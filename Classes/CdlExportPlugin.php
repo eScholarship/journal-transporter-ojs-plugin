@@ -78,15 +78,64 @@ class CdlExportPlugin extends ImportExportPlugin {
      * @param $args Parameters to the plugin
      */
     function executeCLI($scriptName, &$args) {
-        $this->usage($scriptName);
+        $this->default($scriptName, $args);
     }
 
     /**
-     * Display the command-line usage information
+     * List things
      */
-    function usage($scriptName) {
-        echo "USAGE NOT AVAILABLE.\n"
-            . "Well done! Your CLI is running, but this plugin doesn't do anything yet.\n";
+    function default($scriptName, $args) {
+        $journalDao = DAORegistry::getDAO('JournalDAO');
+        $data = [];
+        if(array_key_exists(0, $args)) {
+            $journalPath = $args[0];
+        } else {
+            $journalsResultSet = $journalDao->getJournals();
+            while(!$journalsResultSet->eof()) {
+                $journal = $journalsResultSet->next();
+                $data[] = ['title' => $journal->getLocalizedTitle(), 'path' => $journal->getPath()];
+            }
+            echo json_encode(['journals' => $data]);
+            die();
+        }
+
+
+        $issueDao = DAORegistry::getDAO('IssueDAO');
+        $sectionsDao = DAORegistry::getDAO('SectionDAO');
+
+        $journal = $journalDao->getJournalByPath($journalPath);
+        if(is_null($journal)) {
+            echo "Could not find a journal with path $journalPath".PHP_EOL;
+            die();
+        }
+
+        $data['title'] = $journal->getLocalizedTitle();
+
+        $issuesResultSet = $issueDao->getIssues($journal->getId());
+        $issues = [];
+        while(!$issuesResultSet->eof()) {
+            $issue = $issuesResultSet->next();
+            $numberOfArticles = $issueDao->getNumArticles($issue->getId());
+            $dataIssue = [
+                'title' => $issue->getLocalizedTitle(),
+                'numberOfArticles' => $numberOfArticles,
+                'published' => $issue->getPublished()
+            ];
+            $issues[] = $dataIssue;
+        }
+        $data['issues'] = $issues;
+
+        $sectionsResultSet = $sectionsDao->getJournalSections($journal->getId());
+        $sections = [];
+        while(!$sectionsResultSet->eof()) {
+            $section = $sectionsResultSet->next();
+            $dataSection = ['title' => $section->getLocalizedTitle()];
+            $sections = $dataSection;
+        }
+
+        $data['sections'] = $sections;
+
+        echo json_encode($data);
     }
 }
 
