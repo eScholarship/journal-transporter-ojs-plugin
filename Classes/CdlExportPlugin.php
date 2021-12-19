@@ -14,8 +14,10 @@
 
 // $Id$
 
-
 import('classes.plugins.ImportExportPlugin');
+
+use CdlExportPlugin\Utility\DataObjectUtility;
+use CdlExportPlugin\Command\Controller;
 
 class CdlExportPlugin extends ImportExportPlugin {
     const PLUGIN_DISPLAY_NAME = 'CDL OJS Export Plugin';
@@ -54,88 +56,38 @@ class CdlExportPlugin extends ImportExportPlugin {
         return self::PLUGIN_DESCRIPTION;
     }
 
-    function display(&$args) {
-        die("Code in ".__CLASS__."::".__METHOD__." borrowed from sample importexport plugin. Aborting!");
-        parent::display($args);
-        switch (array_shift($args)) {
-            case 'exportIssue':
-                // The actual issue export code would go here
-                break;
-            default:
-                // Display a list of issues for export
-                $journal =& Request::getJournal();
-                $issueDao =& DAORegistry::getDAO('IssueDAO');
-                $issues =& $issueDao->getIssues($journal->getId(), Handler::getRangeInfo('issues'));
-
-                $templateMgr =& TemplateManager::getManager();
-                $templateMgr->assign_by_ref('issues', $issues);
-                $templateMgr->display($this->getTemplatePath() . 'issues.tpl');
-        }
+    function display($args) {
+        die("Code in ".__CLASS__."::".__METHOD__." doesn't do anything.");
     }
 
     /**
      * Execute import/export tasks using the command-line interface.
      * @param $args Parameters to the plugin
      */
-    function executeCLI($scriptName, &$args) {
-        $this->default($scriptName, $args);
+    function executeCLI($scriptName, $args) {
+        $this->includeAllClasses();
+        $cliController = new Controller();
+        $cliController->initializeHandler($args);
+        $cliController->execute();
     }
 
     /**
-     * List things
+     * There's no autoloading here. We'll just load all classes when the CLI is executed.
      */
-    function default($scriptName, $args) {
-        $journalDao = DAORegistry::getDAO('JournalDAO');
-        $data = [];
-        if(array_key_exists(0, $args)) {
-            $journalPath = $args[0];
-        } else {
-            $journalsResultSet = $journalDao->getJournals();
-            while(!$journalsResultSet->eof()) {
-                $journal = $journalsResultSet->next();
-                $data[] = ['title' => $journal->getLocalizedTitle(), 'path' => $journal->getPath()];
+    function includeAllClasses() {
+        // TODO: make this all better.
+        require_once('Command/Traits/Handler.php');
+        require_once('Utility/Traits/DAOInjection.php');
+
+        // Include all classes in the plugin
+        $directoryIterator = new RecursiveDirectoryIterator(dirname(__FILE__));
+        $iterator = new RecursiveIteratorIterator($directoryIterator, RecursiveIteratorIterator::SELF_FIRST);
+
+        foreach ($iterator as $file) {
+            if($file->getExtension() === 'php') {
+                require_once($file);
             }
-            echo json_encode(['journals' => $data]);
-            die();
         }
-
-
-        $issueDao = DAORegistry::getDAO('IssueDAO');
-        $sectionsDao = DAORegistry::getDAO('SectionDAO');
-
-        $journal = $journalDao->getJournalByPath($journalPath);
-        if(is_null($journal)) {
-            echo "Could not find a journal with path $journalPath".PHP_EOL;
-            die();
-        }
-
-        $data['title'] = $journal->getLocalizedTitle();
-
-        $issuesResultSet = $issueDao->getIssues($journal->getId());
-        $issues = [];
-        while(!$issuesResultSet->eof()) {
-            $issue = $issuesResultSet->next();
-            $numberOfArticles = $issueDao->getNumArticles($issue->getId());
-            $dataIssue = [
-                'title' => $issue->getLocalizedTitle(),
-                'numberOfArticles' => $numberOfArticles,
-                'published' => $issue->getPublished()
-            ];
-            $issues[] = $dataIssue;
-        }
-        $data['issues'] = $issues;
-
-        $sectionsResultSet = $sectionsDao->getJournalSections($journal->getId());
-        $sections = [];
-        while(!$sectionsResultSet->eof()) {
-            $section = $sectionsResultSet->next();
-            $dataSection = ['title' => $section->getLocalizedTitle()];
-            $sections = $dataSection;
-        }
-
-        $data['sections'] = $sections;
-
-        echo json_encode($data);
     }
 }
 
