@@ -16,7 +16,6 @@
  */
 
 // $Id$
-
 require_once('Classes/CdlExportPlugin.php');
 
 return new CdlExportPlugin();

@@ -1,9 +1,9 @@
 <?php namespace CdlExportPlugin\Command;
 
-use CdlExportPlugin\Command\Traits\Handler;
+use CdlExportPlugin\Command\Traits\CommandHandler;
 
 class Controller {
-    use Handler;
+    use CommandHandler;
 
     private $allowedCommands = [
       'journals' => Journals::class

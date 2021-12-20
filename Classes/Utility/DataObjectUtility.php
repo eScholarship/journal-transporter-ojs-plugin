@@ -2,17 +2,44 @@
 
 class DataObjectUtility {
     /**
-     * Given a data object, iterates thee getters and builds an array of the results
+     * Given a resultSet returns an array of data objects cast as arrays
+     * @param $resultSet
+     * @return array|array[]|\stdClass[]
+     */
+    public static function resultSetToArray($resultSet, $exclude = ['allData']) {
+        return array_map(
+            function($dataObject) use($exclude) {
+              return DataObjectUtility::dataObjectToArray($dataObject, $exclude);
+            },
+            $resultSet->toArray()
+        );
+    }
+
+    /**
+     * Given a DataObject, iterates the getters and builds an array of the results. If the getters return
+     * a DataObject, we recurse. If it's not given a DO or an array, it returns the value.
      * @param $dataObject
-     * @return array
+     * @return mixed
      */
     public static function dataObjectToArray($dataObject, $exclude = ['allData']) {
-        $out = new \stdClass;
-        foreach(self::getGetters($dataObject) as $method) {
-            $key = self::stripGetFromGetter($method);
-            if(!in_array($key, $exclude)) $out->$key = $dataObject->$method();
+        if(is_object($dataObject) && is_subclass_of($dataObject, 'DataObject')) {
+            $out = new \stdClass;
+            $out->__class = get_class($dataObject);
+            foreach(self::getGetters($dataObject) as $method) {
+                $key = self::stripGetFromGetter($method);
+                $output = $dataObject->$method();
+                if(!in_array($key, $exclude)) $out->$key = self::dataObjectToArray($output);
+            }
+            return $out;
+        } elseif(is_array($dataObject)) {
+            $out = [];
+            foreach ($dataObject as $k => $v) {
+                $out[$k] = self::dataObjectToArray($v);
+            }
+            return $out;
+        } else {
+            return $dataObject;
         }
-        return $out;
     }
 
     /**

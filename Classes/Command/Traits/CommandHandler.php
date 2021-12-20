@@ -1,6 +1,6 @@
 <?php namespace CdlExportPlugin\Command\Traits;
 
-trait Handler {
+trait CommandHandler {
 
     private $args;
 

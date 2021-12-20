@@ -1,20 +1,17 @@
 <?php namespace CdlExportPlugin\Command;
 
 use CdlExportPlugin\Command\Journals\Journal;
-use CdlExportPlugin\Command\Traits\Handler;
-use CdlExportPlugin\Utility\Traits\DAOInjection;
+use CdlExportPlugin\Command\Traits\CommandHandler;
+use CdlExportPlugin\Utility\Traits\DAOCache;
 use DAORegistry;
 use CdlExportPlugin\Utility\DataObjectUtility;
 
 class Journals {
-    use Handler;
-    use DAOInjection;
-
-    private $DAOs = ['journal'];
+    use CommandHandler;
+    use DAOCache;
 
     public function __construct($args) {
         $this->initializeHandler($args);
-        $this->initializeDAOInjection();
     }
 
     /**

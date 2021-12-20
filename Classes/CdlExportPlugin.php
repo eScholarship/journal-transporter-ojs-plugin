@@ -66,6 +66,7 @@ class CdlExportPlugin extends ImportExportPlugin {
      */
     function executeCLI($scriptName, $args) {
         $this->includeAllClasses();
+        error_reporting(E_ERROR); // Don't show warnings or notices, lots of rattles in the OJS engine
         $cliController = new Controller();
         $cliController->initializeHandler($args);
         $cliController->execute();
@@ -76,8 +77,8 @@ class CdlExportPlugin extends ImportExportPlugin {
      */
     function includeAllClasses() {
         // TODO: make this all better.
-        require_once('Command/Traits/Handler.php');
-        require_once('Utility/Traits/DAOInjection.php');
+        require_once('Command/Traits/CommandHandler.php');
+        require_once('Utility/Traits/DAOCache.php');
 
         // Include all classes in the plugin
         $directoryIterator = new RecursiveDirectoryIterator(dirname(__FILE__));
