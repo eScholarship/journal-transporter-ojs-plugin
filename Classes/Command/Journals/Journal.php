@@ -29,6 +29,8 @@ class Journal {
             if($scope === 'issues') $data = $this->getIssues();
             if($scope === 'sections') $data = $this->getSections();
             if($scope === 'articles') $data = $this->getArticles($this->args);
+        } else {
+            $data = DataObjectUtility::dataObjectToArray($this->journal);
         }
 
         echo json_encode($data);
@@ -58,23 +60,36 @@ class Journal {
         // Only show all this stuff if we're display an article singly
         if(!is_null($articleId)) {
             foreach($articleData as &$article) {
-                $article->__authorSubmission = DataObjectUtility::dataObjectToArray($this->getDAO('authorSubmission')->getAuthorSubmission($article->id));
-                $article->__editAssignment = DataObjectUtility::resultSetToArray($this->getDAO('editAssignment')->getEditAssignmentsByArticleId($article->id));
-                $article->__editorSubmission = DataObjectUtility::dataObjectToArray($this->getDAO('editorSubmission')->getEditorSubmission($article->id));
-                $article->__sectionEditorSubmission = DataObjectUtility::dataObjectToArray($this->getDAO('sectionEditorSubmission')->getSectionEditorSubmission($article->id));
-                $article->__reviewAssignment = $this->getDAO('reviewAssignment')->getReviewAssignmentsByArticleId($article->id);
-                $article->__reviewerSubmission = $this->getDAO('reviewerSubmission')->getEditorDecisions($article->id);
-                $article->__copyeditorSubmission = DataObjectUtility::dataObjectToArray($this->getDAO('copyeditorSubmission')->getCopyeditorSubmission($article->id));
-                $article->__layoutEditorSubmission = DataObjectUtility::dataObjectToArray($this->getDAO('layoutEditorSubmission')->getSubmission($article->id));
-                $article->__proofreaderSubmission = DataObjectUtility::dataObjectToArray($this->getDAO('proofreaderSubmission')->getSubmission($article->id));
+                $dataMergeConfig = [
+                    ['authorSubmission', 'getAuthorSubmission', 'DAO'],
+                    ['editAssignment', 'getEditAssignmentsByArticleId', 'resultSet'],
+                    ['editorSubmission', 'getEditorSubmission', 'DAO'],
+                    ['sectionEditorSubmission', 'getSectionEditorSubmission', 'DAO'],
+                    ['reviewAssignment', 'getReviewAssignmentsByArticleId', 'DAO'],
+                    ['reviewerSubmission', 'getEditorDecisions', 'none'],
+                    ['copyeditorSubmission', 'getCopyeditorSubmission', 'DAO'],
+                    ['layoutEditorSubmission', 'getSubmission', 'DAO'],
+                    ['proofreaderSubmission', 'getSubmission', 'DAO'],
+                    ['articleComment', 'getArticleComments', 'DAO'],
+                    ['articleFile', 'getArticleFilesByArticle', 'DAO'],
+                    ['articleGalley', 'getGalleysByArticle', 'DAO'],
+                    ['suppFile', 'getSuppFilesByArticle', 'DAO'],
+                    ['articleEmailLog', 'getArticleLogEntries', 'resultSet'],
+                    ['articleEventLog', 'getArticleLogEntries', 'resultSet']
+                ];
 
-
-                $article->__articleComments = DataObjectUtility::dataObjectToArray($this->getDao('articleComment')->getArticleComments($article->id));
-                $article->__articleFile = DataObjectUtility::dataObjectToArray($this->getDao('articleFile')->getArticleFilesByArticle($article->id));
-                $article->__articleGalley = DataObjectUtility::dataObjectToArray($this->getDao('articleGalley')->getGalleysByArticle($article->id));
-                $article->__suppFile = DataObjectUtility::dataObjectToArray($this->getDao('suppFile')->getSuppFilesByArticle($article->id));
-                $article->__articleEmailLog = DataObjectUtility::resultSetToArray($this->getDAO('articleEmailLog')->getArticleLogEntries($article->id));
-                $article->__articleEventLog = DataObjectUtility::resultSetToArray($this->getDAO('articleEventLog')->getArticleLogEntries($article->id));
+                foreach($dataMergeConfig as $mergeConfig) {
+                    $methodName = $mergeConfig[1];
+                    $daoResult = $this->getDAO($mergeConfig[0])->$methodName($article->id);
+                    if($mergeConfig[2] === 'DAO') {
+                        $data = DataObjectUtility::dataObjectToArray($daoResult);
+                    } elseif($mergeConfig[2] === 'resultSet') {
+                        $data = DataObjectUtility::resultSetToArray($daoResult);
+                    } else {
+                        $data = $daoResult;
+                    }
+                    $article = DataObjectUtility::mergeWithoutRedundancy($article, $data, '__'.$mergeConfig[0]);
+                }
             }
         }
 

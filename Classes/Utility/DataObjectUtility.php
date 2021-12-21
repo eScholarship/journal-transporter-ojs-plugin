@@ -43,7 +43,8 @@ class DataObjectUtility {
     }
 
     /**
-     *
+     * Takes a getter name and returns it as a property name. If it doesn't begin with "get" the original
+     * value is returned.
      * @param string $methodName
      * @return string
      */
@@ -70,5 +71,53 @@ class DataObjectUtility {
                 return count($methodReflection->getParameters()) === 0;
             }
         );
+    }
+
+
+    /**
+     * This function accepts an object $a, and an object, array (or anything) $b, and reduces $b to only
+     * properties that $a has a different value for, or do not exist on $a. For array or other other values, it simply
+     * adds the value. The property always gets added to the $propertyName property in the returned object. To
+     * disable the redundancy checking, set $fullForceMerge to true. To turn off the debug stats, set $disableDebugStats
+     * to true.
+     * @param $a
+     * @param $b
+     * @param $propertyName
+     * @param false $forceFullMerge
+     * @param false $disableDebugStats
+     * @return mixed
+     */
+    public static function mergeWithoutRedundancy($a, $b, $propertyName, $forceFullMerge = false, $disableDebugStats = false) {
+        if(gettype($b) !== 'object' || $forceFullMerge) {
+            $supplemental = $b;
+        } else {
+            $differentValues = [];
+            $duplicates = [];
+            $uniqueProperties = [];
+            $supplemental = new \stdClass;
+            $objectProperties = get_object_vars($b);
+            foreach ($objectProperties as $property => $value) {
+                if (property_exists($a, $property)) {
+                    if ($a->$property != $value) {
+                        $supplemental->$property = $b->$property;
+                        $differentValues[] = $property;
+                    } else {
+                        $duplicates[] = $property;
+                    }
+                } else {
+                    $supplemental->$property = $value;
+                    $uniqueProperties[] = $property;
+                }
+            }
+            if(!$disableDebugStats) {
+                $supplemental->__mergeWithoutRedundancyStats = (object) [
+                    '__differentValues' => $differentValues,
+                    '__duplicates' => $duplicates,
+                    '__uniqueProperties' => $uniqueProperties
+                ];
+            }
+        }
+        $a->$propertyName = $supplemental;
+        return $a;
     }
 }
