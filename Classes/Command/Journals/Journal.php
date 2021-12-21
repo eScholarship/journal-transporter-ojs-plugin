@@ -8,14 +8,15 @@ class Journal {
     use CommandHandler;
     use DAOCache;
 
-    private $DAOs = ['journal', 'issue', 'section', 'article', 'authorSubmission', 'reviewAssignment'];
-
     private $journal;
 
     public function __construct($args) {
         $this->initializeHandler($args);
     }
 
+    /**
+     * Looks at the arguments and handles the generation of the response
+     */
     public function execute() {
         $journalPath = array_shift($this->args);
 
@@ -36,18 +37,34 @@ class Journal {
         echo json_encode($data);
     }
 
+    /**
+     * Returns the issues of a journal
+     * @return array|array[]|\stdClass[]
+     */
     protected function getIssues() {
         return DataObjectUtility::resultSetToArray(
             $this->getDAO('issue')->getIssues($this->journal->getId())
         );
     }
 
+    /**
+     * Returns the sections of journal
+     * @return array|array[]|\stdClass[]
+     */
     protected function getSections() {
         return DataObjectUtility::resultSetToArray(
             $this->getDAO('section')->getJournalSections($this->journal->getId())
         );
     }
 
+    /**
+     * TODO: this merging needs some serious cleanup!
+     *
+     * This renders the articles output. For a single article, you get a lot of data. For many articles, you get
+     * some data.
+     * @param array $args
+     * @return array|array[]|\stdClass[]
+     */
     protected function getArticles($args = []) {
         $articleId = array_shift($args);
 
@@ -61,38 +78,38 @@ class Journal {
         if(!is_null($articleId)) {
             foreach($articleData as &$article) {
                 $dataMergeConfig = [
-                    ['authorSubmission', 'getAuthorSubmission', 'DAO'],
-                    ['editAssignment', 'getEditAssignmentsByArticleId', 'resultSet'],
-                    ['editorSubmission', 'getEditorSubmission', 'DAO'],
-                    ['sectionEditorSubmission', 'getSectionEditorSubmission', 'DAO'],
-                    ['reviewAssignment', 'getReviewAssignmentsByArticleId', 'DAO'],
-                    ['reviewerSubmission', 'getEditorDecisions', 'none'],
-                    ['copyeditorSubmission', 'getCopyeditorSubmission', 'DAO'],
-                    ['layoutEditorSubmission', 'getSubmission', 'DAO'],
-                    ['proofreaderSubmission', 'getSubmission', 'DAO'],
-                    ['articleComment', 'getArticleComments', 'DAO'],
-                    ['articleFile', 'getArticleFilesByArticle', 'DAO'],
-                    ['articleGalley', 'getGalleysByArticle', 'DAO'],
-                    ['suppFile', 'getSuppFilesByArticle', 'DAO'],
-                    ['articleEmailLog', 'getArticleLogEntries', 'resultSet'],
-                    ['articleEventLog', 'getArticleLogEntries', 'resultSet']
+                    'authorSubmission->getAuthorSubmission',
+                    'editAssignment->getEditAssignmentsByArticleId',
+                    'editorSubmission->getEditorSubmission',
+                    'sectionEditorSubmission->getSectionEditorSubmission',
+                    'reviewAssignment->getReviewAssignmentsByArticleId',
+                    'reviewerSubmission->getEditorDecisions',
+                    'copyeditorSubmission->getCopyeditorSubmission',
+                    'layoutEditorSubmission->getSubmission',
+                    'proofreaderSubmission->getSubmission',
+                    'articleComment->getArticleComments',
+                    'articleFile->getArticleFilesByArticle',
+                    'articleGalley->getGalleysByArticle',
+                    'suppFile->getSuppFilesByArticle',
+                    'articleEmailLog->getArticleLogEntries',
+                    'articleEventLog->getArticleLogEntries'
                 ];
 
                 foreach($dataMergeConfig as $mergeConfig) {
-                    $methodName = $mergeConfig[1];
-                    $daoResult = $this->getDAO($mergeConfig[0])->$methodName($article->id);
-                    if($mergeConfig[2] === 'DAO') {
+                    list($dao, $method) = explode('->', $mergeConfig);
+                    $daoResult = $this->getDAO($dao)->$method($article->id);
+                    if(DataObjectUtility::isDataObject($daoResult) || is_array($daoResult)) {
                         $data = DataObjectUtility::dataObjectToArray($daoResult);
-                    } elseif($mergeConfig[2] === 'resultSet') {
+                    } elseif(DataObjectUtility::isResultSet($daoResult)) {
                         $data = DataObjectUtility::resultSetToArray($daoResult);
                     } else {
                         $data = $daoResult;
                     }
-                    $article = DataObjectUtility::mergeWithoutRedundancy($article, $data, '__'.$mergeConfig[0]);
+
+                    $article = DataObjectUtility::mergeWithoutRedundancy($article, $data, '__'.$dao);
                 }
             }
         }
-
         return $articleData;
     }
 }

@@ -120,4 +120,20 @@ class DataObjectUtility {
         $a->$propertyName = $supplemental;
         return $a;
     }
+
+    /**
+     * @param $object
+     * @return mixed
+     */
+    public static function isDataObject($object) {
+        return is_subclass_of($object, 'DataObject');
+    }
+
+    /**
+     * @param $object
+     * @return mixed
+     */
+    public static function isResultSet($object) {
+        return get_class($object) == 'DAOResultFactory';
+    }
 }
