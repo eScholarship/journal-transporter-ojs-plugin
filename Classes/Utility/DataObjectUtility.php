@@ -75,11 +75,11 @@ class DataObjectUtility {
 
 
     /**
-     * This function accepts an object $a, and an object, array (or anything) $b, and reduces $b to only
-     * properties that $a has a different value for, or do not exist on $a. For array or other other values, it simply
-     * adds the value. The property always gets added to the $propertyName property in the returned object. To
-     * disable the redundancy checking, set $fullForceMerge to true. To turn off the debug stats, set $disableDebugStats
-     * to true.
+     * This function accepts an object $a, and an object, array (or anything) $b, and reduces $b if it's an object to
+     * only properties that $a has a different value for, or do not exist on $a. For array or other other values, it
+     * simply adds the value. The value (whether an object, array or other) always gets added to the $propertyName
+     * property in the returned object. To disable the redundancy checking, set $fullForceMerge to true. To turn off the
+     * debug stats, set $disableDebugStats to true.
      * @param $a
      * @param $b
      * @param $propertyName
@@ -110,10 +110,14 @@ class DataObjectUtility {
                 }
             }
             if(!$disableDebugStats) {
+                asort($differentValues);
+                asort($duplicates);
+                asort($uniqueProperties);
+
                 $supplemental->__mergeWithoutRedundancyStats = (object) [
-                    '__differentValues' => $differentValues,
-                    '__duplicates' => $duplicates,
-                    '__uniqueProperties' => $uniqueProperties
+                    '__differentValues' => implode(', ', $differentValues),
+                    '__duplicates' => implode(', ', $duplicates),
+                    '__uniqueProperties' => implode(', ', $uniqueProperties)
                 ];
             }
         }
