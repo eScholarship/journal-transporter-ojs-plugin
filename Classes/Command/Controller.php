@@ -6,7 +6,8 @@ class Controller {
     use CommandHandler;
 
     private $allowedCommands = [
-      'journals' => Journals::class
+      'journals' => Journals::class,
+      'api' => Api::class
     ];
 
     /**
