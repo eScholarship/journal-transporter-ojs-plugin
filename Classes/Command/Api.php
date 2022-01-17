@@ -1,10 +1,8 @@
 <?php namespace CdlExportPlugin\Command;
 
 use CdlExportPlugin\Utility\RegexUtility;
-use CdlExportPlugin\Utility\Traits\DAOCache;
 
 class Api {
-    use DAOCache;
 
     private $args = [];
 
@@ -51,26 +49,12 @@ class Api {
     }
 
     /**
-     * Turns ?k1=v1&k2=v2 into key value pairs. Not used yet.
-     * @param $argumentsString
-     * @return array
-     */
-    private function parseArguments($argumentsString) {
-        $pairs = explode('&', $argumentsString);
-        $arguments = [];
-        foreach($pairs as $pair) {
-            list($key, $value) = explode('=', $pair);
-            $arguments[$key] = is_null($value) ?: $value;
-        }
-        return $arguments;
-    }
-
-    /**
      * Call API method, catch exceptions
      * @param $route
      * @param $class
      * @param $routeParameters
-     * @return array|mixed
+     * @param array $arguments
+     * @return array
      */
     private function callApiMethod($route, $class, $routeParameters, $arguments = []) {
         $parameters = $this->zipArgs($routeParameters, RegexUtility::getRegexNamedMatches($route));
@@ -97,5 +81,20 @@ class Api {
             $out[$allowedParameter] = @$rawArgs[$allowedParameter];
         }
         return $out;
+    }
+
+    /**
+     * Turns ?k1=v1&k2=v2 into key value pairs. Not used yet.
+     * @param $argumentsString
+     * @return array
+     */
+    private function parseArguments($argumentsString) {
+        $pairs = explode('&', $argumentsString);
+        $arguments = [];
+        foreach($pairs as $pair) {
+            list($key, $value) = explode('=', $pair);
+            $arguments[$key] = is_null($value) ?: $value;
+        }
+        return $arguments;
     }
 }

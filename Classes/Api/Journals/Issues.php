@@ -1,17 +1,8 @@
 <?php namespace CdlExportPlugin\Api\Journals;
 
-use CdlExportPlugin\Repository\Journal;
-use CdlExportPlugin\Repository\Issue;
-
 class Issues {
     private $journalRepository;
     private $issueRepository;
-
-    public function __construct()
-    {
-        $this->journalRepository = new Journal;
-        $this->issueRepository = new Issue;
-    }
 
     /**
      * @param array $args

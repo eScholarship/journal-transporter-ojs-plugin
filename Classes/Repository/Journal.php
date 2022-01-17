@@ -1,18 +1,18 @@
 <?php namespace CdlExportPlugin\Repository;
 
+use CdlExportPlugin\Utility\DAOFactory;
 use CdlExportPlugin\Utility\Traits\DAOCache;
 
 class Journal {
-    use DAOCache;
 
     public function fetchAll()
     {
-        return $this->getDAO('journal')->getJournals();
+        return DAOFactory::get()->getDAO('journal')->getJournals();
     }
 
     public function fetchOneById($id)
     {
-        $journal = $this->getDAO('journal')->getJournal($id);
+        $journal = DAOFactory::get()->getDAO('journal')->getJournal($id);
         if(is_null($journal)) throw new \Exception("Journal $id not found");
         return $journal;
     }

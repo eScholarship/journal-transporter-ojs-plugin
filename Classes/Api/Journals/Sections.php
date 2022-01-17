@@ -1,21 +1,12 @@
 <?php namespace CdlExportPlugin\Api\Journals;
 
-use CdlExportPlugin\Repository\Journal;
-use CdlExportPlugin\Repository\Section;
-
 class Sections {
     private $journalRepository;
     private $sectionRepository;
 
-    public function __construct()
-    {
-        $this->journalRepository = new Journal;
-        $this->sectionRepository = new Section;
-    }
-
     /**
      * @param $args
-     * @return array|array[]|mixed|\stdClass|\stdClass[]
+     * @return array
      * @throws \Exception
      */
     public function execute($args)

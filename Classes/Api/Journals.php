@@ -1,15 +1,9 @@
 <?php namespace CdlExportPlugin\Api;
 
-use CdlExportPlugin\Repository\Journal;
 use CdlExportPlugin\Utility\DataObjectUtility;
 
-class Journals {
-    private $journalRepository;
-
-    public function __construct()
-    {
-        $this->journalRepository = new Journal;
-    }
+class Journals extends ApiRoute {
+    protected $journalRepository;
 
     public function execute($args)
     {

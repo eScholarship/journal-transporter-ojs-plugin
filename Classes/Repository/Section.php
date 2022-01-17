@@ -1,13 +1,12 @@
 <?php namespace CdlExportPlugin\Repository;
 
-use CdlExportPlugin\Utility\Traits\DAOCache;
+use CdlExportPlugin\Utility\DAOFactory;
 
 class Section {
-    use DAOCache;
 
     public function fetchByJournal($journal)
     {
-        return $this->getDAO('section')->getJournalSections($journal->getId());
+        return DAOFactory::get()->getDAO('section')->getJournalSections($journal->getId());
     }
 
 }

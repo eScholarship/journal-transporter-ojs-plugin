@@ -1,12 +1,11 @@
 <?php namespace CdlExportPlugin\Command\Journals;
 
 use CdlExportPlugin\Command\Traits\CommandHandler;
+use CdlExportPlugin\Utility\DAOFactory;
 use CdlExportPlugin\Utility\DataObjectUtility;
-use CdlExportPlugin\Utility\Traits\DAOCache;
 
 class Journal {
     use CommandHandler;
-    use DAOCache;
 
     private $journal;
 
@@ -21,9 +20,9 @@ class Journal {
         $journalIdentifier = array_shift($this->args);
 
         if(preg_match('/^[0-9]+$/', $journalIdentifier)) {
-            $this->journal = $this->getDAO('journal')->getJournal($journalIdentifier);
+            $this->journal = DAOFactory::get()->getDAO('journal')->getJournal($journalIdentifier);
         } else {
-            $this->journal = $this->getDAO('journal')->getJournalByPath($journalIdentifier);
+            $this->journal = DAOFactory::get()->getDAO('journal')->getJournalByPath($journalIdentifier);
         }
 
         if(is_null($this->journal)) {
@@ -48,7 +47,7 @@ class Journal {
      */
     protected function getIssues() {
         return DataObjectUtility::resultSetToArray(
-            $this->getDAO('issue')->getIssues($this->journal->getId())
+            DAOFactory::get()->getDAO('issue')->getIssues($this->journal->getId())
         );
     }
 
@@ -58,7 +57,7 @@ class Journal {
      */
     protected function getSections() {
         return DataObjectUtility::resultSetToArray(
-            $this->getDAO('section')->getJournalSections($this->journal->getId())
+            DAOFactory::get()->getDAO('section')->getJournalSections($this->journal->getId())
         );
     }
 
@@ -76,7 +75,7 @@ class Journal {
         $articleData = !is_null($articleId) ?
             [DataObjectUtility::dataObjectToArray($this->getDAO('article')->getArticle($articleId, $this->journal->getId()))] :
             DataObjectUtility::resultSetToArray(
-                $this->getDAO('article')->getArticlesByJournalId($this->journal->getId())
+                DAOFactory::get()->getDAO('article')->getArticlesByJournalId($this->journal->getId())
             );
 
         // Only show all this stuff if we're display an article singly
@@ -102,7 +101,7 @@ class Journal {
 
                 foreach($dataMergeConfig as $mergeConfig) {
                     list($dao, $method) = explode('->', $mergeConfig);
-                    $daoResult = $this->getDAO($dao)->$method($article->id);
+                    $daoResult = DAOFactory::get()->getDAO($dao)->$method($article->id);
                     if(DataObjectUtility::isDataObject($daoResult) || is_array($daoResult)) {
                         $data = DataObjectUtility::dataObjectToArray($daoResult);
                     } elseif(DataObjectUtility::isResultSet($daoResult)) {

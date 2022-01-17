@@ -2,13 +2,11 @@
 
 use CdlExportPlugin\Command\Journals\Journal;
 use CdlExportPlugin\Command\Traits\CommandHandler;
-use CdlExportPlugin\Utility\Traits\DAOCache;
-use DAORegistry;
+use CdlExportPlugin\Utility\DAOFactory;
 use CdlExportPlugin\Utility\DataObjectUtility;
 
 class Journals {
     use CommandHandler;
-    use DAOCache;
 
     public function __construct($args) {
         $this->initializeHandler($args);
@@ -22,7 +20,7 @@ class Journals {
         if(array_key_exists(0, $this->args)) {
             (new Journal($this->args))->execute();
         } else {
-            $journalsResultSet = $this->getDAO('journal')->getJournals();
+            $journalsResultSet = DAOFactory::get()->getDAO('journal')->getJournals();
             foreach($journalsResultSet->toArray() as $journal) {
                 $data[] = DataObjectUtility::dataObjectToArray($journal);
             }
