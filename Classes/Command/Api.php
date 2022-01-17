@@ -1,5 +1,6 @@
 <?php namespace CdlExportPlugin\Command;
 
+use CdlExportPlugin\Utility\RegexUtility;
 use CdlExportPlugin\Utility\Traits\DAOCache;
 
 class Api {
@@ -11,9 +12,9 @@ class Api {
         // Don't use a ~ character in these route regexes, unless you escape them, kew? We're using them
         // as the delimiter. Note we're using named parameters too.
         '^/journals(/(?P<journal>\d+))?$' => \CdlExportPlugin\Api\Journals::class,
-        '^/journals/(?P<journal>\d+)/sections(/(?P<section>\d+))?$' => \CdlExportPlugin\Api\Journals\Sections::class,
-        '^/journals/(\d+)/issues$' => \CdlExportPlugin\Api\Journals\Issues::class,
-        '^/journals/(\d+)/articles$' => \CdlExportPlugin\Api\Journals\Articles::class,
+        '^/journals/(?P<journal>\d+)/sections$' => \CdlExportPlugin\Api\Journals\Sections::class,
+        '^/journals/(?P<journal>\d+)/issues$' => \CdlExportPlugin\Api\Journals\Issues::class,
+        '^/journals/(?P<journal>\d+)/articles(/(?P<article>\d+))?$' => \CdlExportPlugin\Api\Journals\Articles::class,
     ];
 
     /**
@@ -28,29 +29,54 @@ class Api {
      *
      */
     public function execute() {
-        $out = ['Exception' => ["Route '".$this->args[0]."' did not match defined routes"]]; // Fallback response
-        foreach($this->routes as $route => $class) {
-            $matches = [];
-            if(preg_match('~'.$route.'~', $this->args[0], $matches)) {
-                $out = $this->callApiMethod($route, $class, $matches);
-                break;
+        $skipRouteLookup = false;
+        if(is_null($this->args[0])) {
+            $out = ['Exception' => 'No route provided', 'routeRegexes' => array_keys($this->routes)];
+            $skipRouteLookup = true;
+        } else {
+            $out = ['Exception' => ["Provided route '".$this->args[0]."' did not match defined routes"]]; // Fallback response
+        }
+
+        if(!$skipRouteLookup) {
+            list($head, $tail) = explode('?', $this->args[0], 2);
+            foreach ($this->routes as $route => $class) {
+                $matches = [];
+                if (preg_match('~' . $route . '~', $head, $matches)) {
+                    $out = $this->callApiMethod($route, $class, $matches, $this->parseArguments($tail));
+                    break;
+                }
             }
         }
         echo json_encode($out).PHP_EOL;
     }
 
     /**
+     * Turns ?k1=v1&k2=v2 into key value pairs. Not used yet.
+     * @param $argumentsString
+     * @return array
+     */
+    private function parseArguments($argumentsString) {
+        $pairs = explode('&', $argumentsString);
+        $arguments = [];
+        foreach($pairs as $pair) {
+            list($key, $value) = explode('=', $pair);
+            $arguments[$key] = is_null($value) ?: $value;
+        }
+        return $arguments;
+    }
+
+    /**
      * Call API method, catch exceptions
      * @param $route
      * @param $class
-     * @param $matches
+     * @param $routeParameters
      * @return array|mixed
      */
-    private function callApiMethod($route, $class, $matches) {
-        $args = $this->zipArgs($matches, $this->getRegexNamedMatches($route));
+    private function callApiMethod($route, $class, $routeParameters, $arguments = []) {
+        $parameters = $this->zipArgs($routeParameters, RegexUtility::getRegexNamedMatches($route));
 
         try {
-            $out = (new $class($matches))->execute($args);
+            $out = (new $class($routeParameters))->execute($parameters, $arguments);
         } catch(\Exception $e) {
             // TODO: this could be make more robust exception handling
             $out = ['Exception' => $e->getMessage()];
@@ -59,25 +85,16 @@ class Api {
     }
 
     /**
-     * Extract the named matches from a regex, with a regex!
-     * @param $route
-     * @return array|mixed
-     */
-    private function getRegexNamedMatches($route) {
-        return preg_match_all('/\?P<([a-zA-Z0-9_]+)>/', $route, $matches) ? $matches[1] : [];
-    }
-
-    /**
      * Given an array of matches and an array of allowed params, return just the params from the matches that are
      * allowed
      * @param $rawArgs
-     * @param $allowedParams
+     * @param $allowedParameters
      * @return array
      */
-    private function zipArgs($rawArgs, $allowedParams) {
+    private function zipArgs($rawArgs, $allowedParameters) {
         $out = [];
-        foreach($allowedParams as $allowedParam) {
-            $out[$allowedParam] = @$rawArgs[$allowedParam];
+        foreach($allowedParameters as $allowedParameter) {
+            $out[$allowedParameter] = @$rawArgs[$allowedParameter];
         }
         return $out;
     }

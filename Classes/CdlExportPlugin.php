@@ -65,7 +65,7 @@ class CdlExportPlugin extends ImportExportPlugin {
      * @param $args Parameters to the plugin
      */
     function executeCLI($scriptName, $args) {
-        $this->includeAllClasses();
+        $this->registerAutoload();
         error_reporting(E_ERROR); // Don't show warnings or notices, lots of rattles in the OJS engine
         $cliController = new Controller();
         $cliController->initializeHandler($args);
@@ -73,22 +73,18 @@ class CdlExportPlugin extends ImportExportPlugin {
     }
 
     /**
-     * There's no autoloading here. We'll just load all classes when the CLI is executed.
+     *
      */
-    function includeAllClasses() {
-        // TODO: make this all better.
-        require_once('Command/Traits/CommandHandler.php');
-        require_once('Utility/Traits/DAOCache.php');
-
-        // Include all classes in the plugin
-        $directoryIterator = new RecursiveDirectoryIterator(dirname(__FILE__));
-        $iterator = new RecursiveIteratorIterator($directoryIterator, RecursiveIteratorIterator::SELF_FIRST);
-
-        foreach ($iterator as $file) {
-            if($file->getExtension() === 'php') {
-                require_once($file);
+    function registerAutoload() {
+        spl_autoload_register(function($class) {
+            $namespace = 'CdlExportPlugin\\';
+            if(strpos($class, $namespace) === 0) {
+                $file = __DIR__.'/'.str_replace('\\', '/', substr($class, strlen($namespace))).'.php';
+                if(file_exists($file)) {
+                    include $file;
+                }
             }
-        }
+        });
     }
 }
 

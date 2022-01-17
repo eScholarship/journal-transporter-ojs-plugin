@@ -1,32 +1,46 @@
 <?php namespace CdlExportPlugin\Api;
 
+use CdlExportPlugin\Repository\Journal;
 use CdlExportPlugin\Utility\DataObjectUtility;
-use CdlExportPlugin\Utility\Traits\DAOCache;
 
 class Journals {
-    use DAOCache;
+    private $journalRepository;
+
+    public function __construct()
+    {
+        $this->journalRepository = new Journal;
+    }
 
     public function execute($args)
     {
         return @$args['journal'] ? $this->getJournal($args['journal']) : $this->getJournals();
     }
 
-    private function getJournal($id) {
-        $journal = $this->getDAO('journal')->getJournal($id);
-        if(is_null($journal)) throw new \Exception("Journal $id not found");
+    /**
+     * @param $id
+     * @return array|mixed|\stdClass
+     * @throws \Exception
+     */
+    protected function getJournal($id)
+    {
+        $journal = $this->journalRepository->fetchOneById($id);
         return DataObjectUtility::dataObjectToArray($journal);
     }
 
-    private function getJournals() {
-        $journalsResultSet = $this->getDAO('journal')->getJournals();
-        $data = [];
+    /**
+     * @return array
+     */
+    protected function getJournals()
+    {
+        $journalsResultSet = $this->journalRepository->fetchAll();
+        $journals = [];
         foreach ($journalsResultSet->toArray() as $journal) {
-            $data[] = [
+            $journals[] = [
                 'title' => $journal->getLocalizedTitle(),
                 'path' => $journal->getPath(),
                 'id' => $journal->getId()
             ];
         }
-        return $data;
+        return $journals;
     }
 }

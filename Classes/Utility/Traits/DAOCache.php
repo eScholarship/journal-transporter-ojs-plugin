@@ -2,6 +2,7 @@
 
 use \DAORegistry;
 
+// TODO: turn this into a singleton class
 trait DAOCache {
     private $DAOInstances = [];
 

@@ -18,11 +18,16 @@ class Journal {
      * Looks at the arguments and handles the generation of the response
      */
     public function execute() {
-        $journalPath = array_shift($this->args);
+        $journalIdentifier = array_shift($this->args);
 
-        $this->journal = $this->getDAO('journal')->getJournalByPath($journalPath);
+        if(preg_match('/^[0-9]+$/', $journalIdentifier)) {
+            $this->journal = $this->getDAO('journal')->getJournal($journalIdentifier);
+        } else {
+            $this->journal = $this->getDAO('journal')->getJournalByPath($journalIdentifier);
+        }
+
         if(is_null($this->journal)) {
-            throw new \Exception("Could not find a journal with path $journalPath");
+            throw new \Exception("Could not find a journal with path / id $journalIdentifier");
         }
 
         $scope = array_shift($this->args);
