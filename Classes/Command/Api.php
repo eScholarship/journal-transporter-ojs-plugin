@@ -1,6 +1,11 @@
 <?php namespace CdlExportPlugin\Command;
 
 use CdlExportPlugin\Utility\RegexUtility;
+use CdlExportPlugin\Api\Journals;
+use CdlExportPlugin\Api\Journals\Sections;
+use CdlExportPlugin\Api\Journals\Issues;
+use CdlExportPlugin\Api\Journals\Articles;
+use CdlExportPlugin\Api\Journals\Articles\Digest\Emails;
 
 class Api {
 
@@ -9,10 +14,11 @@ class Api {
     private $routes = [
         // Don't use a ~ character in these route regexes, unless you escape them, kew? We're using them
         // as the delimiter. Note we're using named parameters too.
-        '^/journals(/(?P<journal>\d+))?$' => \CdlExportPlugin\Api\Journals::class,
-        '^/journals/(?P<journal>\d+)/sections$' => \CdlExportPlugin\Api\Journals\Sections::class,
-        '^/journals/(?P<journal>\d+)/issues$' => \CdlExportPlugin\Api\Journals\Issues::class,
-        '^/journals/(?P<journal>\d+)/articles(/(?P<article>\d+))?$' => \CdlExportPlugin\Api\Journals\Articles::class,
+        '^/journals(/(?P<journal>\d+))?$' => Journals::class,
+        '^/journals/(?P<journal>\d+)/sections$' => Sections::class,
+        '^/journals/(?P<journal>\d+)/issues$' => Issues::class,
+        '^/journals/(?P<journal>\d+)/articles(/(?P<article>\d+))?$' => Articles::class,
+        '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/digest/emails(\.(?P<format>[a-z]+))?$' => Emails::class,
     ];
 
     /**
@@ -45,7 +51,14 @@ class Api {
                 }
             }
         }
-        echo json_encode($out).PHP_EOL;
+
+        // This is the start of a what might be a response object. Not sure we need it yet. Only using in
+        // Api/Journals/Articles/Digest/Emails currently
+        if(is_object($out) && $out->__format__ === 'txt') {
+            echo $out->data.PHP_EOL;
+        } else {
+            echo json_encode($out) . PHP_EOL;
+        }
     }
 
     /**

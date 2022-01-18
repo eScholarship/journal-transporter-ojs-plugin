@@ -1,8 +1,8 @@
 <?php namespace CdlExportPlugin\Api\Journals;
 
 class Sections {
-    private $journalRepository;
-    private $sectionRepository;
+    protected $journalRepository;
+    protected $sectionRepository;
 
     /**
      * @param $args

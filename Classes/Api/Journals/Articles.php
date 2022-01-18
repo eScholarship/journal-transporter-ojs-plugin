@@ -3,8 +3,8 @@
 use CdlExportPlugin\Utility\DataObjectUtility;
 
 class Articles {
-    private $journalRepository;
-    private $articleRepository;
+    protected $journalRepository;
+    protected $articleRepository;
 
     /**
      * @param array $args

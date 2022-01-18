@@ -73,7 +73,7 @@ class Journal {
         $articleId = array_shift($args);
 
         $articleData = !is_null($articleId) ?
-            [DataObjectUtility::dataObjectToArray($this->getDAO('article')->getArticle($articleId, $this->journal->getId()))] :
+            [DataObjectUtility::dataObjectToArray(DAOFactory::get()->getDAO('article')->getArticle($articleId, $this->journal->getId()))] :
             DataObjectUtility::resultSetToArray(
                 DAOFactory::get()->getDAO('article')->getArticlesByJournalId($this->journal->getId())
             );

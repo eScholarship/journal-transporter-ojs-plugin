@@ -1,8 +1,8 @@
 <?php namespace CdlExportPlugin\Api\Journals;
 
 class Issues {
-    private $journalRepository;
-    private $issueRepository;
+    protected $journalRepository;
+    protected $issueRepository;
 
     /**
      * @param array $args
