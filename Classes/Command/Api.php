@@ -6,6 +6,8 @@ use CdlExportPlugin\Api\Journals\Sections;
 use CdlExportPlugin\Api\Journals\Issues;
 use CdlExportPlugin\Api\Journals\Articles;
 use CdlExportPlugin\Api\Journals\Articles\Digest\Emails;
+use CdlExportPlugin\Api\Journals\Articles\Log;
+use CdlExportPlugin\Api\Journals\Articles\Synthetics\History;
 
 class Api {
 
@@ -19,6 +21,8 @@ class Api {
         '^/journals/(?P<journal>\d+)/issues$' => Issues::class,
         '^/journals/(?P<journal>\d+)/articles(/(?P<article>\d+))?$' => Articles::class,
         '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/digest/emails(\.(?P<format>[a-z]+))?$' => Emails::class,
+        '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/digest/log' => Log::class,
+        '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/synthetics/history' => History::class,
     ];
 
     /**
@@ -46,7 +50,7 @@ class Api {
             foreach ($this->routes as $route => $class) {
                 $matches = [];
                 if (preg_match('~' . $route . '~', $head, $matches)) {
-                    $out = $this->callApiMethod($route, $class, $matches, $this->parseArguments($tail));
+                    $out = $this->callRouteHandler($route, $class, $matches, $this->parseArguments($tail));
                     break;
                 }
             }
@@ -69,7 +73,7 @@ class Api {
      * @param array $arguments
      * @return array
      */
-    private function callApiMethod($route, $class, $routeParameters, $arguments = []) {
+    private function callRouteHandler($route, $class, $routeParameters, $arguments = []) {
         $parameters = $this->zipArgs($routeParameters, RegexUtility::getRegexNamedMatches($route));
 
         try {
