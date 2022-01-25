@@ -22,7 +22,7 @@ class Journals extends ApiRoute {
         $journal = $this->journalRepository->fetchOneById($id);
         $data = NestedMapper::nest($journal);
         $pageHeaderTitleImage = $journal->getSettings()['pageHeaderTitleImage']['en_US'];
-        $data['logoPath'] = Config::getVar('general', 'base_url').
+        $data['logoPath'] = getcwd().'/'.
             Config::getVar('files', 'public_files_dir').'/journals/'.$journal->getId().'/'.
             $pageHeaderTitleImage['uploadName'];
         return $data;
