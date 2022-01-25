@@ -2,6 +2,7 @@
 
 use CdlExportPlugin\Builder\Mapper\NestedMapper;
 use CdlExportPlugin\Utility\DAOFactory;
+use CdlExportPlugin\Utility\DataObjectUtility;
 
 class History
 {
@@ -19,20 +20,61 @@ class History
     }
 
     protected function build() {
-        $this->prependJq(); // just annoying
-        $this->createArticle();
-        $this->assignEditors();
-        $this->assignReviewers();
-        $this->assignCopyeditor();
-        $this->assignLayoutEditor();
-        $this->assignProofReader();
+        $this->logEntries();
+
+// We might be able to get rid of these, as they represent an early implementation. Keeping for now for easy
+// access
+//        $this->createArticle();
+//        $this->assignEditors();
+//        $this->assignReviewers();
+//        $this->assignCopyeditor();
+//        $this->assignLayoutEditor();
+//        $this->assignProofReader();
     }
 
-    protected function prependJq()
-    {
-        for($a = 1; $a < 250; $a++) {
-            $this->append([]);
+    protected function logEntries() {
+        $articleLogEntries = DAOFactory::get()->getDAO('articleEventLog')
+            ->getArticleLogEntries($this->article->getId())->toArray();
+
+        usort($articleLogEntries, function($a, $b) {
+            return (new \DateTime($a->getDateLogged()) > (new \DateTime($b->getDateLogged())));
+        });
+
+        foreach($articleLogEntries as $articleLogEntry) {
+            $associatedObject = $this->getAssociatedObject($articleLogEntry);
+
+            $this->append([
+                'articleLogEntry' => DataObjectUtility::dataObjectToArray($articleLogEntry),
+                'associatedObject' => NestedMapper::nest($associatedObject)
+            ]);
         }
+    }
+
+    protected function getAssociatedObject($articleLogEntry) {
+        switch($articleLogEntry->getAssocType()) {
+            case ARTICLE_LOG_TYPE_DEFAULT:
+
+            case ARTICLE_LOG_TYPE_AUTHOR:
+            case ARTICLE_LOG_TYPE_EDITOR:
+                $dao = 'user';
+                $method = 'getUser';
+                break;
+            break;
+            case ARTICLE_LOG_TYPE_REVIEW:
+                $dao = 'reviewAssignment';
+                $method = 'getReviewAssignmentById';
+            case ARTICLE_LOG_TYPE_COPYEDIT:
+                // CopyeditAssignment
+            case ARTICLE_LOG_TYPE_LAYOUT:
+                // LayoutAssignment
+            case ARTICLE_LOG_TYPE_PROOFREAD:
+                // ProofreadAssignment
+        }
+
+        if($dao and $method) {
+            return DAOFactory::get()->getDAO($dao)->$method($articleLogEntry->getAssocId());
+        }
+        return null;
     }
 
     protected function createArticle() {

@@ -66,7 +66,7 @@ class CdlExportPlugin extends ImportExportPlugin {
      */
     function executeCLI($scriptName, $args) {
         $this->registerAutoload();
-        error_reporting(E_ERROR); // Don't show warnings or notices, lots of rattles in the OJS engine
+        error_reporting(E_ERROR | E_PARSE); // Don't show warnings or notices, lots of rattles in the OJS engine
         $cliController = new Controller();
         $cliController->initializeHandler($args);
         $cliController->execute();

@@ -1,6 +1,8 @@
 <?php namespace CdlExportPlugin\Api;
 
+use CdlExportPlugin\Builder\Mapper\NestedMapper;
 use CdlExportPlugin\Utility\DataObjectUtility;
+use Config;
 
 class Journals extends ApiRoute {
     protected $journalRepository;
@@ -18,7 +20,12 @@ class Journals extends ApiRoute {
     protected function getJournal($id)
     {
         $journal = $this->journalRepository->fetchOneById($id);
-        return DataObjectUtility::dataObjectToArray($journal);
+        $data = NestedMapper::nest($journal);
+        $pageHeaderTitleImage = $journal->getSettings()['pageHeaderTitleImage']['en_US'];
+        $data['logoPath'] = Config::getVar('general', 'base_url').
+            Config::getVar('files', 'public_files_dir').'/journals/'.$journal->getId().'/'.
+            $pageHeaderTitleImage['uploadName'];
+        return $data;
     }
 
     /**
