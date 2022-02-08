@@ -14,6 +14,7 @@ class Controller {
      *
      */
     function usage() {
+        die('moved to HTTP endpoints, clean this up');
         echo <<<EOF
 Usage: `php tools/importExport.php CdlExportPlugin [COMMAND] [ARGS...]`
 

@@ -1,6 +1,8 @@
 <?php namespace CdlExportPlugin\Api\Journals;
 
-class Sections {
+use CdlExportPlugin\Api\ApiRoute;
+
+class Sections extends ApiRoute {
     protected $journalRepository;
     protected $sectionRepository;
 

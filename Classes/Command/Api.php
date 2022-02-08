@@ -56,13 +56,7 @@ class Api {
             }
         }
 
-        // This is the start of a what might be a response object. Not sure we need it yet. Only using in
-        // Api/Journals/Articles/Digest/Emails currently
-        if(is_object($out) && $out->__format__ === 'txt') {
-            echo $out->data.PHP_EOL;
-        } else {
-            echo json_encode($out) . PHP_EOL;
-        }
+        return $out;
     }
 
     /**

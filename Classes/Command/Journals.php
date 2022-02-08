@@ -24,7 +24,7 @@ class Journals {
             foreach($journalsResultSet->toArray() as $journal) {
                 $data[] = DataObjectUtility::dataObjectToArray($journal);
             }
-            echo json_encode(['journals' => $data]);
+            return ['journals' => $data];
         }
     }
 }

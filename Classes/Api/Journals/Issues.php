@@ -1,6 +1,8 @@
 <?php namespace CdlExportPlugin\Api\Journals;
 
-class Issues {
+use CdlExportPlugin\Api\ApiRoute;
+
+class Issues extends ApiRoute  {
     protected $journalRepository;
     protected $issueRepository;
 

@@ -14,12 +14,11 @@
 
 // $Id$
 
-import('classes.plugins.ImportExportPlugin');
+import('lib.pkp.classes.plugins.GenericPlugin');
 
-use CdlExportPlugin\Utility\DataObjectUtility;
 use CdlExportPlugin\Command\Controller;
 
-class CdlExportPlugin extends ImportExportPlugin {
+class CdlExportPlugin extends GenericPlugin {
     const PLUGIN_DISPLAY_NAME = 'CDL OJS Export Plugin';
     const PLUGIN_DESCRIPTION = "Export plugin for CDL's Journal Portability project";
 
@@ -30,7 +29,41 @@ class CdlExportPlugin extends ImportExportPlugin {
      * 	the plugin will not be registered.
      */
     function register($category, $path) {
-        return parent::register($category, $path);
+        $this->registerAutoload();
+
+        if(parent::register($category, $path)) {
+            if(Config::getVar('cdlexport', 'enable_plugin_endpoints') && $this->requestIsAuthorized()) {
+                $this->registerLoadHandlerHook();
+            }
+        }
+    }
+
+    /**
+     * Check to see if the current request is authorized
+     * @return bool
+     */
+    protected function requestIsAuthorized() {
+        if(!Config::getVar('cdlexport', 'require_auth')) return true;
+
+        if(strlen($_SERVER['PHP_AUTH_USER']) > 0 && strlen($_SERVER['PHP_AUTH_PW']) > 0 &&
+            Config::getVar('cdlexport', 'user') === $_SERVER['PHP_AUTH_USER'] &&
+            Config::getVar('cdlexport', 'password') === $_SERVER['PHP_AUTH_PW']) return true;
+
+        return false;
+    }
+
+    /**
+     *
+     */
+    protected function registerLoadHandlerHook() {
+        HookRegistry::register('LoadHandler', function ($hookname, $params) {
+            if ($params[0] == 'cdlexport') {
+                define('HANDLER_CLASS', 'CdlExportHandler');
+                define('CDL_EXPORT_PLUGIN_NAME', $this->getName());
+                $handlerFile =& $params[2];
+                $handlerFile = $this->getPluginPath() . '/Classes/' . 'CdlExportHandler.php';
+            }
+        });
     }
 
     /**
@@ -65,7 +98,6 @@ class CdlExportPlugin extends ImportExportPlugin {
      * @param $args Parameters to the plugin
      */
     function executeCLI($scriptName, $args) {
-        $this->registerAutoload();
         error_reporting(E_ERROR | E_PARSE); // Don't show warnings or notices, lots of rattles in the OJS engine
         $cliController = new Controller();
         $cliController->initializeHandler($args);

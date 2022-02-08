@@ -38,7 +38,7 @@ class Journal {
             $data = DataObjectUtility::dataObjectToArray($this->journal);
         }
 
-        echo json_encode($data);
+        return $data;
     }
 
     /**
