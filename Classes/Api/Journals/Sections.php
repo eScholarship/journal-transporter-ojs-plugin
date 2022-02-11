@@ -1,30 +1,24 @@
 <?php namespace CdlExportPlugin\Api\Journals;
 
 use CdlExportPlugin\Api\ApiRoute;
+use CdlExportPlugin\Builder\Mapper\NestedMapper;
 
 class Sections extends ApiRoute {
     protected $journalRepository;
     protected $sectionRepository;
 
     /**
-     * @param $args
+     * @param $parameters
      * @return array
      * @throws \Exception
      */
-    public function execute($args)
+    public function execute($parameters)
     {
-        $journal = $this->journalRepository->fetchOneById($args['journal']);
-        $sectionsResultSet = $this->sectionRepository->fetchByJournal($journal);
+        $journal = $this->journalRepository->fetchOneById($parameters['journal']);
+        $resultSet = $this->sectionRepository->fetchByJournal($journal);
 
-        $sections = [];
-        foreach ($sectionsResultSet->toArray() as $section) {
-            $sections[] = [
-                'title' => $section->getLocalizedTitle(),
-                'abbreviation' => $section->getLocalizedAbbrev(),
-                'id' => $section->getId()
-            ];
-        }
-
-        return $sections;
+        return array_map(function($item) {
+            return NestedMapper::map($item);
+        }, $resultSet->toArray());
     }
 }

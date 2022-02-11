@@ -1,54 +1,48 @@
 # CDL Export
 
-An OJS plugin that exports editorial and publication history for import into Janeway.
+An OJS plugin that outputs journal and article data for transfer into other systems.
 
-# CLI Controllers
+# Overview
 
-Data is displayed as JSON from two handlers, `api` and `journals`. `journals` served as a proof-of-concept for the
-extraction of data from OJS, but still can be helpful because it will display all data associated with an object,
-whether a journal, article, section or issue. `api` is intended to be a more robust set of endpoints that expose all
-the editorial history of a journal to be synced to other systems.
+This plugin provides HTTP endpoints for fetching data out of OJS. Access to these endpoints can be authorized via basic
+auth, or site admin authorization (or both). Data is mapped from OJS data objects to associative arrays which are, in 
+turn, transformed into JSON for output.
 
-Because all of these endpoints return raw JSON, it's useful to pipe them through `jq` to increase human readability.
-They can also be piped through `jq` and `less` with colors preserved like so: `| jq -C | less -R`.
+# API
 
-`api`
+All API endpoints will look like this: [SITE DOMAIN]/index.php/pages/cdlexport/api/[ROUTE]. The allowed routes are
+defined in `Classes/Api/Controller.php`. Routes that display single records (journals, articles, etc), accept a URL
+parameter `?debug`, which dumps all data from the requested object rather than mapping specific fields.
 
-Call these endpoints with `php tools/importExport.php CdlExportPlugin api [PATHish]`.
+## Authentication
 
-The `[PATHish]` is a absolute path-like string, such as `/journals` or `/journals/15/articles/16140/synthetics/history`.
-The allowed PATHish routes are defined in `Classes/Command/Api.php`.
+This snippet needs to be added to the config.inc.php file:
 
-Currently, paths are:
+```
+;;;;;;;;;;;;;;;;;;;
+; CdlExportPlugin ;
+;;;;;;;;;;;;;;;;;;;
 
-* `/journals`
-* `/journals/[JOURNAL_ID]`
-* `/journals/[JOURNAL_ID]/issues`
-* `/journals/[JOURNAL_ID]/sections`
-* `/journals/[JOURNAL_ID]/articles`
-* `/journals/[JOURNAL_ID]/articles/[ARTICLE_ID]`
-* `/journals/[JOURNAL_ID]/articles/[ARTICLE_ID]/digest/emails`
-* `/journals/[JOURNAL_ID]/articles/[ARTICLE_ID]/digest/emails.txt`
-* `/journals/[JOURNAL_ID]/articles/[ARTICLE_ID]/digest/log`
-* `/journals/[JOURNAL_ID]/articles/[ARTICLE_ID]/digest/log`
-* `/journals/[JOURNAL_ID]/articles/[ARTICLE_ID]/synthetics/history`
+[cdlexport]
 
-`journals`
+enable_plugin_endpoints = On
+require_basic_auth = Off
+basic_auth_user =
+basic_auth_password =
+require_site_admin = Off
+```
 
-Call these endpoints with `php tools/importExport.php CdlExportPlugin journals [ARGS...]`. The responses for the
-endpoints are defined in `Classes/Command/Journals.php` and `Classes/Command/Journals/Journal.php`.
+By default, this will enable the API routes for unauthenticated requests, so be careful and don't do this in a production
+instance! Basic auth and site admin authentication can be enabled individually. If basic auth is enabled, the username
+and password must be provided, or access will be denied.
 
-The arguments are space separated, like a "normal" CLI app. Without any arguments passed, a list of journals is 
-returned. When a journal id is appended, `journals 15`, for example, detailed journal data is displayed. Additional
-slices of journal data can be displayed:
+## Routes
 
-* `journals 15 issues`
-* `journals 15 sections`
-* `journals 15 articles`
+Routes are defined with regexes in `Classes/Api/Controller.php`. Named parameters in the regex help make keeping track
+of dynamic parameters in the route easier. Most routes have their own controller
 
-Individual articles, with ALL associated data objects from OJS can be viewed by specifying an article id:
+## Data Object Mapping
 
-* `journals [JOURNAL_ID] articles [ARTICLE_ID]`
-
-`journals` can be used for exploring raw data, whereas `api` is intentionally tailored toward data that is worthy of 
-transfer to another system.
+All mapping of data objects to JSON is defined in the classes located in `Classes/Builder/Mapper/DataObject`. At its
+core, this consists of a mapping configuration, but a `postMap()` method is also available to process the data after
+mapping.

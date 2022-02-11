@@ -1,5 +1,6 @@
 <?php namespace CdlExportPlugin\Api\Journals;
 
+use CdlExportPlugin\Builder\Mapper\NestedMapper;
 use CdlExportPlugin\Utility\DataObjectUtility;
 use CdlExportPlugin\Api\ApiRoute;
 
@@ -8,14 +9,16 @@ class Articles extends ApiRoute  {
     protected $articleRepository;
 
     /**
-     * @param array $args
+     * @param array $parameters
      * @return array
      * @throws \Exception
      */
-    public function execute($args)
+    public function execute($parameters, $arguments)
     {
-        $journal = $this->journalRepository->fetchOneById($args['journal']);
-        return @$args['article'] ? $this->getArticle($args['article'], $journal) : $this->getArticles($journal);
+        $journal = $this->journalRepository->fetchOneById($parameters['journal']);
+        return @$parameters['article'] ?
+            $this->getArticle($parameters['article'], $journal, $arguments[ApiRoute::DEBUG_ARGUMENT]) :
+            $this->getArticles($journal);
     }
 
     /**
@@ -24,19 +27,10 @@ class Articles extends ApiRoute  {
      */
     protected function getArticles($journal)
     {
-        $articleResultSet = $this->articleRepository->fetchByJournal($journal);
-
-        $issues = [];
-        foreach ($articleResultSet->toArray() as $issue) {
-            $issues[] = [
-                'title'        => $issue->getLocalizedTitle(),
-                'id'           => $issue->getId(),
-                'sectionId'    => $issue->getSectionId(),
-                'sectionTitle' => $issue->getSectionTitle()
-            ];
-        }
-
-        return $issues;
+        $resultSet = $this->articleRepository->fetchByJournal($journal);
+        return array_map(function($item) {
+            return NestedMapper::map($item);
+        }, $resultSet->toArray());
     }
 
     /**
@@ -44,9 +38,11 @@ class Articles extends ApiRoute  {
      * @param $journal
      * @return array
      */
-    protected function getArticle($id, $journal)
+    protected function getArticle($id, $journal, $debug)
     {
         $article = $this->articleRepository->fetchByIdAndJournal($id, $journal);
-        return DataObjectUtility::dataObjectToArray($article);
+        if($debug) return DataObjectUtility::dataObjectToArray($article);
+
+        return NestedMapper::map($article);
     }
 }

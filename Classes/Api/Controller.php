@@ -1,4 +1,4 @@
-<?php namespace CdlExportPlugin\Command;
+<?php namespace CdlExportPlugin\Api;
 
 use CdlExportPlugin\Utility\RegexUtility;
 use CdlExportPlugin\Api\Journals;
@@ -9,7 +9,7 @@ use CdlExportPlugin\Api\Journals\Articles\Digest\Emails;
 use CdlExportPlugin\Api\Journals\Articles\Log;
 use CdlExportPlugin\Api\Journals\Articles\Synthetics\History;
 
-class Api {
+class Controller {
 
     private $args = [];
 

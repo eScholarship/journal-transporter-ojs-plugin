@@ -7,14 +7,7 @@ class CdlExportHandler extends Handler {
      *
      */
     public function api() {
-        $this->handleRequest(\CdlExportPlugin\Command\Api::class);
-    }
-
-    /**
-     *
-     */
-    public function journals() {
-        $this->handleRequest(\CdlExportPlugin\Command\Journals::class);
+        $this->handleRequest(\CdlExportPlugin\Api\Controller::class);
     }
 
     /**

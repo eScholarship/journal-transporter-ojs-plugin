@@ -1,42 +1,27 @@
 <?php namespace CdlExportPlugin\Api\Journals;
 
 use CdlExportPlugin\Api\ApiRoute;
+use CdlExportPlugin\Builder\Mapper\NestedMapper;
+use CdlExportPlugin\Utility\DataObjectUtility;
 
 class Issues extends ApiRoute  {
     protected $journalRepository;
     protected $issueRepository;
 
     /**
-     * @param array $args
+     * @param array $parameters
      * @return array
      * @throws \Exception
      */
-    public function execute($args)
+    public function execute($parameters, $arguments)
     {
-        $journal = $this->journalRepository->fetchOneById($args['journal']);
-        $issuesResultSet = $this->issueRepository->fetchByJournal($journal);
+        $journal = $this->journalRepository->fetchOneById($parameters['journal']);
+        $resultSet = $this->issueRepository->fetchByJournal($journal);
 
-        $issues = [];
-        foreach ($issuesResultSet->toArray() as $issue) {
-            $issues[] = [
-                'title'                => $issue->getLocalizedTitle(),
-                'id'                   => $issue->getId(),
-                'volume'               => $issue->getVolume(),
-                'number'               => $issue->getNumber(),
-                'year'                 => $issue->getYear(),
-                'published'            => (bool) $issue->getPublished(),
-                'current'              => (bool) $issue->getCurrent(),
-                'datePublished'        => $issue->getDatePublished(),
-                'coverPageDescription' => $issue->getLocalizedCoverPageDescription(),
-                'coverPageAltText'     => $issue->getLocalizedCoverPageAltText(),
-                'width'                => $issue->getIssueWidth(),
-                'height'               => $issue->getIssueHeight(),
-                'articlesCount'        => $issue->getNumArticles(),
-                'issueFileName'        => $issue->getLocalizedFileName(),
-                'originalFileName'     => $issue->getLocalizedOriginalFileName(),
-            ];
-        }
+        if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObjectUtility::resultSetToArray($resultSet);
 
-        return $issues;
+        return array_map(function($item) {
+            return NestedMapper::map($item);
+        }, $resultSet->toArray());
     }
 }

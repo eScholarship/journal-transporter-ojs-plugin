@@ -1,14 +1,14 @@
 <?php namespace CdlExportPlugin\Builder\Mapper\DataObject;
 
 class ArticleFile  extends AbstractDataObjectMapper {
-    protected static $mapping = '
-        fileId -> id
-                  filePath
-                  fileName
-                  fileType
-                  originalFilename
-                  dateUploaded 
-    ';
+    protected static $mapping = <<<EOF
+		fileId -> id
+		          filePath
+		          fileName
+		          fileType
+		          originalFilename
+		          dateUploaded
+EOF;
 
     /**
      * @param $model

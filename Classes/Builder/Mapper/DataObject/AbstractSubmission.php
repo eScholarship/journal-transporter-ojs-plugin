@@ -2,8 +2,8 @@
 
 class AbstractSubmission extends AbstractDataObjectMapper {
     protected static $mapping = '
-                     editAssignments
-                     galleys
-        suppFiles -> supplementaryFiles
+		editAssignments
+		        galleys
+		      suppFiles -> supplementaryFiles
     ';
 }

@@ -2,14 +2,14 @@
 
 use CdlExportPlugin\Builder\Mapper\NestedMapper;
 use CdlExportPlugin\Utility\DataObjectUtility;
-use Config;
 
 class Journals extends ApiRoute {
     protected $journalRepository;
 
-    public function execute($args)
+    public function execute($parameters, $arguments)
     {
-        return @$args['journal'] ? $this->getJournal($args['journal']) : $this->getJournals();
+        return @$parameters['journal'] ?
+            $this->getJournal($parameters['journal'], $arguments[ApiRoute::DEBUG_ARGUMENT]) : $this->getJournals();
     }
 
     /**
@@ -17,15 +17,11 @@ class Journals extends ApiRoute {
      * @return array|mixed|\stdClass
      * @throws \Exception
      */
-    protected function getJournal($id)
+    protected function getJournal($id, $debug)
     {
-        $journal = $this->journalRepository->fetchOneById($id);
-        $data = NestedMapper::nest($journal);
-        $pageHeaderTitleImage = $journal->getSettings()['pageHeaderTitleImage']['en_US'];
-        $data['logoPath'] = getcwd().'/'.
-            Config::getVar('files', 'public_files_dir').'/journals/'.$journal->getId().'/'.
-            $pageHeaderTitleImage['uploadName'];
-        return $data;
+        $item = $this->journalRepository->fetchOneById($id);
+        if($debug) return DataObjectUtility::dataObjectToArray($item);
+        return NestedMapper::map($item);
     }
 
     /**
@@ -33,15 +29,10 @@ class Journals extends ApiRoute {
      */
     protected function getJournals()
     {
-        $journalsResultSet = $this->journalRepository->fetchAll();
-        $journals = [];
-        foreach ($journalsResultSet->toArray() as $journal) {
-            $journals[] = [
-                'title' => $journal->getLocalizedTitle(),
-                'path' => $journal->getPath(),
-                'id' => $journal->getId()
-            ];
-        }
-        return $journals;
+        $resultSet = $this->journalRepository->fetchAll();
+
+        return array_map(function($item) {
+            return NestedMapper::map($item);
+        }, $resultSet->toArray());
     }
 }

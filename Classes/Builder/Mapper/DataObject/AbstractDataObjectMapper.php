@@ -7,12 +7,35 @@ class AbstractDataObjectMapper {
     /**
      * Extend this class, and name the child class after a OJS class. Add a static parameter called $mapping, which
      * is a string. Each line of the string contains a field name. If the field name is being mapped to a different
-     * field that the source field name, use this syntax `sourceField -> targetField`. If you need to call a method in the
-     * mapper, we'll do it another way which hasn't been implemented yet.
-     * @param $model
+     * field that the source field name, use this syntax `sourceField -> targetField`.
+     *
+     * Don't be frightened by the oddly formatted mapping in those subclasses. It's easy to read, here's an example:
+     *
+     *          editId -> id
+     *                    editorId
+     *                    isEditor     | boolean
+     *                    dateNotified | datetime
+     *                    dateUnderway | datetime
+     *  editorFullName -> fullName
+     * editorFirstName -> firstName
+     *  editorLastName -> lastName
+     *  editorInitials -> initials
+     *     editorEmail -> email
+     *
+     * The most basic line is like the second one. This just means call a getter method `getEditorId()` and put the value
+     * into a field called `editorId`. The first line represents a mapping from a getter method that is named different
+     * than where how to want to have it. So `editId -> id` calls `getEditId()` and stores the value in `id`. At the
+     * end of 3 of these lines are filters, prepended with a pipe. These correspond with functions (see the
+     * `apply*Filter()` methods below, that get called on a value before it is stored.
+     *
+     * There's a script in the plugin `script/formatMapping.php` which will take stdin and output formatted mapping.
+     * It's a little clunky because you have to do it on the command line, so there's room for improvement.
+     *
+     *
+     * @param $dataObject
      * @return array
      */
-    public static function map($model)
+    public static function map($dataObject)
     {
         $out = [];
         $mapping = explode("\n", trim(static::$mapping));
@@ -34,9 +57,9 @@ class AbstractDataObjectMapper {
 
             // Special handling for all local ids
             if($ours === 'id') {
-                $value = static::getSystemId($model, $theirs);
+                $value = static::getSystemId($dataObject, $theirs);
             } else {
-                $value = NestedMapper::nest($model->$methodName());
+                $value = NestedMapper::map($dataObject->$methodName());
             }
 
             // Process filters
@@ -48,6 +71,16 @@ class AbstractDataObjectMapper {
 
             $out[$ours] = $value;
         }
+
+        return static::postMap($out, $dataObject);
+    }
+
+    /**
+     * Use this on the mapper objects to transform the data after the mapping
+     * @param $out
+     * @param $dataObject
+     */
+    protected static function postMap($out, $dataObject) {
         return $out;
     }
 

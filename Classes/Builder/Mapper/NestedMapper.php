@@ -1,14 +1,18 @@
 <?php namespace CdlExportPlugin\Builder\Mapper;
 
+/**
+ * Class NestedMapper
+ * @package CdlExportPlugin\Builder\Mapper
+ */
 class NestedMapper
 {
-    public static function nest($mappable, $placeholder = false) {
+    public static function map($mappable, $placeholder = false) {
         if($placeholder) return "PLACEHOLDER";
 
         if(is_array($mappable)) {
             $out = [];
             foreach($mappable as $item) {
-                $out[] = self::nest($item);
+                $out[] = self::map($item);
             }
         } elseif(is_object($mappable)) {
             $className = '\\CdlExportPlugin\\Builder\\Mapper\\DataObject\\'.ucfirst(get_class($mappable));

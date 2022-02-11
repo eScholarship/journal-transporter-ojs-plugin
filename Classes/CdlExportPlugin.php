@@ -43,13 +43,27 @@ class CdlExportPlugin extends GenericPlugin {
      * @return bool
      */
     protected function requestIsAuthorized() {
-        if(!Config::getVar('cdlexport', 'require_auth')) return true;
+        // No authentication of any kind required, don't need to check
+        if(!Config::getVar('cdlexport', 'require_basic_auth') &&
+            !Config::getVar('cdlexport', 'require_site_admin')
+        ) return true;
 
-        if(strlen($_SERVER['PHP_AUTH_USER']) > 0 && strlen($_SERVER['PHP_AUTH_PW']) > 0 &&
-            Config::getVar('cdlexport', 'user') === $_SERVER['PHP_AUTH_USER'] &&
-            Config::getVar('cdlexport', 'password') === $_SERVER['PHP_AUTH_PW']) return true;
+        // If basic auth is required and fails, no access for you!
+        if(Config::getVar('cdlexport', 'require_basic_auth')) {
+            // Can't enable basic auth with an empty username or password
+            if(!(strlen($_SERVER['PHP_AUTH_USER']) > 0) || !(strlen($_SERVER['PHP_AUTH_PW']) > 0)) return false;
 
-        return false;
+            if(Config::getVar('cdlexport', 'basic_auth_user') !== $_SERVER['PHP_AUTH_USER'] ||
+                Config::getVar('cdlexport', 'basic_auth_password') !== $_SERVER['PHP_AUTH_PW']) return false;
+        }
+
+
+        // If site admin is required and this isn't a site admin, no access for you!
+        if(Config::getVar('cdlexport', 'require_site_admin') && !Validation::isSiteAdmin()) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -91,17 +105,6 @@ class CdlExportPlugin extends GenericPlugin {
 
     function display($args) {
         die("Code in ".__CLASS__."::".__METHOD__." doesn't do anything.");
-    }
-
-    /**
-     * Execute import/export tasks using the command-line interface.
-     * @param $args Parameters to the plugin
-     */
-    function executeCLI($scriptName, $args) {
-        error_reporting(E_ERROR | E_PARSE); // Don't show warnings or notices, lots of rattles in the OJS engine
-        $cliController = new Controller();
-        $cliController->initializeHandler($args);
-        $cliController->execute();
     }
 
     /**
