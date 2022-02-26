@@ -39,10 +39,20 @@ and password must be provided, or access will be denied.
 ## Routes
 
 Routes are defined with regexes in `Classes/Api/Controller.php`. Named parameters in the regex help make keeping track
-of dynamic parameters in the route easier. Most routes have their own controller
+of dynamic parameters in the route easier. Most routes have their own controller, but some share a list / single
+controller.
 
 ## Data Object Mapping
 
 All mapping of data objects to JSON is defined in the classes located in `Classes/Builder/Mapper/DataObject`. At its
 core, this consists of a mapping configuration, but a `postMap()` method is also available to process the data after
 mapping.
+
+Different contexts can be defined in the children of the `AbstractDataObjectMapper` alongside the mapping. Contexts
+allow certain mapped fields to be excluded or included in the constructed data. By default, all fields are included
+in the data. If fields are explicitly set to be `include`d, then will appear. If they are explicitly set to be 
+`exclude`d, or the `exclude` value is set to `*` and they aren't `include`d, they will not appear.
+See `Classes/Builder/Mapper/DataObject/Journal.php` for an example.
+
+Contexts allow us to use the same mapping configuation for lists of items and singular display of the same items. See
+

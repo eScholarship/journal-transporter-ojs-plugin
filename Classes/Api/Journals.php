@@ -32,7 +32,7 @@ class Journals extends ApiRoute {
         $resultSet = $this->journalRepository->fetchAll();
 
         return array_map(function($item) {
-            return NestedMapper::map($item);
+            return NestedMapper::map($item, 'list');
         }, $resultSet->toArray());
     }
 }

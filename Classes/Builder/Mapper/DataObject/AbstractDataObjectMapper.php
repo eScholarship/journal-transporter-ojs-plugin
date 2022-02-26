@@ -35,7 +35,7 @@ class AbstractDataObjectMapper {
      * @param $dataObject
      * @return array
      */
-    public static function map($dataObject)
+    public static function map($dataObject, $context = null)
     {
         $out = [];
         $mapping = explode("\n", trim(static::$mapping));
@@ -53,26 +53,49 @@ class AbstractDataObjectMapper {
             if(strlen($ours) === 0) {
                 $ours = $theirs;
             }
-            $methodName = 'get' . ucfirst($theirs);
 
-            // Special handling for all local ids
-            if($ours === 'id') {
-                $value = static::getSystemId($dataObject, $theirs);
-            } else {
-                $value = NestedMapper::map($dataObject->$methodName());
-            }
+            if(is_null($context) || self::includeFieldInContext($context, $ours)) {
+                $methodName = 'get' . ucfirst($theirs);
 
-            // Process filters
-            if(count($parts)) {
-                foreach($parts as $filter) {
-                    $value = self::applyFilter(trim($filter), $value);
+                // Special handling for all local ids
+                if ($ours === 'id') {
+                    $value = static::getSystemId($dataObject, $theirs);
+                } else {
+                    $value = NestedMapper::map($dataObject->$methodName());
                 }
-            }
 
-            $out[$ours] = $value;
+                // Process filters
+                if (count($parts)) {
+                    foreach ($parts as $filter) {
+                        $value = self::applyFilter(trim($filter), $value);
+                    }
+                }
+
+                $out[$ours] = $value;
+            }
         }
 
-        return static::postMap($out, $dataObject);
+        return static::postMap($out, $dataObject, $context);
+    }
+
+    /**
+     * @param $context
+     * @param $field
+     */
+    protected static function includeFieldInContext($context, $field)
+    {
+        if(array_key_exists($context, static::$contexts)) {
+            $contextConfiguration = static::$contexts[$context];
+            if(array_key_exists('include', $contextConfiguration) && is_array($contextConfiguration['include']) &&
+                in_array($field, $contextConfiguration['include'])) return true;
+
+
+            if(array_key_exists('exclude', $contextConfiguration) && $contextConfiguration['exclude'] == '*' ||
+                (is_array($contextConfiguration->exclude) && (in_array($field, $contextConfiguration->exclude ||
+                in_array('*', $contextConfiguration['exclude']))))) return false;
+
+            return true;
+        }
     }
 
     /**

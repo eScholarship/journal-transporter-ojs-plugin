@@ -1,9 +1,9 @@
 <?php namespace CdlExportPlugin\Api;
 
 use CdlExportPlugin\Utility\RegexUtility;
-use CdlExportPlugin\Api\Journals;
 use CdlExportPlugin\Api\Journals\Sections;
 use CdlExportPlugin\Api\Journals\Issues;
+use CdlExportPlugin\Api\Journals\Users;
 use CdlExportPlugin\Api\Journals\Articles;
 use CdlExportPlugin\Api\Journals\Articles\Digest\Emails;
 use CdlExportPlugin\Api\Journals\Articles\Log;
@@ -19,6 +19,7 @@ class Controller {
         '^/journals(/(?P<journal>\d+))?$' => Journals::class,
         '^/journals/(?P<journal>\d+)/sections$' => Sections::class,
         '^/journals/(?P<journal>\d+)/issues$' => Issues::class,
+        '^/journals/(?P<journal>\d+)/users' => Users::class,
         '^/journals/(?P<journal>\d+)/articles(/(?P<article>\d+))?$' => Articles::class,
         '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/digest/emails(\.(?P<format>[a-z]+))?$' => Emails::class,
         '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/digest/log' => Log::class,
