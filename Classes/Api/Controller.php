@@ -96,16 +96,27 @@ class Controller {
     }
 
     /**
-     * Turns ?k1=v1&k2=v2 into key value pairs. Not used yet.
+     * This is pretty naive, but also good enough for our purposes.
+     * Turns ?k1=v1&k2=v2 into key value pairs.
      * @param $argumentsString
      * @return array
      */
     private function parseArguments($argumentsString) {
-        $pairs = explode('&', $argumentsString);
         $arguments = [];
-        foreach($pairs as $pair) {
-            list($key, $value) = explode('=', $pair);
-            $arguments[$key] = is_null($value) ?: $value;
+        if(strlen($argumentsString) > 0) {
+            $pairs = explode('&', $argumentsString);
+            foreach ($pairs as $pair) {
+                list($key, $value) = explode('=', $pair);
+                if (substr($key, -2) == '[]') {
+                    if (is_array($arguments[$key])) {
+                        $arguments[$key][] = $value;
+                    } else {
+                        $arguments[$key] = [$value];
+                    }
+                } else {
+                    $arguments[$key] = is_null($value) ?: $value;
+                }
+            }
         }
         return $arguments;
     }

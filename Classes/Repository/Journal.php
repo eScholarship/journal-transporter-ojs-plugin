@@ -10,6 +10,23 @@ class Journal {
         return DAOFactory::get()->getDAO('journal')->getJournals();
     }
 
+    public function fetchByIdsAndPaths($ids, $paths) {
+        $journals = [];
+
+        $dao = DAOFactory::get()->getDAO('journal');
+        foreach($ids as $id) {
+            $journal = $dao->getJournal($id);
+            if($journal) $journals[] = $journal;
+        }
+
+        foreach($paths as $path) {
+            $journal = $dao->getJournalByPath($path);
+            if($journal) $journals[] = $journal;
+        }
+
+        return $journals;
+    }
+
     public function fetchOneById($id)
     {
         $journal = DAOFactory::get()->getDAO('journal')->getJournal($id);
