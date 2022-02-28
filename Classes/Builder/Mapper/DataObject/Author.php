@@ -3,7 +3,7 @@
 class Author extends AbstractDataObjectMapper
 {
     protected static $mapping = <<<EOF
-		            authorId -> id
+		            authorId -> sourceRecordKey
 		                        firstName
 		                        middleName
 		                        lastName

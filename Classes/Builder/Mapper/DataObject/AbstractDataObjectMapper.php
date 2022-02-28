@@ -5,6 +5,11 @@ use CdlExportPlugin\Builder\Mapper\NestedMapper;
 class AbstractDataObjectMapper {
 
     /**
+     * Where we store record identifiers in the JSON we output
+     */
+    const SOURCE_RECORD_KEY_PROPERTY = 'sourceRecordKey';
+
+    /**
      * Extend this class, and name the child class after a OJS class. Add a static parameter called $mapping, which
      * is a string. Each line of the string contains a field name. If the field name is being mapped to a different
      * field that the source field name, use this syntax `sourceField -> targetField`.
@@ -57,9 +62,9 @@ class AbstractDataObjectMapper {
             if(is_null($context) || self::includeFieldInContext($context, $ours)) {
                 $methodName = 'get' . ucfirst($theirs);
 
-                // Special handling for all local ids
-                if ($ours === 'id') {
-                    $value = static::getSystemId($dataObject, $theirs);
+                // Special handling for source record keys
+                if ($ours === self::SOURCE_RECORD_KEY_PROPERTY) {
+                    $value = static::getSourceRecordKey($dataObject, $theirs);
                 } else {
                     $value = NestedMapper::map($dataObject->$methodName());
                 }
@@ -111,7 +116,7 @@ class AbstractDataObjectMapper {
      * @param $model
      * @return string
      */
-    protected static function getSystemId($model, $theirs = 'id') {
+    protected static function getSourceRecordKey($model, $theirs = 'id') {
         $method = 'get'.ucfirst($theirs);
         return get_class($model).':'.$model->$method();
     }

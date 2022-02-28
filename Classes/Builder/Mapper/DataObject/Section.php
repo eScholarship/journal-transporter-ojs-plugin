@@ -2,7 +2,7 @@
 
 class Section extends AbstractDataObjectMapper {
     protected static $mapping = <<<EOF
-		                   id
+		             id -> sourceRecordKey
 		 localizedTitle -> title
 		localizedAbbrev -> abbreviation
 EOF;

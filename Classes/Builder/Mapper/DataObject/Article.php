@@ -2,7 +2,7 @@
 
 class Article extends AbstractDataObjectMapper {
     protected static $mapping = <<<EOF
-		                id
+		          id -> sourceRecordKey
 		sectionTitle -> section
 		articleTitle -> title
 		                authors

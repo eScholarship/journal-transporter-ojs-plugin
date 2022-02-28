@@ -4,7 +4,7 @@ use Config;
 
 class Issue extends AbstractDataObjectMapper {
     protected static $mapping = <<<EOF
-		                                 id
+                                   id -> sourceRecordKey
 		               localizedTitle -> title
 		                                 volume
 		                                 number

@@ -3,7 +3,7 @@
 class ArticleEventLogEntry extends AbstractDataObjectMapper
 {
     protected static $mapping = <<<EOF
-		    logId -> id
+		    logId -> sourceRecordKey
 		             articleId
 		             userId
 		             dateLogged          | datetime

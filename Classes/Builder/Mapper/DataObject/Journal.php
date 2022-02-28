@@ -7,7 +7,7 @@ class Journal extends AbstractDataObjectMapper {
     protected static $contexts = ['list' => ['exclude' => '*', 'include' => ['id', 'title']]];
 
     protected static $mapping = <<<EOF
-		                   id
+		             id -> sourceRecordKey
 		                   path
 		 localizedTitle -> title
 		journalInitials -> initials

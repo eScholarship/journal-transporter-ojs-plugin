@@ -2,7 +2,7 @@
 
 class ReviewAssignment extends AbstractDataObjectMapper {
     protected static $mapping = <<<EOF
-		        reviewId -> id
+		        reviewId -> sourceRecordKey
 		                    reviewerId
 		reviewerFullName -> fullName
 		                    dateRated        | datetime

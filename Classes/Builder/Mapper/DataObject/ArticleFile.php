@@ -2,7 +2,7 @@
 
 class ArticleFile  extends AbstractDataObjectMapper {
     protected static $mapping = <<<EOF
-		fileId -> id
+		fileId -> sourceRecordKey
 		          filePath
 		          fileName
 		          fileType
@@ -14,7 +14,7 @@ EOF;
      * @param $model
      * @return string
      */
-    protected static function getSystemId($model) {
+    protected static function getSourceRecordKey($model) {
         return get_class($model).':'.$model->getArticleId().':'.$model->getFileId();
     }
 }

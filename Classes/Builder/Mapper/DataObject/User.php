@@ -2,7 +2,7 @@
 
 class User extends AbstractDataObjectMapper {
     protected static $mapping = <<<EOF
-		                    userId -> id
+		                    userId -> sourceRecordKey
 		                              firstName
 		                              middleName
 		                              lastName
