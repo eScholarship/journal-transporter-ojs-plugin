@@ -56,3 +56,6 @@ See `Classes/Builder/Mapper/DataObject/Journal.php` for an example.
 
 Contexts allow us to use the same mapping configuation for lists of items and singular display of the same items. See
 
+## License
+
+This software is licensed with the 3-clause BSD license.
