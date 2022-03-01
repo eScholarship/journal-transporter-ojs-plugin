@@ -60,23 +60,22 @@ class AbstractDataObjectMapper {
             }
 
             if(is_null($context) || self::includeFieldInContext($context, $ours)) {
-                $methodName = 'get' . ucfirst($theirs);
-
                 // Special handling for source record keys
                 if ($ours === self::SOURCE_RECORD_KEY_PROPERTY) {
                     $value = static::getSourceRecordKey($dataObject, $theirs);
                 } else {
-                    $value = NestedMapper::map($dataObject->$methodName());
+                    $value = NestedMapper::map(self::getFieldValue($theirs, $dataObject));
                 }
 
-                // Process filters
+                // Process filters that transform values
                 if (count($parts)) {
                     foreach ($parts as $filter) {
                         $value = self::applyFilter(trim($filter), $value);
                     }
                 }
 
-                $out[$ours] = $value;
+                // Convert to snakes for JSON
+                $out[self::camelToSnake($ours)] = $value;
             }
         }
 
@@ -84,6 +83,41 @@ class AbstractDataObjectMapper {
     }
 
     /**
+     * @param $str
+     * @return mixed|string
+     */
+    protected function camelToSnake($str)
+    {
+        if (empty($str)) {
+            return $str;
+        }
+        $str = lcfirst($str);
+        $str = preg_replace("/[A-Z]/", '_' . "$0", $str);
+        return strtolower($str);
+    }
+
+    /**
+     * Traverses objects / arrays by dot notation
+     * @param $fieldName
+     * @param $object
+     */
+    protected static function getFieldValue($fieldName, $object) {
+        $currentValue = $object;
+        $fieldNameParts = explode('.', $fieldName);
+        while(count($fieldNameParts) > 0) {
+            $fieldName = array_shift($fieldNameParts);
+            if(is_array($currentValue)) {
+                $currentValue = $currentValue[$fieldName];
+            } elseif(is_object($currentValue)) {
+                $methodName = 'get' . ucfirst($fieldName);
+                $currentValue = $currentValue->$methodName();
+            }
+        }
+        return $currentValue;
+    }
+
+    /**
+     * Returns true if we should show the specified field in the specified context
      * @param $context
      * @param $field
      */
@@ -108,7 +142,7 @@ class AbstractDataObjectMapper {
      * @param $out
      * @param $dataObject
      */
-    protected static function postMap($out, $dataObject) {
+    protected static function postMap($out, $dataObject, $context) {
         return $out;
     }
 

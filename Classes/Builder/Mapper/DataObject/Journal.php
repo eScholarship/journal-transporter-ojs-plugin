@@ -4,13 +4,23 @@ use CdlExportPlugin\Utility\DAOFactory;
 use Config;
 
 class Journal extends AbstractDataObjectMapper {
-    protected static $contexts = ['list' => ['exclude' => '*', 'include' => ['id', 'title']]];
+    protected static $contexts = ['list' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title']]];
 
     protected static $mapping = <<<EOF
-		             id -> sourceRecordKey
-		                   path
-		 localizedTitle -> title
-		journalInitials -> initials
+		                     id -> sourceRecordKey
+		                           path
+		         localizedTitle -> title
+		        journalInitials -> initials
+		                           enabled         | boolean
+		   settings.contactName -> contactName
+		  settings.contactEmail -> contactEmail
+		  settings.contactPhone -> contactPhone
+		    settings.contactFax -> contactFax
+		settings.emailSignature -> emailSignature
+		    settings.onlineIssn -> onlineIssn
+		     settings.printIssn -> printIssn
+		  settings.supportEmail -> supportEmail
+		   settings.supportName -> supportName
 EOF;
 
     /**
@@ -21,19 +31,30 @@ EOF;
     protected static function postMap($data, $dataObject, $context) {
         if($context == 'list') return $data;
 
-        $logoData = $dataObject->getSettings()['pageHeaderTitleImage']['en_US'];
-        if($logoData) {
-            $logoUrl =
-                Config::getVar('general', 'base_url') .
-                Config::getVar('files', 'public_files_dir') .
-                '/journals/' . $dataObject->getId() . '/' . $logoData['uploadName'];
-            $logoData['url'] = $logoUrl;
-            $data['logo'] = $logoData;
-        } else $data['logo'] = null;
+        $data['headerImage'] = self::getImage($dataObject, 'pageHeaderTitleImage');
+        $data['logoImage'] = self::getImage($dataObject, 'pageHeaderLogoImage');
 
         //$data = array_merge($data, self::getCounts($dataObject));
 
         return $data;
+    }
+
+    /**
+     *
+     * @param $dataObject
+     * @param $settingKey
+     * @return mixed|null
+     */
+    protected static function getImage($dataObject, $settingKey) {
+        $imageData = $dataObject->getSettings()[$settingKey]['en_US'];
+        if($imageData) {
+            $imageUrl =
+                Config::getVar('general', 'base_url') .
+                Config::getVar('files', 'public_files_dir') .
+                '/journals/' . $dataObject->getId() . '/' . $imageData['uploadName'];
+            $imageData['url'] = $imageUrl;
+            return $imageData;
+        } else return null;
     }
 
     /**

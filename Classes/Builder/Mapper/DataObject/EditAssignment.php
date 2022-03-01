@@ -4,9 +4,9 @@ class EditAssignment extends AbstractDataObjectMapper {
     protected static $mapping = <<<EOF
 		         editId -> sourceRecordKey
 		                   editorId
-		                   isEditor     | boolean
-		                   dateNotified | datetime
-		                   dateUnderway | datetime
+		                   isEditor        | boolean
+		                   dateNotified    | datetime
+		                   dateUnderway    | datetime
 		 editorFullName -> fullName
 		editorFirstName -> firstName
 		 editorLastName -> lastName
