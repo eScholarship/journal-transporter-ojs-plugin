@@ -27,7 +27,10 @@ class Users extends ApiRoute  {
                 return $roleDAO->getRoleName($role->_data['roleId']);
             }, $this->roleRepository->fetchByUserAndJournal($item, $journal));
 
-            return (object) ['user' => NestedMapper::map($item), 'roles' => $roles];
+            $user = NestedMapper::map($item);
+            $user['roles'] = $roles;
+
+            return $user;
         }, $resultSet->toArray());
     }
 }
