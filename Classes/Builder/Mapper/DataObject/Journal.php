@@ -4,7 +4,7 @@ use CdlExportPlugin\Utility\DAOFactory;
 use Config;
 
 class Journal extends AbstractDataObjectMapper {
-    protected static $contexts = ['list' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title']]];
+    protected static $contexts = ['list' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title', 'path']]];
 
     protected static $mapping = <<<EOF
 		                     id -> sourceRecordKey
