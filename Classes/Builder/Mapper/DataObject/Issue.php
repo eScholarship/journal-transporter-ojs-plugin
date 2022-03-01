@@ -3,6 +3,8 @@
 use Config;
 
 class Issue extends AbstractDataObjectMapper {
+    protected static $contexts = ['index' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title']]];
+
     protected static $mapping = <<<EOF
                                    id -> sourceRecordKey
 		               localizedTitle -> title

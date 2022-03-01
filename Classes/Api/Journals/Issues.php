@@ -15,13 +15,33 @@ class Issues extends ApiRoute  {
      */
     public function execute($parameters, $arguments)
     {
+        if(@$parameters['issue']) {
+            return $this->getIssue($parameters['issue'], $parameters['journal'], $arguments[ApiRoute::DEBUG_ARGUMENT]);
+        } else {
+            return $this->getIssues($parameters);
+        }
+    }
+
+    protected function getIssue($issueId, $journalId, $debug)
+    {
+        $journal = $this->journalRepository->fetchOneById($journalId);
+        $item = $this->issueRepository->fetchByIdAndJournal($issueId, $journal);
+        if($debug) return DataObjectUtility::dataObjectToArray($item);
+        return NestedMapper::map($item);
+    }
+
+
+    /**
+     * @param $parameters
+     * @return array
+     */
+    public function getIssues($parameters)
+    {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
         $resultSet = $this->issueRepository->fetchByJournal($journal);
 
-        if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObjectUtility::resultSetToArray($resultSet);
-
         return array_map(function($item) {
-            return NestedMapper::map($item);
+            return NestedMapper::map($item, 'index');
         }, $resultSet->toArray());
     }
 }

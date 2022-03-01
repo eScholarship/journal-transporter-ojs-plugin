@@ -5,7 +5,7 @@ use CdlExportPlugin\Builder\Mapper\NestedMapper;
 use CdlExportPlugin\Utility\DAOFactory;
 use CdlExportPlugin\Utility\DataObjectUtility;
 
-class Users extends ApiRoute  {
+class Roles extends ApiRoute  {
     protected $journalRepository;
     protected $roleRepository;
 
@@ -27,7 +27,7 @@ class Users extends ApiRoute  {
                 return $roleDAO->getRoleName($role->_data['roleId']);
             }, $this->roleRepository->fetchByUserAndJournal($item, $journal));
 
-            $user = NestedMapper::map($item);
+            $user = NestedMapper::map($item, 'roles');
             $user['roles'] = $roles;
 
             return $user;
