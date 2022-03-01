@@ -66,7 +66,7 @@ class Journals extends ApiRoute {
         }
 
         foreach((array) @$arguments[self::JOURNALS_PATH_FILTER_ARGUMENT . '[]'] as $path) {
-            if(preg_match('/^[a-z]+$/', $path)) {
+            if(preg_match('/^[a-z_]+$/', $path)) {
                 if(!array_key_exists(self::JOURNALS_PATH_FILTER_ARGUMENT, $out))
                     $out[self::JOURNALS_PATH_FILTER_ARGUMENT] = [];
                 $out[self::JOURNALS_PATH_FILTER_ARGUMENT][] = $path;
