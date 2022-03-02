@@ -104,9 +104,11 @@ class Controller {
      * @return array
      */
     private function parseArguments($argumentsString) {
+        $decodedArgumentsString = urldecode($argumentsString);
+
         $arguments = [];
-        if(strlen($argumentsString) > 0) {
-            $pairs = explode('&', $argumentsString);
+        if(strlen($decodedArgumentsString) > 0) {
+            $pairs = explode('&', $decodedArgumentsString);
             foreach ($pairs as $pair) {
                 list($key, $value) = explode('=', $pair);
                 if (substr($key, -2) == '[]') {
