@@ -52,12 +52,18 @@ class Journals extends ApiRoute {
     /**
      * At this point, we're not doing this anywhere else, so I'm restraining myself from abstracting it. Also,
      * this is a little clunky.
+     *
+     * Note that we're exploding comma lists into arrays.
+     *
      * @param $arguments
      */
     protected function validArguments($arguments) {
         $out = [];
 
-        foreach((array) @$arguments[self::JOURNALS_ID_FILTER_ARGUMENT . '[]'] as $id) {
+        $ids = array_unique(array_filter(array_map('trim',
+            explode(',', @$arguments[self::JOURNALS_ID_FILTER_ARGUMENT]))));
+
+        foreach($ids as $id) {
             if(ctype_digit($id)) {
                 if(!array_key_exists(self::JOURNALS_ID_FILTER_ARGUMENT, $out))
                     $out[self::JOURNALS_ID_FILTER_ARGUMENT] = [];
@@ -65,8 +71,11 @@ class Journals extends ApiRoute {
             }
         }
 
-        foreach((array) @$arguments[self::JOURNALS_PATH_FILTER_ARGUMENT . '[]'] as $path) {
-            if(preg_match('/^[a-z_]+$/', $path)) {
+        $paths = array_unique(array_filter(array_map('trim',
+            explode(',', @$arguments[self::JOURNALS_PATH_FILTER_ARGUMENT]))));
+
+        foreach($paths as $path) {
+            if(preg_match('/^[0-9a-z_]+$/', $path)) {
                 if(!array_key_exists(self::JOURNALS_PATH_FILTER_ARGUMENT, $out))
                     $out[self::JOURNALS_PATH_FILTER_ARGUMENT] = [];
                 $out[self::JOURNALS_PATH_FILTER_ARGUMENT][] = $path;
