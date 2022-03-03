@@ -50,10 +50,10 @@ class AbstractDataObjectMapper {
 
             $trimmed = trim($fieldConfig);
 
-            list($theirs, $ours) = explode('->', $trimmed);
+            $fieldNames = explode('->', $trimmed);
 
-            $ours = trim($ours);
-            $theirs = trim($theirs);
+            $ours = trim(@$fieldNames[1]);
+            $theirs = trim(@$fieldNames[0]);
 
             if(strlen($ours) === 0) {
                 $ours = $theirs;
