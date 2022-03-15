@@ -7,7 +7,7 @@ class ArticleFile  extends AbstractDataObjectMapper {
 		          fileName
 		          fileType
 		          originalFilename
-		          dateUploaded
+		          dateUploaded     | datetime
 EOF;
 
     /**

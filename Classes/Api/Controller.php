@@ -5,9 +5,11 @@ use CdlExportPlugin\Api\Journals\Sections;
 use CdlExportPlugin\Api\Journals\Issues;
 use CdlExportPlugin\Api\Journals\Roles;
 use CdlExportPlugin\Api\Users;
+use CdlExportPlugin\Api\Journals\Articles\Files\Revisions;
 use CdlExportPlugin\Api\Journals\Articles;
 use CdlExportPlugin\Api\Journals\Articles\Digest\Emails;
 use CdlExportPlugin\Api\Journals\Articles\Log;
+use CdlExportPlugin\Api\Journals\Articles\Files as ArticleFiles;
 use CdlExportPlugin\Api\Journals\Articles\Synthetics\History;
 
 class Controller {
@@ -23,9 +25,13 @@ class Controller {
         '^/journals/(?P<journal>\d+)/roles' => Roles::class,
         '^/journals/(?P<journal>\d+)/articles(/(?P<article>\d+))?$' => Articles::class,
         '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/digest/emails(\.(?P<format>[a-z]+))?$' => Emails::class,
+        '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/files/(?P<file>\d+)/revisions$' => Revisions::class,
+        '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/files/(?P<fileType>(galley|supplementary|article))$' => ArticleFiles::class,
         '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/digest/log' => Log::class,
         '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/synthetics/history' => History::class,
-        '^/users(/(?P<user>\d+))$' => Users::class
+        '^/users(/(?P<user>\d+))$' => Users::class,
+        '^/files(/(?P<file>\d+))$' => Files::class
+
     ];
 
     /**
