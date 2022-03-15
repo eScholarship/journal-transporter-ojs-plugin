@@ -26,8 +26,25 @@ class Issues extends ApiRoute  {
     {
         $journal = $this->journalRepository->fetchOneById($journalId);
         $item = $this->issueRepository->fetchByIdAndJournal($issueId, $journal);
+
+        // Determine the published order -- probably could be improved
+        $sequence = null;
+        if($item->getPublished()) {
+            $i = 0;
+            $publishedIssues = $this->issueRepository->fetchPublishedByJournal($journal)->toArray();
+            foreach($publishedIssues as $publishedIssue) {
+                if($publishedIssue->getId() == $item->getId()) {
+                    $sequence = $i;
+                    break;
+                }
+                $i++;
+            }
+        }
+
         if($debug) return DataObjectUtility::dataObjectToArray($item);
-        return NestedMapper::map($item);
+        $issue = NestedMapper::map($item);
+        $issue['sequence'] = $sequence;
+        return $issue;
     }
 
 
@@ -38,10 +55,18 @@ class Issues extends ApiRoute  {
     public function getIssues($parameters)
     {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
-        $resultSet = $this->issueRepository->fetchByJournal($journal);
+        $publishedIssues = $this->issueRepository->fetchPublishedByJournal($journal)->toArray();
+        $unpublishedIssues = $this->issueRepository->fetchUnpublishedByJournal($journal)->toArray();
 
-        return array_map(function($item) {
-            return NestedMapper::map($item, 'index');
-        }, $resultSet->toArray());
+        $allIssues = array_merge($publishedIssues, $unpublishedIssues);
+
+        $iterator = 0;
+        $issues = [];
+        foreach($allIssues as $item) {
+            $issue = NestedMapper::map($item, 'index');
+            $issue['sequence'] = $item->getPublished() ? $iterator++ : null;
+            $issues[] = $issue;
+        }
+        return $issues;
     }
 }

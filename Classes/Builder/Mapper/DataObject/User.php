@@ -17,10 +17,10 @@ class User extends AbstractDataObjectMapper {
 		                              phone
 		                              fax
 		                              mailingAddress
-		                              country
+		                              countryCode
 		        localizedBiography -> biography
 		                              interests
-		localizedProfessionalTitle -> professionalTitle
+		localizedProfessionalTitle -> title
 		          contactSignature -> signature  
 EOF;
 }

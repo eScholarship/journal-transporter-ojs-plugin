@@ -7,5 +7,6 @@ class Section extends AbstractDataObjectMapper {
 		             id -> sourceRecordKey
 		 localizedTitle -> title
 		localizedAbbrev -> abbreviation
+		                   sequence
 EOF;
 }

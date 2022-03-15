@@ -24,7 +24,7 @@ class Roles extends ApiRoute  {
         $roleDAO = DAOFactory::get()->getDAO('role');
         return array_map(function($item) use($journal, $roleDAO) {
             $roles = array_map(function($role) use($roleDAO) {
-                return $roleDAO->getRoleName($role->_data['roleId']);
+                return str_replace('user.role.', '', $roleDAO->getRoleName($role->_data['roleId']));
             }, $this->roleRepository->fetchByUserAndJournal($item, $journal));
 
             $user = NestedMapper::map($item, 'roles');

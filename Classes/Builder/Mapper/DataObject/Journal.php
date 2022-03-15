@@ -10,7 +10,8 @@ class Journal extends AbstractDataObjectMapper {
 		                     id -> sourceRecordKey
 		                           path
 		         localizedTitle -> title
-		        journalInitials -> initials
+		        journalInitials -> abbreviation
+		   localizedDescription -> description
 		                           enabled         | boolean
 		   settings.contactName -> contactName
 		  settings.contactEmail -> contactEmail
@@ -31,8 +32,8 @@ EOF;
     protected static function postMap($data, $dataObject, $context) {
         if($context == 'list') return $data;
 
-        $data['headerImage'] = self::getImage($dataObject, 'pageHeaderTitleImage');
-        $data['logoImage'] = self::getImage($dataObject, 'pageHeaderLogoImage');
+        //$data['header'] = self::getImage($dataObject, 'pageHeaderTitleImage');
+        $data['logo'] = self::getImage($dataObject, 'pageHeaderLogoImage');
 
         //$data = array_merge($data, self::getCounts($dataObject));
 

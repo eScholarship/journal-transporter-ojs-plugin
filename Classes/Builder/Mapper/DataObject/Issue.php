@@ -14,7 +14,7 @@ class Issue extends AbstractDataObjectMapper {
 		                                 published            | boolean
 		                                 current              | boolean
 		                                 datePublished        | datetime
-		localizedCoverPageDescription -> coverPageDescription
+		localizedCoverPageDescription -> description
 		    localizedCoverPageAltText -> coverPageAltText
 		                   issueWidth -> width
 		                  issueHeight -> height
