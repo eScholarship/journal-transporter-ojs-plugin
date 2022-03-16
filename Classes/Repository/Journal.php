@@ -27,10 +27,22 @@ class Journal {
         return $journals;
     }
 
+    /**
+     * Path will work here too
+     * @param $id
+     * @return mixed
+     * @throws \Exception
+     */
     public function fetchOneById($id)
     {
-        $journal = DAOFactory::get()->getDAO('journal')->getJournal($id);
+        if(preg_match('/^[0-9]+$/', $id)) {
+            $journal = DAOFactory::get()->getDAO('journal')->getJournal($id);
+        } else {
+            $journal = DAOFactory::get()->getDAO('journal')->getJournalByPath($id);
+        }
+
         if(is_null($journal)) throw new \Exception("Journal $id not found");
         return $journal;
     }
+
 }

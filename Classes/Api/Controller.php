@@ -19,16 +19,16 @@ class Controller {
     private $routes = [
         // Don't use a ~ character in these route regexes, unless you escape them, kew? We're using them
         // as the delimiter. Note we're using named parameters too.
-        '^/journals(/(?P<journal>\d+))?$' => Journals::class,
-        '^/journals/(?P<journal>\d+)/sections(/(?P<section>\d+))?$' => Sections::class,
-        '^/journals/(?P<journal>\d+)/issues(/(?P<issue>\d+))?$' => Issues::class,
-        '^/journals/(?P<journal>\d+)/roles' => Roles::class,
-        '^/journals/(?P<journal>\d+)/articles(/(?P<article>\d+))?$' => Articles::class,
-        '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/digest/emails(\.(?P<format>[a-z]+))?$' => Emails::class,
-        '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/files/(?P<file>\d+)/revisions$' => Revisions::class,
-        '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/files/(?P<fileType>(galley|supplementary|article))$' => ArticleFiles::class,
-        '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/digest/log' => Log::class,
-        '^/journals/(?P<journal>\d+)/articles/(?P<article>\d+)/synthetics/history' => History::class,
+        '^/journals(/(?P<journal>[a-zA-Z0-9_]+))?$' => Journals::class,
+        '^/journals/(?P<journal>[a-zA-Z0-9_]+)/sections(/(?P<section>\d+))?$' => Sections::class,
+        '^/journals/(?P<journal>[a-zA-Z0-9_]+)/issues(/(?P<issue>\d+))?$' => Issues::class,
+        '^/journals/(?P<journal>[a-zA-Z0-9_]+)/roles' => Roles::class,
+        '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles(/(?P<article>\d+))?$' => Articles::class,
+        '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/digest/emails(\.(?P<format>[a-z]+))?$' => Emails::class,
+        '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/files/(?P<file>\d+)/revisions$' => Revisions::class,
+        '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/files/(?P<fileType>(galley|supplementary|article))$' => ArticleFiles::class,
+        '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/digest/log' => Log::class,
+        '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/synthetics/history' => History::class,
         '^/users(/(?P<user>\d+))$' => Users::class,
         '^/files(/(?P<file>\d+))$' => Files::class
 
