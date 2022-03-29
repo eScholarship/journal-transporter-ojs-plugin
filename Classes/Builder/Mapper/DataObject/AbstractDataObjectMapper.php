@@ -1,6 +1,7 @@
 <?php namespace CdlExportPlugin\Builder\Mapper\DataObject;
 
 use CdlExportPlugin\Builder\Mapper\NestedMapper;
+use CdlExportPlugin\Utility\DateUtility;
 
 class AbstractDataObjectMapper {
 
@@ -175,8 +176,7 @@ class AbstractDataObjectMapper {
      */
     protected static function applyDatetimeFilter($value) {
         if(!is_null($value) && strlen($value) > 0) {
-            return (new \DateTime($value, new \DateTimeZone('America/Los_Angeles')))
-                ->format('c');
+            return DateUtility::formatDateString($value);
         }
         return null;
     }

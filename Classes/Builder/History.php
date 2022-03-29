@@ -3,6 +3,7 @@
 use CdlExportPlugin\Builder\Mapper\NestedMapper;
 use CdlExportPlugin\Utility\DAOFactory;
 use CdlExportPlugin\Utility\DataObjectUtility;
+use CdlExportPlugin\Utility\DateUtility;
 
 class History
 {
@@ -17,6 +18,38 @@ class History
 
     public function toArray() {
         return $this->events;
+    }
+
+    /**
+     * @return array
+     */
+    public function toMilestonesArray() {
+        $out = [];
+        foreach($this->events as $event) {
+            $logEntry = $event->articleLogEntry;
+            $out[] = (object) ['date' => DateUtility::formatDateString($logEntry['date_logged']),
+                'event' => $logEntry['event_title'], 'message' => $logEntry['message']];
+
+        }
+        return $out;
+    }
+
+    /**
+     * @param $eventTitle
+     * @return string|null
+     */
+    public function getMilestoneDate($eventTitle, $messageRegex = null) {
+        $milestones = $this->toMilestonesArray();
+        foreach($milestones as $milestone) {
+            if($eventTitle === $milestone->event) {
+                if(!is_null($messageRegex)) {
+                    if(preg_match($messageRegex, $milestone->message)) return $milestone->date;
+                } else {
+                    return $milestone->date;
+                }
+            }
+        }
+        return null;
     }
 
     protected function build() {
@@ -34,7 +67,7 @@ class History
         foreach($articleLogEntries as $articleLogEntry) {
             $associatedObject = $this->getAssociatedObject($articleLogEntry);
 
-            $this->append([
+            $this->append((object) [
                 'articleLogEntry' => NestedMapper::map($articleLogEntry),
                 'associatedObject' => NestedMapper::map($associatedObject)
             ]);

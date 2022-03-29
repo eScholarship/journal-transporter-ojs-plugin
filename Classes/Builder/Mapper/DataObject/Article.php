@@ -7,5 +7,6 @@ class Article extends AbstractDataObjectMapper {
 		articleTitle -> title
 		                authors
 		                statusKey
+		                language
 EOF;
 }
