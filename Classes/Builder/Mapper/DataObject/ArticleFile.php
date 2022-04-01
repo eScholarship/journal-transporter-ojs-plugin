@@ -3,6 +3,7 @@
 class ArticleFile  extends AbstractDataObjectMapper {
     protected static $mapping = <<<EOF
 		fileId -> sourceRecordKey
+		          fileId
 		          filePath
 		          fileName
 		          fileType

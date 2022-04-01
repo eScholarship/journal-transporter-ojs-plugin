@@ -7,6 +7,7 @@ use CdlExportPlugin\Api\ApiRoute;
 class Articles extends ApiRoute  {
     protected $journalRepository;
     protected $articleRepository;
+    protected $authorSubmissionRepository;
 
     /**
      * @param array $parameters
@@ -36,25 +37,39 @@ class Articles extends ApiRoute  {
     /**
      * @param $id
      * @param $journal
+     * @param $debug
      * @return array
      */
     protected function getArticle($id, $journal, $debug)
     {
         $article = $this->articleRepository->fetchByIdAndJournal($id, $journal);
-        if($debug) return DataObjectUtility::dataObjectToArray($article);
+        if($debug) return $this->getDebugResponse($article);
 
         $history = new \CdlExportPlugin\Builder\History($article);
         $dates = [
-            'date_started' => $history->getMilestoneDate('submission.event.general.articleSubmitted'),
-            'date_accepted' => $history->getMilestoneDate('submission.event.editor.editorDecision', '/\(Accept Submission\)/'),
-            'date_declined' => $history->getMilestoneDate('submission.event.editor.editorDecision', '/\(Decline Submission\)/'),
-            'date_submitted' => $history->getMilestoneDate('submission.event.general.articleSubmitted'),
-            'date_published' => $history->getMilestoneDate('submission.event.general.articlePublished'),
-            'date_updated' => $history->getMilestoneDate('submission.event.general.metadataUpdated')
+            'date_started' => $history->getEventDate('submission.event.general.articleSubmitted'),
+            'date_accepted' => $history->getEventDate('submission.event.editor.editorDecision', '/\(Accept Submission\)/'),
+            'date_declined' => $history->getEventDate('submission.event.editor.editorDecision', '/\(Decline Submission\)/'),
+            'date_submitted' => $history->getEventDate('submission.event.general.articleSubmitted'),
+            'date_published' => $history->getEventDate('submission.event.general.articlePublished'),
+            'date_updated' => $history->getEventDate('submission.event.general.metadataUpdated')
         ];
 
         $mappedArticle = NestedMapper::map($article);
 
         return array_merge($mappedArticle, $dates);
+    }
+
+    /**
+     * @param $article
+     * @return object
+     */
+    protected function getDebugResponse($article) {
+        return (object) [
+            'article' => DataObjectUtility::dataObjectToArray($article),
+            'authorSubmission' => DataObjectUtility::dataObjectToArray(
+                $this->authorSubmissionRepository->fetchByArticle($article)
+            )
+        ];
     }
 }

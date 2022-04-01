@@ -43,6 +43,8 @@ class AbstractDataObjectMapper {
      */
     public static function map($dataObject, $context = null)
     {
+        $dataObject = static::preMap($dataObject, $context);
+
         $out = [];
         $mapping = explode("\n", trim(static::$mapping));
         foreach ($mapping as $mappingConfig) {
@@ -101,17 +103,24 @@ class AbstractDataObjectMapper {
      * Traverses objects / arrays by dot notation
      * @param $fieldName
      * @param $object
+     * @throws
      */
-    protected static function getFieldValue($fieldName, $object) {
+    protected static function getFieldValue($key, $object) {
         $currentValue = $object;
-        $fieldNameParts = explode('.', $fieldName);
+        $fieldNameParts = explode('.', $key);
         while(count($fieldNameParts) > 0) {
             $fieldName = array_shift($fieldNameParts);
             if(is_array($currentValue)) {
                 $currentValue = $currentValue[$fieldName];
             } elseif(is_object($currentValue)) {
                 $methodName = 'get' . ucfirst($fieldName);
-                $currentValue = $currentValue->$methodName();
+                if(method_exists($currentValue, $methodName)) {
+                    $currentValue = $currentValue->$methodName();
+                } elseif(property_exists($object, $fieldName)) {
+                    $currentValue = $currentValue->$fieldName;
+                } else {
+                    throw new \Exception("Can't get $key from " . get_class($object));
+                }
             }
         }
         return $currentValue;
@@ -137,6 +146,15 @@ class AbstractDataObjectMapper {
             return true;
         }
     }
+
+    /**
+     * Use this on the mapper objects to transform the data before the mapping
+     * @param $dataObject
+     */
+    protected static function preMap($dataObject, $context) {
+        return $dataObject;
+    }
+
 
     /**
      * Use this on the mapper objects to transform the data after the mapping

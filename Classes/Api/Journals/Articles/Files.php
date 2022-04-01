@@ -2,6 +2,7 @@
 
 use CdlExportPlugin\Builder\Mapper\NestedMapper;
 use CdlExportPlugin\Api\ApiRoute;
+use CdlExportPlugin\Utility\DataObjectUtility;
 
 class Files extends ApiRoute  {
     protected $journalRepository;
@@ -22,11 +23,19 @@ class Files extends ApiRoute  {
 
         $files = $this->getFilesByType($parameters['fileType'], $article);
 
+        if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObjectUtility::dataObjectToArray($files);
+
         return array_map(function($item) {
             return NestedMapper::map($item);
         }, $files);
     }
 
+    /**
+     * @param $type
+     * @param $article
+     * @return mixed
+     * @throws \Exception
+     */
     protected function getFilesByType($type, $article)
     {
         switch($type) {

@@ -1,3 +1,3 @@
 <?php namespace CdlExportPlugin\Builder\Mapper\DataObject;
 
-class GalleyFile extends ArticleFile {}
+class ArticleGalley extends ArticleFile {}

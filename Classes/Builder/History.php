@@ -23,7 +23,7 @@ class History
     /**
      * @return array
      */
-    public function toMilestonesArray() {
+    public function toEventArray() {
         $out = [];
         foreach($this->events as $event) {
             $logEntry = $event->articleLogEntry;
@@ -38,8 +38,8 @@ class History
      * @param $eventTitle
      * @return string|null
      */
-    public function getMilestoneDate($eventTitle, $messageRegex = null) {
-        $milestones = $this->toMilestonesArray();
+    public function getEventDate($eventTitle, $messageRegex = null) {
+        $milestones = $this->toEventArray();
         foreach($milestones as $milestone) {
             if($eventTitle === $milestone->event) {
                 if(!is_null($messageRegex)) {
