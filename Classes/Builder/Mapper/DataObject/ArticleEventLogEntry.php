@@ -2,21 +2,21 @@
 
 class ArticleEventLogEntry extends AbstractDataObjectMapper
 {
-    protected static $mapping = <<<EOF
-		    logId -> sourceRecordKey
-		             articleId
-		             userId
-		             dateLogged          | datetime
-		iPaddress -> ip
-		             logLevel
-		             eventType
-		             assocType
-		             message
-		             logLevelString
-		             eventTitle
-		             userFullName
-		             userEmail
-		             assocTypeString
-		             assocTypeLongString
-EOF;
+    protected static $mapping = [
+        ['property' => 'sourceRecordKey', 'source' => 'logId'],
+        ['property' => 'articleId'],
+        ['property' => 'userId'],
+        ['property' => 'dateLogged', 'filters' => ['datetime']],
+        ['property' => 'ip', 'source' => 'iPaddress'],
+        ['property' => 'logLevel'],
+        ['property' => 'eventType'],
+        ['property' => 'assocType'],
+        ['property' => 'message'],
+        ['property' => 'logLevelString'],
+        ['property' => 'eventTitle'],
+        ['property' => 'userFullName'],
+        ['property' => 'userEmail'],
+        ['property' => 'assocTypeString'],
+        ['property' => 'assocTypeLongString'],
+    ];
 }

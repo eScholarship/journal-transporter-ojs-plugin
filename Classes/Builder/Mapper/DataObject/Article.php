@@ -3,14 +3,14 @@
 use CdlExportPlugin\Repository\AuthorSubmission;
 
 class Article extends AbstractDataObjectMapper {
-    protected static $mapping = <<<EOF
-		                               id -> sourceRecordKey
-		                     sectionTitle -> section
-		                     articleTitle -> title
-		                                     authors
-		                                     language
-        authorSubmission.submissionStatus -> submissionStatus
-EOF;
+    protected static $mapping = [
+        ['property' => 'sourceRecordKey', 'source' => 'id'],
+        ['property' => 'section', 'source' => 'sectionTitle'],
+        ['property' => 'title', 'source' => 'articleTitle'],
+        ['property' => 'authors'],
+        ['property' => 'language'],
+        ['property' => 'submissionStatus', 'source' => 'authorSubmission.submissionStatus'],
+    ];
 
     /**
      * @param $data

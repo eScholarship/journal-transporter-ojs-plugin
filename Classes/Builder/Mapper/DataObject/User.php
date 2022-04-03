@@ -3,24 +3,24 @@
 class User extends AbstractDataObjectMapper {
     protected static $contexts = ['roles' => ['exclude' => '*', 'include' => ['sourceRecordKey']]];
 
-    protected static $mapping = <<<EOF
-		                    userId -> sourceRecordKey
-		                              firstName
-		                              middleName
-		                              lastName
-		                              initials
-		      localizedAffiliation -> affiliation
-		                              salutation
-		                              gender
-		                              email
-		                              url
-		                              phone
-		                              fax
-		                              mailingAddress
-		                   country -> countryCode
-		        localizedBiography -> biography
-		                              interests
-		localizedProfessionalTitle -> title
-		          contactSignature -> signature  
-EOF;
+    protected static $mapping = [
+        ['property' => 'sourceRecordKey', 'source' => 'userId'],
+        ['property' => 'firstName'],
+        ['property' => 'middleName'],
+        ['property' => 'lastName'],
+        ['property' => 'initials'],
+        ['property' => 'affiliation', 'source' => 'localizedAffiliation'],
+        ['property' => 'salutation'],
+        ['property' => 'gender'],
+        ['property' => 'email'],
+        ['property' => 'url'],
+        ['property' => 'phone'],
+        ['property' => 'fax'],
+        ['property' => 'mailingAddress'],
+        ['property' => 'countryCode', 'source' => 'country'],
+        ['property' => 'biography', 'source' => 'localizedBiography'],
+        ['property' => 'interests'],
+        ['property' => 'title', 'source' => 'localizedProfessionalTitle'],
+        ['property' => 'signature', 'source' => 'contactSignature'],
+    ];
 }

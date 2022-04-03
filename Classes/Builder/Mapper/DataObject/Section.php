@@ -3,10 +3,10 @@
 class Section extends AbstractDataObjectMapper {
     protected static $contexts = ['index' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title']]];
 
-    protected static $mapping = <<<EOF
-		             id -> sourceRecordKey
-		 localizedTitle -> title
-		localizedAbbrev -> abbreviation
-		                   sequence
-EOF;
+    protected static $mapping = [
+        ['property' => 'sourceRecordKey', 'source' => 'id'],
+        ['property' => 'title', 'source' => 'localizedTitle'],
+        ['property' => 'abbreviation', 'source' => 'localizedAbbrev'],
+        ['property' => 'sequence'],
+    ];
 }

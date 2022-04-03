@@ -6,23 +6,23 @@ use Config;
 class Journal extends AbstractDataObjectMapper {
     protected static $contexts = ['list' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title', 'path']]];
 
-    protected static $mapping = <<<EOF
-		                     id -> sourceRecordKey
-		                           path
-		         localizedTitle -> title
-		        journalInitials -> abbreviation
-		   localizedDescription -> description
-		                           enabled         | boolean
-		   settings.contactName -> contactName
-		  settings.contactEmail -> contactEmail
-		  settings.contactPhone -> contactPhone
-		    settings.contactFax -> contactFax
-		settings.emailSignature -> emailSignature
-		    settings.onlineIssn -> onlineIssn
-		     settings.printIssn -> printIssn
-		  settings.supportEmail -> supportEmail
-		   settings.supportName -> supportName
-EOF;
+    protected static $mapping = [
+        ['property' => 'sourceRecordKey', 'source' => 'id'],
+        ['property' => 'path'],
+        ['property' => 'title', 'source' => 'localizedTitle'],
+        ['property' => 'abbreviation', 'source' => 'journalInitials'],
+        ['property' => 'description', 'source' => 'localizedDescription'],
+        ['property' => 'enabled', 'filters' => ['boolean']],
+        ['property' => 'contactName', 'source' => 'settings.contactName'],
+        ['property' => 'contactEmail', 'source' => 'settings.contactEmail'],
+        ['property' => 'contactPhone', 'source' => 'settings.contactPhone'],
+        ['property' => 'contactFax', 'source' => 'settings.contactFax'],
+        ['property' => 'emailSignature', 'source' => 'settings.emailSignature'],
+        ['property' => 'onlineIssn', 'source' => 'settings.onlineIssn'],
+        ['property' => 'printIssn', 'source' => 'settings.printIssn'],
+        ['property' => 'supportEmail', 'source' => 'settings.supportEmail'],
+        ['property' => 'supportName', 'source' => 'settings.supportName'],
+    ];
 
     /**
      * @param $data

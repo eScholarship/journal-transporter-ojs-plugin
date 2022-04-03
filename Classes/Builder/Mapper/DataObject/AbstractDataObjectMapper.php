@@ -12,31 +12,7 @@ class AbstractDataObjectMapper {
 
     /**
      * Extend this class, and name the child class after a OJS class. Add a static parameter called $mapping, which
-     * is a string. Each line of the string contains a field name. If the field name is being mapped to a different
-     * field that the source field name, use this syntax `sourceField -> targetField`.
-     *
-     * Don't be frightened by the oddly formatted mapping in those subclasses. It's easy to read, here's an example:
-     *
-     *          editId -> id
-     *                    editorId
-     *                    isEditor     | boolean
-     *                    dateNotified | datetime
-     *                    dateUnderway | datetime
-     *  editorFullName -> fullName
-     * editorFirstName -> firstName
-     *  editorLastName -> lastName
-     *  editorInitials -> initials
-     *     editorEmail -> email
-     *
-     * The most basic line is like the second one. This just means call a getter method `getEditorId()` and put the value
-     * into a field called `editorId`. The first line represents a mapping from a getter method that is named different
-     * than where how to want to have it. So `editId -> id` calls `getEditId()` and stores the value in `id`. At the
-     * end of 3 of these lines are filters, prepended with a pipe. These correspond with functions (see the
-     * `apply*Filter()` methods below, that get called on a value before it is stored.
-     *
-     * There's a script in the plugin `script/formatMapping.php` which will take stdin and output formatted mapping.
-     * It's a little clunky because you have to do it on the command line, so there's room for improvement.
-     *
+     * is an array. Each item of the array contains a field mapping.
      *
      * @param $dataObject
      * @return array
@@ -46,42 +22,32 @@ class AbstractDataObjectMapper {
         $dataObject = static::preMap($dataObject, $context);
 
         $out = [];
-        $mapping = explode("\n", trim(static::$mapping));
-        foreach ($mapping as $mappingConfig) {
-            $parts = explode('|', $mappingConfig);
-            $fieldConfig = trim(array_shift($parts));
+        foreach (static::$mapping as $mappingConfig) {
+            $property = trim($mappingConfig['property']);
+            $source = trim(@$mappingConfig['source']);
 
-            $trimmed = trim($fieldConfig);
-
-            $fieldNames = explode('->', $trimmed);
-
-            $ours = trim(@$fieldNames[1]);
-            $theirs = trim(@$fieldNames[0]);
-
-            if(strlen($ours) === 0) {
-                $ours = $theirs;
+            if(strlen($source) === 0) {
+                $source = $property;
             }
-
-            if(is_null($context) || self::includeFieldInContext($context, $ours)) {
+            if(is_null($context) || self::includeFieldInContext($context, $property)) {
                 // Special handling for source record keys
-                if ($ours === self::SOURCE_RECORD_KEY_PROPERTY) {
-                    $value = static::getSourceRecordKey($dataObject, $theirs);
+                if ($property === self::SOURCE_RECORD_KEY_PROPERTY) {
+                    $value = static::getSourceRecordKey($dataObject, $source);
                 } else {
-                    $value = NestedMapper::map(self::getFieldValue($theirs, $dataObject));
+                    $value = NestedMapper::map(self::getFieldValue($source, $dataObject));
                 }
 
                 // Process filters that transform values
-                if (count($parts)) {
-                    foreach ($parts as $filter) {
+                if (array_key_exists('filters', $mappingConfig)) {
+                    foreach ($mappingConfig['filters'] as $filter) {
                         $value = self::applyFilter(trim($filter), $value);
                     }
                 }
 
                 // Convert to snakes for JSON
-                $out[self::camelToSnake($ours)] = $value;
+                $out[self::camelToSnake($source)] = $value;
             }
         }
-
         return static::postMap($out, $dataObject, $context);
     }
 

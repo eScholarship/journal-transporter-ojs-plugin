@@ -2,19 +2,19 @@
 
 class Author extends AbstractDataObjectMapper
 {
-    protected static $mapping = <<<EOF
-		            authorId -> sourceRecordKey
-		                        firstName
-		                        middleName
-		                        lastName
-		                        initials
-		localizedAffiliation -> affiliation
-		                        salutation
-		                        country
-		                        url
-		                        email
-		  localizedBiography -> biography
-		                        sequence
-		                        primaryContact
-EOF;
+    protected static $mapping = [
+        ['property' => 'sourceRecordKey', 'source' => 'authorId'],
+        ['property' => 'firstName'],
+        ['property' => 'middleName'],
+        ['property' => 'lastName'],
+        ['property' => 'initials'],
+        ['property' => 'affiliation', 'source' => 'localizedAffiliation'],
+        ['property' => 'salutation'],
+        ['property' => 'country'],
+        ['property' => 'url'],
+        ['property' => 'email'],
+        ['property' => 'biography', 'source' => 'localizedBiography'],
+        ['property' => 'sequence'],
+        ['property' => 'primaryContact'],
+    ];
 }

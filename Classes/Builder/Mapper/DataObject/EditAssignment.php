@@ -1,16 +1,16 @@
 <?php namespace CdlExportPlugin\Builder\Mapper\DataObject;
 
 class EditAssignment extends AbstractDataObjectMapper {
-    protected static $mapping = <<<EOF
-		         editId -> sourceRecordKey
-		                   editorId
-		                   isEditor        | boolean
-		                   dateNotified    | datetime
-		                   dateUnderway    | datetime
-		 editorFullName -> fullName
-		editorFirstName -> firstName
-		 editorLastName -> lastName
-		 editorInitials -> initials
-		    editorEmail -> email
-EOF;
+    protected static $mapping = [
+        ['property' => 'sourceRecordKey', 'source' => 'editId'],
+        ['property' => 'editorId'],
+        ['property' => 'isEditor', 'filters' => ['boolean']],
+        ['property' => 'dateNotified', 'filters' => ['datetime']],
+        ['property' => 'dateUnderway', 'filters' => ['datetime']],
+        ['property' => 'fullName', 'source' => 'editorFullName'],
+        ['property' => 'firstName', 'source' => 'editorFirstName'],
+        ['property' => 'lastName', 'source' => 'editorLastName'],
+        ['property' => 'initials', 'source' => 'editorInitials'],
+        ['property' => 'email', 'source' => 'editorEmail'],
+    ];
 }
