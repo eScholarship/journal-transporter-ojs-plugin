@@ -1,5 +1,6 @@
 <?php namespace CdlExportPlugin\Builder\Mapper\DataObject;
 
+use CdlExportPlugin\Repository\PublishedArticle;
 use CdlExportPlugin\Repository\AuthorSubmission;
 
 class Article extends AbstractDataObjectMapper {
@@ -10,6 +11,14 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'authors'],
         ['property' => 'language'],
         ['property' => 'submissionStatus', 'source' => 'authorSubmission.submissionStatus'],
+        ['property' => 'dateStarted', 'source' => 'dateSubmitted'],
+        ['property' => 'dateSubmitted'],
+        ['property' => 'dateUpdated', 'source' => 'lastModified'],
+        ['property' => 'datePublished', 'source' => 'publishedArticle.datePublished', 'onError' => null],
+        ['property' => 'dateAccepted', 'onError' => '**NOT IMPLEMENTED**'],
+        ['property' => 'dateDeclined', 'onError' => '**NOT IMPLEMENTED**'],
+        ['property' => 'doi', 'source' => 'storedDOI'],
+        ['property' => 'pages'],
     ];
 
     /**
@@ -18,8 +27,10 @@ class Article extends AbstractDataObjectMapper {
      * @return mixed
      */
     protected static function preMap($dataObject, $context) {
-        // Add the authorSubmission onto the article -- it has some useful info not on the article
+        // Add the publishedArticle onto the article -- it has some useful info not on the article
         $dataObject->authorSubmission = (new AuthorSubmission)->fetchByArticle($dataObject);
+        $dataObject->publishedArticle = (new PublishedArticle)->fetchByArticle($dataObject);
+
         return $dataObject;
     }
 

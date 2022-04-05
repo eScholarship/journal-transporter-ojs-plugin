@@ -8,6 +8,7 @@ class Articles extends ApiRoute  {
     protected $journalRepository;
     protected $articleRepository;
     protected $authorSubmissionRepository;
+    protected $publishedArticleRepository;
 
     /**
      * @param array $parameters
@@ -44,20 +45,7 @@ class Articles extends ApiRoute  {
     {
         $article = $this->articleRepository->fetchByIdAndJournal($id, $journal);
         if($debug) return $this->getDebugResponse($article);
-
-        $history = new \CdlExportPlugin\Builder\History($article);
-        $dates = [
-            'date_started' => $history->getEventDate('submission.event.general.articleSubmitted'),
-            'date_accepted' => $history->getEventDate('submission.event.editor.editorDecision', '/\(Accept Submission\)/'),
-            'date_declined' => $history->getEventDate('submission.event.editor.editorDecision', '/\(Decline Submission\)/'),
-            'date_submitted' => $history->getEventDate('submission.event.general.articleSubmitted'),
-            'date_published' => $history->getEventDate('submission.event.general.articlePublished'),
-            'date_updated' => $history->getEventDate('submission.event.general.metadataUpdated')
-        ];
-
-        $mappedArticle = NestedMapper::map($article);
-
-        return array_merge($mappedArticle, $dates);
+        return NestedMapper::map($article);
     }
 
     /**

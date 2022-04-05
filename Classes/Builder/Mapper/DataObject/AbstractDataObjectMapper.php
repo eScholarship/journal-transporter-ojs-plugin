@@ -10,6 +10,10 @@ class AbstractDataObjectMapper {
      */
     const SOURCE_RECORD_KEY_PROPERTY = 'sourceRecordKey';
 
+    const CAMEL_TO_SNAKE_EXCEPTIONS = ['iPaddress' => 'ip_address'];
+
+    const ON_ERROR_TRIGGER_EXCEPTION = '!@#$!@#$';
+
     /**
      * Extend this class, and name the child class after a OJS class. Add a static parameter called $mapping, which
      * is an array. Each item of the array contains a field mapping.
@@ -26,6 +30,8 @@ class AbstractDataObjectMapper {
             $property = trim($mappingConfig['property']);
             $source = trim(@$mappingConfig['source']);
 
+            $onError = array_key_exists('onError', $mappingConfig) ? $mappingConfig['onError'] : self::ON_ERROR_TRIGGER_EXCEPTION;
+
             if(strlen($source) === 0) {
                 $source = $property;
             }
@@ -34,7 +40,7 @@ class AbstractDataObjectMapper {
                 if ($property === self::SOURCE_RECORD_KEY_PROPERTY) {
                     $value = static::getSourceRecordKey($dataObject, $source);
                 } else {
-                    $value = NestedMapper::map(self::getFieldValue($source, $dataObject));
+                    $value = NestedMapper::map(self::getFieldValue($source, $dataObject, $onError));
                 }
 
                 // Process filters that transform values
@@ -45,7 +51,7 @@ class AbstractDataObjectMapper {
                 }
 
                 // Convert to snakes for JSON
-                $out[self::camelToSnake($source)] = $value;
+                $out[self::camelToSnake($property)] = $value;
             }
         }
         return static::postMap($out, $dataObject, $context);
@@ -57,6 +63,8 @@ class AbstractDataObjectMapper {
      */
     protected function camelToSnake($str)
     {
+        if(array_key_exists($str, self::CAMEL_TO_SNAKE_EXCEPTIONS)) return self::CAMEL_TO_SNAKE_EXCEPTIONS[$str];
+
         if (empty($str)) {
             return $str;
         }
@@ -69,9 +77,10 @@ class AbstractDataObjectMapper {
      * Traverses objects / arrays by dot notation
      * @param $fieldName
      * @param $object
+     * @param $onError The value to return if there's an error, defaults to except via cheap mechanism
      * @throws
      */
-    protected static function getFieldValue($key, $object) {
+    protected static function getFieldValue($key, $object, $onError = self::ON_ERROR_TRIGGER_EXCEPTION) {
         $currentValue = $object;
         $fieldNameParts = explode('.', $key);
         while(count($fieldNameParts) > 0) {
@@ -85,6 +94,9 @@ class AbstractDataObjectMapper {
                 } elseif(property_exists($object, $fieldName)) {
                     $currentValue = $currentValue->$fieldName;
                 } else {
+                    if($onError !== self::ON_ERROR_TRIGGER_EXCEPTION) {
+                        return $onError;
+                    }
                     throw new \Exception("Can't get $key from " . get_class($object));
                 }
             }
