@@ -11,12 +11,12 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'authors'],
         ['property' => 'language'],
         ['property' => 'submissionStatus', 'source' => 'authorSubmission.submissionStatus'],
-        ['property' => 'dateStarted', 'source' => 'dateSubmitted'],
-        ['property' => 'dateSubmitted'],
-        ['property' => 'dateUpdated', 'source' => 'lastModified'],
-        ['property' => 'datePublished', 'source' => 'publishedArticle.datePublished', 'onError' => null],
-        ['property' => 'dateAccepted', 'onError' => null], // NOT IMPLEMENTED
-        ['property' => 'dateDeclined', 'onError' => null], // NOT IMPLEMENTED
+        ['property' => 'dateStarted', 'source' => 'dateSubmitted', 'filters' => ['datetime']],
+        ['property' => 'dateSubmitted', 'filters' => ['datetime']],
+        ['property' => 'dateUpdated', 'source' => 'lastModified', 'filters' => ['datetime']],
+        ['property' => 'datePublished', 'source' => 'publishedArticle.datePublished', 'onError' => null, 'filters' => ['datetime']],
+        ['property' => 'dateAccepted', 'onError' => null, 'filters' => ['datetime']], // NOT IMPLEMENTED
+        ['property' => 'dateDeclined', 'onError' => null, 'filters' => ['datetime']], // NOT IMPLEMENTED
         ['property' => 'doi', 'source' => 'storedDOI'],
         ['property' => 'pages'],
     ];
