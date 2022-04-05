@@ -15,8 +15,8 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'dateSubmitted'],
         ['property' => 'dateUpdated', 'source' => 'lastModified'],
         ['property' => 'datePublished', 'source' => 'publishedArticle.datePublished', 'onError' => null],
-        ['property' => 'dateAccepted', 'onError' => '**NOT IMPLEMENTED**'],
-        ['property' => 'dateDeclined', 'onError' => '**NOT IMPLEMENTED**'],
+        ['property' => 'dateAccepted', 'onError' => null], // NOT IMPLEMENTED
+        ['property' => 'dateDeclined', 'onError' => null], // NOT IMPLEMENTED
         ['property' => 'doi', 'source' => 'storedDOI'],
         ['property' => 'pages'],
     ];
