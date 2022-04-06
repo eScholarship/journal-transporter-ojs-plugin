@@ -161,6 +161,7 @@ class AbstractDataObjectMapper {
     protected static function applyFilter($filter, $value) {
         if($filter === 'boolean') return static::applyBooleanFilter($value);
         if($filter === 'datetime') return static::applyDatetimeFilter($value);
+        if($filter === 'integer') return static::applyIntegerFilter($value);
 
         throw new \Exception("Filter $filter does not exist");
     }
@@ -183,5 +184,13 @@ class AbstractDataObjectMapper {
      */
     protected static function applyBooleanFilter($value) {
         return (bool) $value;
+    }
+
+    /**
+     * @param $value
+     * @return bool
+     */
+    protected static function applyIntegerFilter($value) {
+        return (int) $value;
     }
 }

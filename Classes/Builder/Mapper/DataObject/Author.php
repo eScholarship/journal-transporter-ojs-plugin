@@ -14,7 +14,7 @@ class Author extends AbstractDataObjectMapper
         ['property' => 'url'],
         ['property' => 'email'],
         ['property' => 'biography', 'source' => 'localizedBiography'],
-        ['property' => 'sequence'],
-        ['property' => 'primaryContact'],
+        ['property' => 'sequence', 'filters' => ['integer']],
+        ['property' => 'primaryContact', 'filters' => ['boolean']],
     ];
 }
