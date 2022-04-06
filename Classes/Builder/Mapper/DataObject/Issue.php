@@ -13,7 +13,7 @@ class Issue extends AbstractDataObjectMapper {
         ['property' => 'year'],
         ['property' => 'published', 'filters' => ['boolean']],
         ['property' => 'current', 'filters' => ['boolean']],
-        ['property' => 'datePublished', 'filters' => ['boolean']],
+        ['property' => 'datePublished', 'filters' => ['datetime']],
         ['property' => 'description', 'source' => 'localizedTitle'],
         ['property' => 'title', 'source' => 'localizedCoverPageDescription'],
         ['property' => 'coverPageAltText', 'source' => 'localizedCoverPageAltText'],
