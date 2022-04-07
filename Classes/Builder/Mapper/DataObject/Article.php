@@ -10,7 +10,6 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'title', 'source' => 'articleTitle'],
         ['property' => 'authors'],
         ['property' => 'language'],
-        ['property' => 'submissionStatus', 'source' => 'authorSubmission.submissionStatus'],
         ['property' => 'dateStarted', 'source' => 'dateSubmitted', 'filters' => ['datetime']],
         ['property' => 'dateSubmitted', 'filters' => ['datetime']],
         ['property' => 'dateUpdated', 'source' => 'lastModified', 'filters' => ['datetime']],
