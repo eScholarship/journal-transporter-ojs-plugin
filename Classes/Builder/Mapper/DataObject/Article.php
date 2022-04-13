@@ -46,6 +46,11 @@ class Article extends AbstractDataObjectMapper {
             $data['galleys'][] = ['file_id' => $galley->getFileId()];
         }
 
+        // TODO: we are generating a reference to another source record key here; we'll likely need another way to do
+        // this
+        $data['issue_source_record_keys'] = is_null($dataObject->publishedArticle) ?
+            [] : ['Issue:'.$dataObject->publishedArticle->getIssueId()];
+
         return $data;
     }
 
