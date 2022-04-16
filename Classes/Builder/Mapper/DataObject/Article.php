@@ -14,10 +14,11 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'dateSubmitted', 'filters' => ['datetime']],
         ['property' => 'dateUpdated', 'source' => 'lastModified', 'filters' => ['datetime']],
         ['property' => 'datePublished', 'source' => 'publishedArticle.datePublished', 'onError' => null, 'filters' => ['datetime']],
-        ['property' => 'dateAccepted', 'onError' => null, 'filters' => ['datetime']], // NOT IMPLEMENTED
-        ['property' => 'dateDeclined', 'onError' => null, 'filters' => ['datetime']], // NOT IMPLEMENTED
+        ['property' => 'dateAccepted', 'onError' => null, 'filters' => ['datetime']], // TODO NOT IMPLEMENTED
+        ['property' => 'dateDeclined', 'onError' => null, 'filters' => ['datetime']], // TODO NOT IMPLEMENTED
         ['property' => 'doi', 'source' => 'storedDOI'],
         ['property' => 'pages'],
+        ['property' => 'mostRecentEditorDecision']
     ];
 
     /**
@@ -30,6 +31,8 @@ class Article extends AbstractDataObjectMapper {
         $dataObject->authorSubmission = (new AuthorSubmission)->fetchByArticle($dataObject);
         $dataObject->publishedArticle = (new PublishedArticle)->fetchByArticle($dataObject);
 
+        $dataObject->mostRecentEditorDecision = self::getMostRecentEditorDecision($dataObject);
+
         return $dataObject;
     }
 
@@ -41,17 +44,33 @@ class Article extends AbstractDataObjectMapper {
     protected static function postMap($data, $dataObject, $context) {
         $data['status'] = self::mapJournalStatus($dataObject->getStatus());
 
-        $data['galleys'] = [];
-        foreach($dataObject->authorSubmission->getGalleys() as $galley) {
-            $data['galleys'][] = ['file_id' => $galley->getFileId()];
-        }
-
         // TODO: we are generating a reference to another source record key here; we'll likely need another way to do
         // this
         $data['issue_source_record_keys'] = is_null($dataObject->publishedArticle) ?
-            [] : ['Issue:'.$dataObject->publishedArticle->getIssueId()];
+            [] : [\Issue::class.':'.$dataObject->publishedArticle->getIssueId()];
 
         return $data;
+    }
+
+    /**
+     * TODO: Might want to move this out of the Mapper class into Repository
+     * @param $dataObject
+     */
+    protected static function getMostRecentEditorDecision($dataObject) {
+        $editorDecisions = (new AuthorSubmission)->fetchEditorDecisionsByArticle($dataObject);
+
+        if(count($editorDecisions) == 0) return [];
+
+        usort($editorDecisions, function($a, $b) {
+            $dateA = strtotime($a['dateDecided']);
+            $dateB = strtotime($b['dateDecided']);
+
+            return $dateB > $dateA;
+        });
+
+        $editorDecision = (object) array_pop($editorDecisions);
+        $editorDecision->__mapperClass = 'EditorDecision';
+        return $editorDecision;
     }
 
     /**

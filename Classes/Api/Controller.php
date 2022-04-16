@@ -26,11 +26,11 @@ class Controller {
         '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles(/(?P<article>\d+))?$' => Articles::class,
         '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/digest/emails(\.(?P<format>[a-z]+))?$' => Emails::class,
         '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/files/(?P<file>\d+)/revisions$' => Revisions::class,
-        '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/files/(?P<fileType>(galley|supplementary|article))$' => ArticleFiles::class,
+        '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/files(/(?P<file>(\d+|\d+-\d+)))?$' => ArticleFiles::class,
         '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/digest/log' => Log::class,
         '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/synthetics/history' => History::class,
         '^/users(/(?P<user>\d+))$' => Users::class,
-        '^/files(/(?P<file>\d+))$' => Files::class
+        '^/files/(?P<file>[\d-]+)$' => Files::class
 
     ];
 

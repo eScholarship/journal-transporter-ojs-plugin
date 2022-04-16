@@ -15,7 +15,13 @@ class NestedMapper
                 $out[] = self::map($item);
             }
         } elseif(is_object($mappable)) {
-            $className = '\\CdlExportPlugin\\Builder\\Mapper\\DataObject\\'.ucfirst(get_class($mappable));
+            if(get_class($mappable) === 'stdClass') {
+                $mappableClass = $mappable->__mapperClass;
+            } else {
+                $mappableClass = ucfirst(get_class($mappable));
+            }
+
+            $className = '\\CdlExportPlugin\\Builder\\Mapper\\DataObject\\'.$mappableClass;
             if(class_exists($className)) {
                 $out = $className::map($mappable, $context);
             } else {

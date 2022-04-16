@@ -57,6 +57,9 @@ class Articles extends ApiRoute  {
             'article' => DataObjectUtility::dataObjectToArray($article),
             'authorSubmission' => DataObjectUtility::dataObjectToArray(
                 $this->authorSubmissionRepository->fetchByArticle($article)
+            ),
+            'editorDecisions' => DataObjectUtility::dataObjectToArray(
+                $this->authorSubmissionRepository->fetchEditorDecisionsByArticle($article)
             )
         ];
     }
