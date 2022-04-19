@@ -30,7 +30,10 @@ class ArticleFile  extends AbstractDataObjectMapper {
 
         $specialFile = self::getSpecialFile($dataObject);
         if(is_object($specialFile)) {
-            $dataObject->isGalleyFile = get_class($specialFile) === \ArticleGalley::class;
+            $dataObject->isGalleyFile = in_array(
+                get_class($specialFile),
+                [ \ArticleGalley::class, \ArticleHTMLGalley::class ]
+            );
             $dataObject->isSupplementaryFile = get_class($specialFile) === \SuppFile::class;
         }
 
@@ -54,17 +57,10 @@ class ArticleFile  extends AbstractDataObjectMapper {
             (new SupplementaryFile)->fetchByArticle($article),
         ];
         $specialFiles = array_merge(...array_filter($specialFileGroups));
+        foreach($specialFiles as $specialFile) {
 
-        foreach($specialFiles as $index => $specialFile) {
-            // When calling getFilePath() on suppFiles, it doesn't always get the path right. This is pure hackery.
-            if(get_class($specialFile) === 'SuppFile') {
-                $filePath = preg_replace('/\/\//', '/supp/', $specialFile->getFilePath());
-            } else {
-                $filePath = $specialFile->getFilePath();
-            }
-            if($filePath === $articleFile->getFilePath()) {
-                return $specialFile;
-            }
+            // File names are unique, in theory
+            if(basename($specialFile->getFilePath()) === basename($articleFile->getFilePath())) return $specialFile;
         }
         return null;
     }

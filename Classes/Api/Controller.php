@@ -31,7 +31,6 @@ class Controller {
         '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/synthetics/history' => History::class,
         '^/users(/(?P<user>\d+))$' => Users::class,
         '^/files/(?P<file>[\d-]+)$' => Files::class
-
     ];
 
     /**
