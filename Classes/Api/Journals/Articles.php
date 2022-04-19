@@ -31,7 +31,7 @@ class Articles extends ApiRoute  {
     {
         $resultSet = $this->articleRepository->fetchByJournal($journal);
         return array_map(function($item) {
-            return NestedMapper::map($item);
+            return NestedMapper::map($item, 'index');
         }, $resultSet->toArray());
     }
 

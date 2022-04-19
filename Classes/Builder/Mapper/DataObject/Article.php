@@ -4,6 +4,8 @@ use CdlExportPlugin\Repository\PublishedArticle;
 use CdlExportPlugin\Repository\AuthorSubmission;
 
 class Article extends AbstractDataObjectMapper {
+    protected static $contexts = ['index' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title']]];
+
     protected static $mapping = [
         ['property' => 'sourceRecordKey', 'source' => 'id'],
         ['property' => 'section', 'source' => 'sectionTitle'],
@@ -18,7 +20,9 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'dateDeclined', 'onError' => null, 'filters' => ['datetime']], // TODO NOT IMPLEMENTED
         ['property' => 'doi', 'source' => 'storedDOI'],
         ['property' => 'pages'],
-        ['property' => 'mostRecentEditorDecision']
+        ['property' => 'mostRecentEditorDecision'],
+        ['property' => 'status', 'source' => 'publicationStatus'],
+        ['property' => 'issueSourceRecordKeys']
     ];
 
     /**
@@ -33,23 +37,14 @@ class Article extends AbstractDataObjectMapper {
 
         $dataObject->mostRecentEditorDecision = self::getMostRecentEditorDecision($dataObject);
 
-        return $dataObject;
-    }
-
-    /**
-     * @param $data
-     * @param $dataObject
-     * @return mixed
-     */
-    protected static function postMap($data, $dataObject, $context) {
-        $data['status'] = self::mapJournalStatus($dataObject->getStatus());
+        $dataObject->publicationStatus = self::mapJournalStatus($dataObject->getStatus());
 
         // TODO: we are generating a reference to another source record key here; we'll likely need another way to do
         // this
-        $data['issue_source_record_keys'] = is_null($dataObject->publishedArticle) ?
+        $dataObject->issueSourceRecordKeys = is_null($dataObject->publishedArticle) ?
             [] : [\Issue::class.':'.$dataObject->publishedArticle->getIssueId()];
 
-        return $data;
+        return $dataObject;
     }
 
     /**
