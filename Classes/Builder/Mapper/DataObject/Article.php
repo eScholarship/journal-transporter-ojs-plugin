@@ -22,7 +22,8 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'pages'],
         ['property' => 'mostRecentEditorDecision'],
         ['property' => 'status', 'source' => 'publicationStatus'],
-        ['property' => 'issueSourceRecordKeys']
+        ['property' => 'issueSourceRecordKeys'],
+        ['property' => 'sectionSourceRecordKey']
     ];
 
     /**
@@ -43,6 +44,8 @@ class Article extends AbstractDataObjectMapper {
         // this
         $dataObject->issueSourceRecordKeys = is_null($dataObject->publishedArticle) ?
             [] : [\Issue::class.':'.$dataObject->publishedArticle->getIssueId()];
+        $dataObject->sectionSourceRecordKey = is_null($dataObject->publishedArticle) ?
+            [] : [\Section::class.':'.$dataObject->publishedArticle->getSectionId()];
 
         return $dataObject;
     }
