@@ -16,7 +16,11 @@ class NestedMapper
             }
         } elseif(is_object($mappable)) {
             if(get_class($mappable) === 'stdClass') {
-                $mappableClass = $mappable->__mapperClass;
+                if(isset($mappable->__mapperClass)) {
+                    $mappableClass = $mappable->__mapperClass;
+                } else {
+                    return $mappable;
+                }
             } else {
                 $mappableClass = ucfirst(get_class($mappable));
             }

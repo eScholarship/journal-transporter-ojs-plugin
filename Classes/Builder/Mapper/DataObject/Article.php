@@ -4,7 +4,7 @@ use CdlExportPlugin\Repository\PublishedArticle;
 use CdlExportPlugin\Repository\AuthorSubmission;
 
 class Article extends AbstractDataObjectMapper {
-    protected static $contexts = ['index' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title']]];
+    protected static $contexts = ['index' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title', 'datePublished']]];
 
     protected static $mapping = [
         ['property' => 'sourceRecordKey', 'source' => 'id'],
@@ -22,8 +22,8 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'pages'],
         ['property' => 'mostRecentEditorDecision'],
         ['property' => 'status', 'source' => 'publicationStatus'],
-        ['property' => 'issueSourceRecordKeys'],
-        ['property' => 'sectionSourceRecordKey']
+        ['property' => 'issues'],
+        ['property' => 'sections']
     ];
 
     /**
@@ -42,10 +42,10 @@ class Article extends AbstractDataObjectMapper {
 
         // TODO: we are generating a reference to another source record key here; we'll likely need another way to do
         // this
-        $dataObject->issueSourceRecordKeys = is_null($dataObject->publishedArticle) ?
-            [] : [\Issue::class.':'.$dataObject->publishedArticle->getIssueId()];
-        $dataObject->sectionSourceRecordKey = is_null($dataObject->publishedArticle) ?
-            [] : [\Section::class.':'.$dataObject->publishedArticle->getSectionId()];
+        $dataObject->issues = is_null($dataObject->publishedArticle) ?
+            [] : [(object) ['source_record_key' => \Issue::class.':'.$dataObject->publishedArticle->getIssueId()]];
+        $dataObject->sections = is_null($dataObject->publishedArticle) ?
+            [] : [(object) ['source_record_key' => \Section::class.':'.$dataObject->publishedArticle->getSectionId()]];
 
         return $dataObject;
     }

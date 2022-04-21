@@ -10,6 +10,7 @@ use CdlExportPlugin\Api\Journals\Articles;
 use CdlExportPlugin\Api\Journals\Articles\Digest\Emails;
 use CdlExportPlugin\Api\Journals\Articles\Log;
 use CdlExportPlugin\Api\Journals\Articles\Files as ArticleFiles;
+use CdlExportPlugin\Api\Journals\Articles\Authors as ArticleAuthors;
 use CdlExportPlugin\Api\Journals\Articles\Synthetics\History;
 
 class Controller {
@@ -27,6 +28,7 @@ class Controller {
         '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/digest/emails(\.(?P<format>[a-z]+))?$' => Emails::class,
         '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/files/(?P<file>\d+)/revisions$' => Revisions::class,
         '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/files(/(?P<file>(\d+|\d+-\d+)))?$' => ArticleFiles::class,
+        '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/authors$' => ArticleAuthors::class,
         '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/digest/log' => Log::class,
         '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/synthetics/history' => History::class,
         '^/users(/(?P<user>\d+))$' => Users::class,
