@@ -16,6 +16,6 @@
  */
 
 // $Id$
-require_once('Classes/CdlExportPlugin.php');
+require_once('Classes/JournalTransporterPlugin.php');
 
-return new CdlExportPlugin();
+return new JournalTransporterPlugin();

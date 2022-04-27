@@ -1,13 +1,13 @@
-<?php namespace CdlExportPlugin\Api\Journals\Articles\Digest;
+<?php namespace JournalTransporterPlugin\Api\Journals\Articles\Digest;
 
-use CdlExportPlugin\Api\ApiRoute;
-use CdlExportPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Api\ApiRoute;
+use JournalTransporterPlugin\Utility\DataObjectUtility;
 
 /**
  * TODO: This should be broken up into smaller methods, but let's hold off until we see what functionality
  * is shared among other routes.
  * Class Emails
- * @package CdlExportPlugin\Api\Journals\Articles\Digest
+ * @package JournalTransporterPlugin\Api\Journals\Articles\Digest
  */
 class Emails extends ApiRoute {
     protected $journalRepository;

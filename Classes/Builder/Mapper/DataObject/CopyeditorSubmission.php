@@ -1,4 +1,4 @@
-<?php namespace CdlExportPlugin\Builder\Mapper\DataObject;
+<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 class CopyeditorSubmission extends AbstractSubmission {
 

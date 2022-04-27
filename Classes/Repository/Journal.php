@@ -1,7 +1,7 @@
-<?php namespace CdlExportPlugin\Repository;
+<?php namespace JournalTransporterPlugin\Repository;
 
-use CdlExportPlugin\Utility\DAOFactory;
-use CdlExportPlugin\Utility\Traits\DAOCache;
+use JournalTransporterPlugin\Utility\DAOFactory;
+use JournalTransporterPlugin\Utility\Traits\DAOCache;
 
 class Journal {
 

@@ -1,8 +1,8 @@
-<?php namespace CdlExportPlugin\Builder\Mapper;
+<?php namespace JournalTransporterPlugin\Builder\Mapper;
 
 /**
  * Class NestedMapper
- * @package CdlExportPlugin\Builder\Mapper
+ * @package JournalTransporterPlugin\Builder\Mapper
  */
 class NestedMapper
 {
@@ -25,7 +25,7 @@ class NestedMapper
                 $mappableClass = ucfirst(get_class($mappable));
             }
 
-            $className = '\\CdlExportPlugin\\Builder\\Mapper\\DataObject\\'.$mappableClass;
+            $className = '\\JournalTransporterPlugin\\Builder\\Mapper\\DataObject\\'.$mappableClass;
             if(class_exists($className)) {
                 $out = $className::map($mappable, $context);
             } else {

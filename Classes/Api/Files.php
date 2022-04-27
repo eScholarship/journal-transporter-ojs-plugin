@@ -1,4 +1,4 @@
-<?php namespace CdlExportPlugin\Api;
+<?php namespace JournalTransporterPlugin\Api;
 
 class Files extends ApiRoute {
     protected $fileRepository;

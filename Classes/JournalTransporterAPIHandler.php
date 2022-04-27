@@ -2,12 +2,12 @@
 
 import('classes.handler.Handler');
 
-class CdlExportHandler extends Handler {
+class JournalTransporterAPIHandler extends Handler {
     /**
      *
      */
     public function api() {
-        $this->handleRequest(\CdlExportPlugin\Api\Controller::class);
+        $this->handleRequest(\JournalTransporterPlugin\Api\Controller::class);
     }
 
     /**

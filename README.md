@@ -1,6 +1,33 @@
-# CDL Export
+# Journal Transporter plugin for OJS
 
-An OJS plugin that outputs journal and article data for transfer into other systems.
+An OJS plugin for the Journal Transporter. At present this plugin only provides API endpoints to export data from OJS.
+
+```
+  ___________________
+ /,-----------------.\
+||        .^.        ||
+||      .'   `.      ||
+||    .'   _   `.    ||
+||  .'    (_)    `.  ||
+||.'    .--~--.    `.||
+|| ~~|  `-----'  |~~ ||
+||   | |~|~~~|~| |   ||
+||   |  `~~~~~'  |   ||
+||   |  \|~|~|/  |   ||
+|| __|   == ==   |__ ||
+||`.     -- --     .'||
+||  `.   -- --   .'  ||
+||    `.       .'    ||
+||      `.   .'      ||
+||        `.'        ||
+|\___________________/|
+ `-------------------'
+```
+ASCII art from https://ascii.co.uk/art/startrek
+
+# Requirements
+
+This plugin has only been tested with a modified version of OJS 2.3.6 running PHP 7.2.
 
 # Overview
 
@@ -10,7 +37,7 @@ turn, transformed into JSON for output.
 
 # API
 
-All API endpoints will look like this: [SITE DOMAIN]/index.php/pages/cdlexport/api/[ROUTE]. The allowed routes are
+All API endpoints will look like this: [SITE DOMAIN]/index.php/pages/js/api/[ROUTE]. The allowed routes are
 defined in `Classes/Api/Controller.php`. Routes that display single records (journals, articles, etc), accept a URL
 parameter `?debug`, which dumps all data from the requested object rather than mapping specific fields.
 
@@ -19,11 +46,11 @@ parameter `?debug`, which dumps all data from the requested object rather than m
 This snippet needs to be added to the config.inc.php file:
 
 ```
-;;;;;;;;;;;;;;;;;;;
-; CdlExportPlugin ;
-;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Journal Transporter Plugin ;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-[cdlexport]
+[journaltransporter]
 
 enable_plugin_endpoints = On
 require_basic_auth = Off
@@ -45,8 +72,8 @@ controller.
 ## Data Object Mapping
 
 All mapping of data objects to JSON is defined in the classes located in `Classes/Builder/Mapper/DataObject`. At its
-core, this consists of a mapping configuration, but a `postMap()` method is also available to process the data after
-mapping.
+core, this consists of a mapping configuration, but `preMap()` and  `postMap()` methods are available to process the 
+data object before and after mapping.
 
 Different contexts can be defined in the children of the `AbstractDataObjectMapper` alongside the mapping. Contexts
 allow certain mapped fields to be excluded or included in the constructed data. By default, all fields are included

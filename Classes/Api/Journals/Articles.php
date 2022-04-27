@@ -1,8 +1,8 @@
-<?php namespace CdlExportPlugin\Api\Journals;
+<?php namespace JournalTransporterPlugin\Api\Journals;
 
-use CdlExportPlugin\Builder\Mapper\NestedMapper;
-use CdlExportPlugin\Utility\DataObjectUtility;
-use CdlExportPlugin\Api\ApiRoute;
+use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
+use JournalTransporterPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Api\ApiRoute;
 
 class Articles extends ApiRoute  {
     protected $journalRepository;

@@ -1,8 +1,8 @@
-<?php namespace CdlExportPlugin\Api\Journals\Articles;
+<?php namespace JournalTransporterPlugin\Api\Journals\Articles;
 
-use CdlExportPlugin\Builder\Mapper\NestedMapper;
-use CdlExportPlugin\Api\ApiRoute;
-use CdlExportPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
+use JournalTransporterPlugin\Api\ApiRoute;
+use JournalTransporterPlugin\Utility\DataObjectUtility;
 
 class Files extends ApiRoute  {
     protected $journalRepository;
@@ -22,7 +22,7 @@ class Files extends ApiRoute  {
         $article = $this->articleRepository->fetchByIdAndJournal($parameters['article'], $journal);
 
         if(!is_null($parameters['file'])) {
-            return (new \CdlExportPlugin\Api\Files)
+            return (new \JournalTransporterPlugin\Api\Files)
                 ->execute(['article' => $article->getId(), 'file' => $parameters['file']], $arguments);
         }
 

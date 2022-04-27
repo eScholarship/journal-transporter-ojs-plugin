@@ -1,7 +1,7 @@
-<?php namespace CdlExportPlugin\Builder\Mapper\DataObject;
+<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
-use CdlExportPlugin\Repository\PublishedArticle;
-use CdlExportPlugin\Repository\AuthorSubmission;
+use JournalTransporterPlugin\Repository\PublishedArticle;
+use JournalTransporterPlugin\Repository\AuthorSubmission;
 
 class Article extends AbstractDataObjectMapper {
     protected static $contexts = ['index' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title', 'datePublished']]];

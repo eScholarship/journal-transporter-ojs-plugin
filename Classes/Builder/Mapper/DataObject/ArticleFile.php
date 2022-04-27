@@ -1,9 +1,9 @@
-<?php namespace CdlExportPlugin\Builder\Mapper\DataObject;
+<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
-use CdlExportPlugin\Repository\File;
-use CdlExportPlugin\Repository\SupplementaryFile;
-use CdlExportPlugin\Repository\Article;
-use CdlExportPlugin\Repository\GalleyFile;
+use JournalTransporterPlugin\Repository\File;
+use JournalTransporterPlugin\Repository\SupplementaryFile;
+use JournalTransporterPlugin\Repository\Article;
+use JournalTransporterPlugin\Repository\GalleyFile;
 
 class ArticleFile  extends AbstractDataObjectMapper {
     protected static $mapping = [

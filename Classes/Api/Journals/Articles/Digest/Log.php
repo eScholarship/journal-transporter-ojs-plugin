@@ -1,7 +1,7 @@
-<?php namespace CdlExportPlugin\Api\Journals\Articles\Digest;
+<?php namespace JournalTransporterPlugin\Api\Journals\Articles\Digest;
 
-use CdlExportPlugin\Utility\DataObjectUtility;
-use CdlExportPlugin\Api\ApiRoute;
+use JournalTransporterPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Api\ApiRoute;
 
 class Log extends ApiRoute {
     protected $journalRepository;

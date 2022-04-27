@@ -1,4 +1,4 @@
-<?php namespace CdlExportPlugin\Utility;
+<?php namespace JournalTransporterPlugin\Utility;
 
 use \DAORegistry;
 
@@ -20,7 +20,7 @@ class DAOFactory {
     }
 
     /**
-     * @return \CdlExportPlugin\Utility\DAOFactory
+     * @return \JournalTransporterPlugin\Utility\DAOFactory
      */
     public function get() {
         return self::$instance === null ? new self : self::instance;

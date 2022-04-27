@@ -1,6 +1,6 @@
-<?php namespace CdlExportPlugin\Api\Journals\Articles\Synthetics;
+<?php namespace JournalTransporterPlugin\Api\Journals\Articles\Synthetics;
 
-use CdlExportPlugin\Api\ApiRoute;
+use JournalTransporterPlugin\Api\ApiRoute;
 
 class History extends ApiRoute {
     protected $journalRepository;
@@ -16,7 +16,7 @@ class History extends ApiRoute {
         $journal = $this->journalRepository->fetchOneById($args['journal']);
         $article = $this->articleRepository->fetchByIdAndJournal($args['article'], $journal);
 
-        $history = new \CdlExportPlugin\Builder\History($article);
+        $history = new \JournalTransporterPlugin\Builder\History($article);
         return $history->toArray();
     }
 }

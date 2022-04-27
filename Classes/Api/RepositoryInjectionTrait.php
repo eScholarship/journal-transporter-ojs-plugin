@@ -1,9 +1,9 @@
-<?php namespace CdlExportPlugin\Api;
+<?php namespace JournalTransporterPlugin\Api;
 
 /**
  * Very simple dependency injection based on attribute names.
  * Trait RepositoryInjection
- * @package CdlExportPlugin\Api
+ * @package JournalTransporterPlugin\Api
  */
 trait RepositoryInjectionTrait
 {
@@ -16,7 +16,7 @@ trait RepositoryInjectionTrait
             $matches = [];
             if(preg_match('/^(.+)Repository$/', $attribute, $matches)) {
                 if($this->$attribute === null) {
-                    $className = 'CdlExportPlugin\\Repository\\'.ucfirst($matches[1]);
+                    $className = 'JournalTransporterPlugin\\Repository\\'.ucfirst($matches[1]);
                     $this->$attribute = new $className;
                 }
             }

@@ -1,6 +1,6 @@
-<?php namespace CdlExportPlugin\Builder\Mapper\DataObject;
+<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
-use CdlExportPlugin\Utility\DAOFactory;
+use JournalTransporterPlugin\Utility\DAOFactory;
 use Config;
 
 class Journal extends AbstractDataObjectMapper {

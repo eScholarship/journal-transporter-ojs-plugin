@@ -1,4 +1,4 @@
-<?php namespace CdlExportPlugin\Builder\Mapper\DataObject;
+<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 class EditorDecision extends AbstractDataObjectMapper {
     protected static $mapping = [

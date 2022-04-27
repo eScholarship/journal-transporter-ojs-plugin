@@ -1,26 +1,27 @@
 <?php
 
 /**
- * @file CdlExportPlugin.php
+ * @file JournalTransporterPlugin.php
  *
  * Copyright (c) 2021 Cast Iron Coding
  * Distributed under the GNU GPL v2.
  *
- * @class CdlExportPlugin
- * @ingroup plugins_importexport_cdlexport
+ * @class JournalTransporterPlugin
+ * @ingroup plugins_importexport_journaltransport
  *
- * @brief Export plugin for CDL's Journal Portability project
+ * @brief An OJS plugin for Journal Tranporter: at present, it only exports"
  */
 
 // $Id$
 
 import('lib.pkp.classes.plugins.GenericPlugin');
 
-use CdlExportPlugin\Command\Controller;
+use JournalTransporterPlugin\Command\Controller;
 
-class CdlExportPlugin extends GenericPlugin {
-    const PLUGIN_DISPLAY_NAME = 'CDL OJS Export Plugin';
-    const PLUGIN_DESCRIPTION = "Export plugin for CDL's Journal Portability project";
+class JournalTransporterPlugin extends GenericPlugin {
+    const PLUGIN_DISPLAY_NAME = 'Journal Transporter for OJS';
+    const PLUGIN_DESCRIPTION = "An OJS plugin for Journal Tranporter: at present, it only exports";
+    const PLUGIN_CONFIG_KEY = 'journaltransporter';
 
     /**
      * Called as a plugin is registered to the registry
@@ -32,7 +33,7 @@ class CdlExportPlugin extends GenericPlugin {
         $this->registerAutoload();
 
         if(parent::register($category, $path)) {
-            if(Config::getVar('cdlexport', 'enable_plugin_endpoints') && $this->requestIsAuthorized()) {
+            if(Config::getVar(self::PLUGIN_CONFIG_KEY, 'enable_plugin_endpoints') && $this->requestIsAuthorized()) {
                 $this->registerLoadHandlerHook();
             }
         }
@@ -44,22 +45,22 @@ class CdlExportPlugin extends GenericPlugin {
      */
     protected function requestIsAuthorized() {
         // No authentication of any kind required, don't need to check
-        if(!Config::getVar('cdlexport', 'require_basic_auth') &&
-            !Config::getVar('cdlexport', 'require_site_admin')
+        if(!Config::getVar(self::PLUGIN_CONFIG_KEY, 'require_basic_auth') &&
+            !Config::getVar(self::PLUGIN_CONFIG_KEY, 'require_site_admin')
         ) return true;
 
         // If basic auth is required and fails, no access for you!
-        if(Config::getVar('cdlexport', 'require_basic_auth')) {
+        if(Config::getVar(self::PLUGIN_CONFIG_KEY, 'require_basic_auth')) {
             // Can't enable basic auth with an empty username or password
             if(!(strlen($_SERVER['PHP_AUTH_USER']) > 0) || !(strlen($_SERVER['PHP_AUTH_PW']) > 0)) return false;
 
-            if(Config::getVar('cdlexport', 'basic_auth_user') !== $_SERVER['PHP_AUTH_USER'] ||
-                Config::getVar('cdlexport', 'basic_auth_password') !== $_SERVER['PHP_AUTH_PW']) return false;
+            if(Config::getVar(self::PLUGIN_CONFIG_KEY, 'basic_auth_user') !== $_SERVER['PHP_AUTH_USER'] ||
+                Config::getVar(self::PLUGIN_CONFIG_KEY, 'basic_auth_password') !== $_SERVER['PHP_AUTH_PW']) return false;
         }
 
 
         // If site admin is required and this isn't a site admin, no access for you!
-        if(Config::getVar('cdlexport', 'require_site_admin') && !Validation::isSiteAdmin()) {
+        if(Config::getVar(self::PLUGIN_CONFIG_KEY, 'require_site_admin') && !Validation::isSiteAdmin()) {
             return false;
         }
 
@@ -71,11 +72,11 @@ class CdlExportPlugin extends GenericPlugin {
      */
     protected function registerLoadHandlerHook() {
         HookRegistry::register('LoadHandler', function ($hookname, $params) {
-            if ($params[0] == 'cdlexport') {
-                define('HANDLER_CLASS', 'CdlExportHandler');
+            if ($params[0] == 'jt') {
+                define('HANDLER_CLASS', 'JournalTransporterAPIHandler');
                 define('CDL_EXPORT_PLUGIN_NAME', $this->getName());
                 $handlerFile =& $params[2];
-                $handlerFile = $this->getPluginPath() . '/Classes/' . 'CdlExportHandler.php';
+                $handlerFile = $this->getPluginPath() . '/Classes/' . 'JournalTransporterAPIHandler.php';
             }
         });
     }
@@ -112,7 +113,7 @@ class CdlExportPlugin extends GenericPlugin {
      */
     function registerAutoload() {
         spl_autoload_register(function($class) {
-            $namespace = 'CdlExportPlugin\\';
+            $namespace = 'JournalTransporterPlugin\\';
             if(strpos($class, $namespace) === 0) {
                 $file = __DIR__.'/'.str_replace('\\', '/', substr($class, strlen($namespace))).'.php';
                 if(file_exists($file)) {

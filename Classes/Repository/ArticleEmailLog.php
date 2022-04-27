@@ -1,6 +1,6 @@
-<?php namespace CdlExportPlugin\Repository;
+<?php namespace JournalTransporterPlugin\Repository;
 
-use CdlExportPlugin\Utility\DAOFactory;
+use JournalTransporterPlugin\Utility\DAOFactory;
 
 class ArticleEmailLog {
     public function fetchByArticle($article)

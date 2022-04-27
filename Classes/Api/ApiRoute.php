@@ -1,4 +1,4 @@
-<?php namespace CdlExportPlugin\Api;
+<?php namespace JournalTransporterPlugin\Api;
 
 class ApiRoute
 {

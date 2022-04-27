@@ -1,3 +1,3 @@
-<?php namespace CdlExportPlugin\Builder\Mapper\DataObject;
+<?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 class ArticleGalley extends ArticleFile {}

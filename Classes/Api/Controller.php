@@ -1,17 +1,17 @@
-<?php namespace CdlExportPlugin\Api;
+<?php namespace JournalTransporterPlugin\Api;
 
-use CdlExportPlugin\Utility\RegexUtility;
-use CdlExportPlugin\Api\Journals\Sections;
-use CdlExportPlugin\Api\Journals\Issues;
-use CdlExportPlugin\Api\Journals\Roles;
-use CdlExportPlugin\Api\Users;
-use CdlExportPlugin\Api\Journals\Articles\Files\Revisions;
-use CdlExportPlugin\Api\Journals\Articles;
-use CdlExportPlugin\Api\Journals\Articles\Digest\Emails;
-use CdlExportPlugin\Api\Journals\Articles\Log;
-use CdlExportPlugin\Api\Journals\Articles\Files as ArticleFiles;
-use CdlExportPlugin\Api\Journals\Articles\Authors as ArticleAuthors;
-use CdlExportPlugin\Api\Journals\Articles\Synthetics\History;
+use JournalTransporterPlugin\Utility\RegexUtility;
+use JournalTransporterPlugin\Api\Journals\Sections;
+use JournalTransporterPlugin\Api\Journals\Issues;
+use JournalTransporterPlugin\Api\Journals\Roles;
+use JournalTransporterPlugin\Api\Users;
+use JournalTransporterPlugin\Api\Journals\Articles\Files\Revisions;
+use JournalTransporterPlugin\Api\Journals\Articles;
+use JournalTransporterPlugin\Api\Journals\Articles\Digest\Emails;
+use JournalTransporterPlugin\Api\Journals\Articles\Log;
+use JournalTransporterPlugin\Api\Journals\Articles\Files as ArticleFiles;
+use JournalTransporterPlugin\Api\Journals\Articles\Authors as ArticleAuthors;
+use JournalTransporterPlugin\Api\Journals\Articles\Synthetics\History;
 
 class Controller {
 

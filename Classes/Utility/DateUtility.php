@@ -1,4 +1,4 @@
-<?php namespace CdlExportPlugin\Utility;
+<?php namespace JournalTransporterPlugin\Utility;
 
 class DateUtility {
     /**

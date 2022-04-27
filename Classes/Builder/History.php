@@ -1,9 +1,9 @@
-<?php namespace CdlExportPlugin\Builder;
+<?php namespace JournalTransporterPlugin\Builder;
 
-use CdlExportPlugin\Builder\Mapper\NestedMapper;
-use CdlExportPlugin\Utility\DAOFactory;
-use CdlExportPlugin\Utility\DataObjectUtility;
-use CdlExportPlugin\Utility\DateUtility;
+use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
+use JournalTransporterPlugin\Utility\DAOFactory;
+use JournalTransporterPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Utility\DateUtility;
 
 class History
 {
