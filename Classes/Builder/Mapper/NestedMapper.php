@@ -12,7 +12,7 @@ class NestedMapper
         if(is_array($mappable)) {
             $out = [];
             foreach($mappable as $item) {
-                $out[] = self::map($item);
+                $out[] = self::map($item, $context);
             }
         } elseif(is_object($mappable)) {
             if(get_class($mappable) === 'stdClass') {

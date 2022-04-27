@@ -14,6 +14,9 @@ class AbstractDataObjectMapper {
 
     const ON_ERROR_TRIGGER_EXCEPTION = '!@#$!@#$';
 
+    /** @var array  */
+    protected static $contexts = [];
+
     /**
      * Extend this class, and name the child class after a OJS class. Add a static parameter called $mapping, which
      * is an array. Each item of the array contains a field mapping.
@@ -31,6 +34,7 @@ class AbstractDataObjectMapper {
             $source = trim(@$mappingConfig['source']);
 
             $onError = array_key_exists('onError', $mappingConfig) ? $mappingConfig['onError'] : self::ON_ERROR_TRIGGER_EXCEPTION;
+            $internalContext = array_key_exists('context', $mappingConfig) ? $mappingConfig['context'] : null;
 
             if(strlen($source) === 0) {
                 $source = $property;
@@ -40,7 +44,7 @@ class AbstractDataObjectMapper {
                 if ($property === self::SOURCE_RECORD_KEY_PROPERTY) {
                     $value = static::getSourceRecordKey($dataObject, $source);
                 } else {
-                    $value = NestedMapper::map(self::getFieldValue($source, $dataObject, $onError));
+                    $value = NestedMapper::map(self::getFieldValue($source, $dataObject, $onError), $internalContext);
                 }
 
                 // Process filters that transform values
@@ -97,7 +101,7 @@ class AbstractDataObjectMapper {
                     if($onError !== self::ON_ERROR_TRIGGER_EXCEPTION) {
                         return $onError;
                     }
-                    throw new \Exception("Can't get $key from " . get_class($object));
+                    throw new \Exception("Can't get \"$key\" from " . get_class($object));
                 }
             }
         }

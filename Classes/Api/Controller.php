@@ -8,7 +8,8 @@ use JournalTransporterPlugin\Api\Users;
 use JournalTransporterPlugin\Api\Journals\Articles\Files\Revisions;
 use JournalTransporterPlugin\Api\Journals\Articles;
 use JournalTransporterPlugin\Api\Journals\Articles\Digest\Emails;
-use JournalTransporterPlugin\Api\Journals\Articles\Log;
+use JournalTransporterPlugin\Api\Journals\Articles\Digest\Log;
+use JournalTransporterPlugin\Api\Journals\Articles\Reviews;
 use JournalTransporterPlugin\Api\Journals\Articles\Files as ArticleFiles;
 use JournalTransporterPlugin\Api\Journals\Articles\Authors as ArticleAuthors;
 use JournalTransporterPlugin\Api\Journals\Articles\Synthetics\History;
@@ -30,6 +31,7 @@ class Controller {
         '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/files(/(?P<file>(\d+|\d+-\d+)))?$' => ArticleFiles::class,
         '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/authors$' => ArticleAuthors::class,
         '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/digest/log' => Log::class,
+        '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/reviews' => Reviews::class,
         '^/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/synthetics/history' => History::class,
         '^/users(/(?P<user>\d+))$' => Users::class,
         '^/files/(?P<file>[\d-]+)$' => Files::class

@@ -1,9 +1,14 @@
 <?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 class ReviewAssignment extends AbstractDataObjectMapper {
+
     protected static $mapping = [
         ['property' => 'sourceRecordKey', 'source' => 'reviewId'],
         ['property' => 'reviewerId'],
+        ['property' => 'round'],
+        ['property' => 'reviewType'],
+        ['property' => 'reviewMethod'],
+        ['property' => 'recommendation'],
         ['property' => 'fullName', 'source' => 'reviewerFullName'],
         ['property' => 'dateRated', 'filters' => ['datetime']],
         ['property' => 'lastModified', 'filters' => ['datetime']],
@@ -18,7 +23,9 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         ['property' => 'declined', 'filters' => ['boolean']],
         ['property' => 'replaced', 'filters' => ['boolean']],
         ['property' => 'cancelled', 'filters' => ['boolean']],
-        ['property' => 'reviewFile'],
-        ['property' => 'reviewerFile'],
+        ['property' => 'reviewFile', 'context' => 'sourceRecordKey'],
+        ['property' => 'suppFiles', 'context' => 'sourceRecordKey'],
+        ['property' => 'reviewerFile', 'context' => 'sourceRecordKey'],
+        ['property' => 'mostRecentPeerReviewComment']
     ];
 }

@@ -6,6 +6,8 @@ use JournalTransporterPlugin\Repository\Article;
 use JournalTransporterPlugin\Repository\GalleyFile;
 
 class ArticleFile  extends AbstractDataObjectMapper {
+    protected static $contexts = ['sourceRecordKey' => ['exclude' => '*', 'include' => ['sourceRecordKey']]];
+
     protected static $mapping = [
         ['property' => 'sourceRecordKey', 'source' => 'fileId'],
         ['property' => 'fileId'],
