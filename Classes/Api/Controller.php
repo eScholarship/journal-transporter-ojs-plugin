@@ -54,7 +54,12 @@ class Controller {
             $out = ['Exception' => 'No route provided', 'routeRegexes' => array_keys($this->routes)];
             $skipRouteLookup = true;
         } else {
-            $out = ['Exception' => ["Provided route '".$this->args[0]."' did not match defined routes"]]; // Fallback response
+            $out = ['Exception' =>
+                [
+                    "Provided route '".$this->args[0]."' did not match defined routes",
+                    'routeRegexes' => array_keys($this->routes)
+                ]
+            ];
         }
 
         if(!$skipRouteLookup) {

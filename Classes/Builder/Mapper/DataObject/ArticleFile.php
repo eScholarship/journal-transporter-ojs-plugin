@@ -6,7 +6,6 @@ use JournalTransporterPlugin\Repository\Article;
 use JournalTransporterPlugin\Repository\GalleyFile;
 
 class ArticleFile  extends AbstractDataObjectMapper {
-    protected static $contexts = ['sourceRecordKey' => ['exclude' => '*', 'include' => ['sourceRecordKey']]];
 
     protected static $mapping = [
         ['property' => 'sourceRecordKey', 'source' => 'fileId'],
@@ -20,6 +19,12 @@ class ArticleFile  extends AbstractDataObjectMapper {
         ['property' => 'parentSourceRecordKey', 'onError' => null],
         ['property' => 'isGalleyFile', 'onError' => false],
         ['property' => 'isSupplementaryFile', 'onError' => false],
+        ['property' => 'title', 'source' => 'settings.title', 'onError' => null],
+        ['property' => 'description', 'source' => 'settings.description', 'onError' => null],
+        ['property' => 'creator', 'source' => 'settings.creator', 'onError' => null],
+        ['property' => 'publisher', 'source' => 'settings.publisher', 'onError' => null],
+        ['property' => 'source', 'source' => 'settings.source', 'onError' => null],
+        ['property' => 'typeOther', 'source' => 'settings.typeOther', 'onError' => null],
     ];
 
     /**
@@ -30,13 +35,29 @@ class ArticleFile  extends AbstractDataObjectMapper {
     protected static function preMap($dataObject, $context) {
         if(!is_null($dataObject->getRevision())) $dataObject->parentSourceRecordKey = self::getParentSourceRecordKey($dataObject);
 
-        $specialFile = self::getSpecialFile($dataObject);
-        if(is_object($specialFile)) {
+        $associatedFile = self::getAssociatedFileRecord($dataObject);
+        $textFields = ['title', 'description', 'creator', 'publisher', 'source', 'typeOther'];
+        if(is_object($associatedFile)) {
+            if(method_exists($associatedFile, 'getLocalizedData')) {
+                $settings = [];
+                foreach($textFields as $field) {
+                    self::$mapping[] = ['property' => $field, 'source' => "settings.$field", 'onError' => null];
+                    $settings[$field] = $associatedFile->getLocalizedData($field);
+                }
+                $dataObject->settings = $settings;
+            }
+
+            // Add some boolean flags indicating the type of file based on the associatedFile record type
             $dataObject->isGalleyFile = in_array(
-                get_class($specialFile),
+                get_class($associatedFile),
                 [ \ArticleGalley::class, \ArticleHTMLGalley::class ]
             );
-            $dataObject->isSupplementaryFile = get_class($specialFile) === \SuppFile::class;
+            $dataObject->isSupplementaryFile = get_class($associatedFile) === \SuppFile::class;
+        }
+
+        // Here's where we would define the $textFields for ArticleFiles that are not supps or galleys
+        if(!property_exists($dataObject, 'settings')) {
+            $dataObject->settings = [ 'title' => '**NOT IMPLEMENTED YET**'];
         }
 
         return $dataObject;
@@ -50,7 +71,7 @@ class ArticleFile  extends AbstractDataObjectMapper {
      * @param $articleFiles
      * @return mixed
      */
-    protected function getSpecialFile($articleFile) {
+    protected function getAssociatedFileRecord($articleFile) {
         $article = (new Article)->fetchById($articleFile->getArticleId());
 
         // Get the other file types, all of which are also article files
@@ -66,7 +87,6 @@ class ArticleFile  extends AbstractDataObjectMapper {
         }
         return null;
     }
-
 
     /**
      * @param $model

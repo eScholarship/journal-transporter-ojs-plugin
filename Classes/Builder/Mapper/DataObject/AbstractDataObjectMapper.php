@@ -18,6 +18,12 @@ class AbstractDataObjectMapper {
     protected static $contexts = [];
 
     /**
+     * All subclasses have these contexts
+     * @var array[]
+     */
+    protected static $sharedContexts = ['sourceRecordKey' => ['exclude' => '*', 'include' => ['sourceRecordKey']]];
+
+    /**
      * Extend this class, and name the child class after a OJS class. Add a static parameter called $mapping, which
      * is an array. Each item of the array contains a field mapping.
      *
@@ -115,8 +121,9 @@ class AbstractDataObjectMapper {
      */
     protected static function includeFieldInContext($context, $field)
     {
-        if(array_key_exists($context, static::$contexts)) {
-            $contextConfiguration = static::$contexts[$context];
+        $mergedContexts = array_merge(self::$sharedContexts, static::$contexts);
+        if(array_key_exists($context, $mergedContexts)) {
+            $contextConfiguration = $mergedContexts[$context];
             if(array_key_exists('include', $contextConfiguration) && is_array($contextConfiguration['include']) &&
                 in_array($field, $contextConfiguration['include'])) return true;
 
