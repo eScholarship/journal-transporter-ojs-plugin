@@ -25,11 +25,11 @@ class Elements extends ApiRoute  {
     }
 
     protected function getReviewFormElements($reviewForm) {
-        $resultSet = $this->reviewFormElementRepository->fetchByReviewForm($reviewForm);
+        $reviewFormElements = $this->reviewFormElementRepository->fetchByReviewForm($reviewForm);
 
         return array_map(function($item) {
             return NestedMapper::map($item, 'index');
-        }, $resultSet);
+        }, array_values($reviewFormElements));
     }
 
     protected function getReviewFormElement($id, $reviewForm, $debug) {

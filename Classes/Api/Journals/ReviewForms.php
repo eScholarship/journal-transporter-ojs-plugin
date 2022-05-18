@@ -24,7 +24,6 @@ class ReviewForms extends ApiRoute  {
 
     protected function getReviewForms($journal) {
         $resultSet = $this->reviewFormRepository->fetchByJournal($journal);
-
         return array_map(function($item) {
             return NestedMapper::map($item, 'index');
         }, $resultSet->toArray());

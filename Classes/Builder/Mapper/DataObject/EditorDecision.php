@@ -5,7 +5,7 @@ use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
 class EditorDecision extends AbstractDataObjectMapper {
     protected static $mapping = [
         ['property' => 'sourceRecordKey', 'source' => 'editDecisionId'],
-        ['property' => 'editorSourceRecordKey'],
+        ['property' => 'editor'],
         ['property' => 'date', 'source' => 'dateDecided', 'filters' => ['datetime']],
         ['property' => 'decision'],
         ['property' => 'round', 'onError' => 'undefined']
@@ -25,8 +25,7 @@ class EditorDecision extends AbstractDataObjectMapper {
             4 => 'decline'
         ][(int) $dataObject->decision];
 
-        // TODO: address generation of source record keys
-        $dataObject->editorSourceRecordKey = SourceRecordKeyUtility::editor($dataObject->editorId);
+        $dataObject->editor = (object)['source_record_key' => SourceRecordKeyUtility::editor($dataObject->editorId)];
 
         return $dataObject;
     }

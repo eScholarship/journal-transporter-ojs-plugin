@@ -21,13 +21,13 @@ class Review extends ApiRoute  {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
         $article = $this->articleRepository->fetchByIdAndJournal($parameters['article'], $journal);
         $reviewAssignments = $this->reviewAssignmentRepository->fetchByArticle($article, (int) $parameters['round']);
-        $reviewId = (int) $parameters['review'];
+        $reviewAssignmentId = (int) $parameters['review_assignment'];
 
-        if($reviewId > 0) {
+        if($reviewAssignmentId > 0) {
             // There doesn't seem to be a way to get review assignments by id, so we do it this way so that we're
             // sure that we're showing a review assignment associated with the article.
             foreach($reviewAssignments as $reviewAssignment) {
-                if((int) $reviewId !== (int) $reviewAssignment->getId()) continue;
+                if((int) $reviewAssignmentId !== (int) $reviewAssignment->getId()) continue;
                 if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObjectUtility::dataObjectToArray($reviewAssignment);
                 return NestedMapper::map($reviewAssignment);
             }

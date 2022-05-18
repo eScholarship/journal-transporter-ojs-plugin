@@ -5,7 +5,7 @@ use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
 class EditAssignment extends AbstractDataObjectMapper {
     protected static $mapping = [
         ['property' => 'sourceRecordKey', 'source' => 'editId'],
-        ['property' => 'editorSourceRecordKey'],
+        ['property' => 'editor'],
         ['property' => 'isEditor', 'filters' => ['boolean']],
         ['property' => 'dateNotified', 'filters' => ['datetime']],
         ['property' => 'dateUnderway', 'filters' => ['datetime']],
@@ -22,7 +22,7 @@ class EditAssignment extends AbstractDataObjectMapper {
      * @return mixed
      */
     protected static function preMap($dataObject, $context) {
-        $dataObject->editorSourceRecordKey = SourceRecordKeyUtility::editor($dataObject->getEditorId());
+        $dataObject->editor = (object)['source_record_key' => SourceRecordKeyUtility::editor($dataObject->getEditorId())];
 
         return $dataObject;
     }

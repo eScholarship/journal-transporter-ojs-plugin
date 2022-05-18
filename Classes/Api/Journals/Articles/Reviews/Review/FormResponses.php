@@ -21,14 +21,14 @@ class FormResponses extends ApiRoute  {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
         $article = $this->articleRepository->fetchByIdAndJournal($parameters['article'], $journal);
         $reviewAssignments = $this->reviewAssignmentRepository->fetchByArticle($article, (int) $parameters['round']);
-        $reviewId = $parameters['review'];
+        $reviewAssignmentId = $parameters['review_assignment'];
 
         $reviewAssignment = null;
         foreach($reviewAssignments as $reviewAssignment) {
-            if ((int)$reviewId === (int)$reviewAssignment->getId()) break;
+            if ((int)$reviewAssignmentId === (int)$reviewAssignment->getId()) break;
         }
 
-        if(is_null($reviewAssignment)) throw new \Exception("ReviewAssignment $reviewId not found");
+        if(is_null($reviewAssignment)) throw new \Exception("ReviewAssignment $reviewAssignmentId not found");
 
         $responses = $this->reviewFormResponseRepository->fetchByReview($reviewAssignment);
         $responseOutput = [];

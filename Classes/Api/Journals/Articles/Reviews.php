@@ -34,8 +34,7 @@ class Reviews extends ApiRoute  {
             'decisions' => array_map(function($item) {
                 return NestedMapper::map((object) ($item + ['__mapperClass' => 'EditorDecision']));
             }, $flattenedEditorDecisions),
-            'numberOfRounds' => $numberOfRounds,
-            'revisions' => '**PLACEHOLDER**'
+            'numberOfRounds' => $numberOfRounds
         ];
 
     }
