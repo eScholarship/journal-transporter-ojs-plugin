@@ -159,8 +159,12 @@ class AbstractDataObjectMapper {
      * @return string
      */
     protected static function getSourceRecordKey($model, $theirs = 'id') {
-        $method = 'get'.ucfirst($theirs);
-        return get_class($model).':'.$model->$method();
+        if(get_class($model) === 'stdClass') list($class, $id) = [$model->__mapperClass, $model->$theirs];
+        else {
+            $method = 'get'.ucfirst($theirs);
+            list($class, $id) = [get_class($model), $model->$method()];
+        }
+        return $class.':'.$id;
     }
 
     /**
@@ -173,6 +177,7 @@ class AbstractDataObjectMapper {
         if($filter === 'boolean') return static::applyBooleanFilter($value);
         if($filter === 'datetime') return static::applyDatetimeFilter($value);
         if($filter === 'integer') return static::applyIntegerFilter($value);
+        if($filter === 'html') return static::applyHTMLFilter($value);
 
         throw new \Exception("Filter $filter does not exist");
     }
@@ -203,5 +208,17 @@ class AbstractDataObjectMapper {
      */
     protected static function applyIntegerFilter($value) {
         return (int) $value;
+    }
+
+    /**
+     * @param $value
+     * @return string
+     */
+    protected static function applyHTMLFilter($value) {
+        $steps = [$value];
+        $steps[] = strip_tags(end($steps), '<p><ul><li><ol><em><i><strong>');
+        // A bullet-vulnerable way to strip attributes off of HTML tags
+        $steps[] = preg_replace('/(<[a-zA-Z]+)[^>]*>/','\1>', end($steps));
+        return end($steps);
     }
 }

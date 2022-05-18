@@ -7,7 +7,8 @@ use JournalTransporterPlugin\Utility\DataObjectUtility;
 class Reviews extends ApiRoute  {
     protected $journalRepository;
     protected $articleRepository;
-    protected $reviewAssignmentRepository;
+    protected $editAssignmentRepository;
+    protected $sectionEditorSubmissionRepository;
 
     /**
      * @param array $parameters
@@ -18,17 +19,24 @@ class Reviews extends ApiRoute  {
     {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
         $article = $this->articleRepository->fetchByIdAndJournal($parameters['article'], $journal);
-        $reviewAssignments = $this->reviewAssignmentRepository->fetchByArticle($article);
+        $editAssignments = $this->editAssignmentRepository->fetchByArticle($article)->toArray();
+        $numberOfRounds = $this->sectionEditorSubmissionRepository->fetchNumberOfRoundsByArticle($article);
 
-        if($arguments[ApiRoute::DEBUG_ARGUMENT]) {
-            return array_map(function($item) {
-                return DataObjectUtility::dataObjectToArray($item);
-            }, array_values($reviewAssignments));
-        } else {
-            return array_map(function($item) {
-                return NestedMapper::map($item);
-                //return DataObjectUtility::dataObjectToArray($item);
-            }, array_values($reviewAssignments));
+        for($i = 1; $i <= $numberOfRounds; $i++) {
+            $editorDecisions[$i] = $this->sectionEditorSubmissionRepository->fetchEditorDecisionsByArticle($article, $i);
         }
+        $flattenedEditorDecisions = array_merge([], ...$editorDecisions);
+        #print_r($flattenedEditorDecisions); die();
+        return [
+            'editors' => array_map(function($item) {
+                return NestedMapper::map($item);
+            }, $editAssignments),
+            'decisions' => array_map(function($item) {
+                return NestedMapper::map((object) ($item + ['__mapperClass' => 'EditorDecision']));
+            }, $flattenedEditorDecisions),
+            'numberOfRounds' => $numberOfRounds,
+            'revisions' => '**PLACEHOLDER**'
+        ];
+
     }
 }

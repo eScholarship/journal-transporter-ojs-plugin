@@ -51,7 +51,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         $dataObject->recommendationText = self::getRecommendationText($dataObject);
         $dataObject->reviewTypeText = self::getReviewTypeText($dataObject);
         $dataObject->qualityText = self::getQualityText($dataObject);
-        
+
         return $dataObject;
     }
 
@@ -79,12 +79,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
     }
 
     protected static function getQualityText($reviewAssignment) {
-        return @[
-            SUBMISSION_REVIEWER_RATING_VERY_GOOD => 'very_good',
-            SUBMISSION_REVIEWER_RATING_GOOD => 'good',
-            SUBMISSION_REVIEWER_RATING_AVERAGE => 'average',
-            SUBMISSION_REVIEWER_RATING_POOR => 'poor',
-            SUBMISSION_REVIEWER_RATING_VERY_POOR => 'very_poor'
-        ][$reviewAssignment->getQuality()];
+        // Go from 1 - 5 range to 20 - 100
+        return $reviewAssignment->getQuality() * 20;
     }
 }

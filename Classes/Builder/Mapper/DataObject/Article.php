@@ -2,6 +2,7 @@
 
 use JournalTransporterPlugin\Repository\PublishedArticle;
 use JournalTransporterPlugin\Repository\AuthorSubmission;
+use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
 
 class Article extends AbstractDataObjectMapper {
     protected static $contexts = ['index' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title', 'datePublished']]];
@@ -10,7 +11,10 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'sourceRecordKey', 'source' => 'id'],
         ['property' => 'section', 'source' => 'sectionTitle'],
         ['property' => 'title', 'source' => 'articleTitle'],
-        ['property' => 'authors'],
+        ['property' => 'abstract', 'source' => 'localizedAbstract', 'filters' => ['html']],
+        ['property' => 'coverLetter', 'source' => 'commentsToEditor', 'filters' => ['html']],
+        ['property' => 'discipline', 'source' => 'localizedDiscipline'],
+        ['property' => 'authors', 'context' => 'sourceRecordKey'], // TODO: this outputs a reference like disc1540 (reference to rt_versions table)
         ['property' => 'language'],
         ['property' => 'dateStarted', 'source' => 'dateSubmitted', 'filters' => ['datetime']],
         ['property' => 'dateSubmitted', 'filters' => ['datetime']],
@@ -40,12 +44,10 @@ class Article extends AbstractDataObjectMapper {
 
         $dataObject->publicationStatus = self::mapJournalStatus($dataObject->getStatus());
 
-        // TODO: we are generating a reference to another source record key here; we'll likely need another way to do
-        // this
         $dataObject->issues = is_null($dataObject->publishedArticle) ?
-            [] : [(object) ['source_record_key' => \Issue::class.':'.$dataObject->publishedArticle->getIssueId()]];
+            [] : [(object) ['source_record_key' => SourceRecordKeyUtility::issue($dataObject->publishedArticle->getIssueId())]];
         $dataObject->sections = is_null($dataObject->publishedArticle) ?
-            [] : [(object) ['source_record_key' => \Section::class.':'.$dataObject->publishedArticle->getSectionId()]];
+            [] : [(object) ['source_record_key' => SourceRecordKeyUtility::section($dataObject->publishedArticle->getSectionId())]];
 
         return $dataObject;
     }

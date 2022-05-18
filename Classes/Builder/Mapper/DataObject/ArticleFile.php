@@ -16,6 +16,7 @@ class ArticleFile  extends AbstractDataObjectMapper {
         ['property' => 'originalFilename'],
         ['property' => 'dateUploaded', 'filters' => ['datetime']],
         ['property' => 'type'],
+        ['property' => 'round', 'filters' => ['integer']],
         ['property' => 'parentSourceRecordKey', 'onError' => null],
         ['property' => 'isGalleyFile', 'onError' => false],
         ['property' => 'isSupplementaryFile', 'onError' => false],
@@ -56,8 +57,9 @@ class ArticleFile  extends AbstractDataObjectMapper {
         }
 
         // Here's where we would define the $textFields for ArticleFiles that are not supps or galleys
+        // TODO: at some point, we might want to set values programatically for title, description, creator, etc.
         if(!property_exists($dataObject, 'settings')) {
-            $dataObject->settings = [ 'title' => '**NOT IMPLEMENTED YET**'];
+            $dataObject->settings = [ 'title' => ''];
         }
 
         return $dataObject;
