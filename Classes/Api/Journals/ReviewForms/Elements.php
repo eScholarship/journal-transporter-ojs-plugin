@@ -1,10 +1,10 @@
-<?php namespace JournalTransporterPlugin\Api\Journals;
+<?php namespace JournalTransporterPlugin\Api\Journals\ReviewForms;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Utility\DataObjectUtility;
 
-class ReviewFormElements extends ApiRoute  {
+class Elements extends ApiRoute  {
     protected $journalRepository;
     protected $reviewFormRepository;
     protected $reviewFormElementRepository;
