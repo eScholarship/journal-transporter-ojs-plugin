@@ -26,7 +26,7 @@ class Reviews extends ApiRoute  {
             $editorDecisions[$i] = $this->sectionEditorSubmissionRepository->fetchEditorDecisionsByArticle($article, $i);
         }
         $flattenedEditorDecisions = array_merge([], ...$editorDecisions);
-        #print_r($flattenedEditorDecisions); die();
+
         return [
             'editors' => array_map(function($item) {
                 return NestedMapper::map($item);

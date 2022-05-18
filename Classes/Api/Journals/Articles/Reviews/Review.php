@@ -9,6 +9,7 @@ class Review extends ApiRoute  {
     protected $articleRepository;
     protected $reviewAssignmentRepository;
     protected $sectionEditorSubmissionRepository;
+    protected $reviewFormResponseRepository;
 
     /**
      * @param array $parameters
@@ -23,6 +24,8 @@ class Review extends ApiRoute  {
         $reviewId = (int) $parameters['review'];
 
         if($reviewId > 0) {
+            // There doesn't seem to be a way to get review assignments by id, so we do it this way so that we're
+            // sure that we're showing a review assignment associated with the article.
             foreach($reviewAssignments as $reviewAssignment) {
                 if((int) $reviewId !== (int) $reviewAssignment->getId()) continue;
                 if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObjectUtility::dataObjectToArray($reviewAssignment);

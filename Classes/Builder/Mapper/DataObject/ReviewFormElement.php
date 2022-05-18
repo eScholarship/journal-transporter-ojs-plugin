@@ -14,12 +14,20 @@ class ReviewFormElement extends AbstractDataObjectMapper
         ['property' => 'responses'],
     ];
 
+    /**
+     * @param $dataObject
+     * @return mixed
+     */
     protected static function preMap($dataObject) {
         $dataObject->type = self::getElementType($dataObject->getElementType());
         $dataObject->responses = self::getFormattedResponses($dataObject->getLocalizedPossibleResponses());
         return $dataObject;
     }
 
+    /**
+     * @param $responses
+     * @return object[]|null
+     */
     protected static function getFormattedResponses($responses) {
         if(is_null($responses)) return null;
         return array_map(
@@ -28,8 +36,13 @@ class ReviewFormElement extends AbstractDataObjectMapper
         );
     }
 
+    /**
+     * @param $type
+     * @return string
+     */
     protected static function getElementType($type)
     {
+        # See: classes/reviewForm/ReviewFormElement.inc.php
         return @[
             REVIEW_FORM_ELEMENT_TYPE_SMALL_TEXT_FIELD => 'small_text',
             REVIEW_FORM_ELEMENT_TYPE_TEXT_FIELD => 'text',
