@@ -9,7 +9,7 @@ class ReviewFormElement extends AbstractDataObjectMapper
         ['property' => 'sequence', 'filters' => ['integer']],
         ['property' => 'type'],
         ['property' => 'required', 'filters' => ['boolean']],
-        ['property' => 'included', 'filters' => ['boolean']],
+        ['property' => 'visible_to_author', 'source' => 'included', 'filters' => ['boolean']],
         ['property' => 'question', 'source' => 'localizedQuestion', 'filters' => ['html']],
         ['property' => 'responses'],
     ];
