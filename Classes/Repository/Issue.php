@@ -3,25 +3,47 @@
 use JournalTransporterPlugin\Utility\DAOFactory;
 
 class Issue {
+    use Repository;
 
+    /**
+     * @var string
+     */
+    protected $DAO = 'issue';
+
+    /**
+     * @param $journal
+     * @return mixed
+     */
     public function fetchByJournal($journal)
     {
-        return DAOFactory::get()->getDAO('issue')->getIssues($journal->getId());
+        return $this->getIssues($journal->getId());
     }
 
+    /**
+     * @param $id
+     * @param $journal
+     * @return mixed
+     */
     public function fetchByIdAndJournal($id, $journal)
     {
-        return DAOFactory::get()->getDAO('issue')->getIssueById($id, $journal->getId());
+        return $this->getIssueById($id, $journal->getId());
     }
 
+    /**
+     * @param $journal
+     * @return mixed
+     */
     public function fetchPublishedByJournal($journal)
     {
-        return DAOFactory::get()->getDAO('issue')->getPublishedIssues($journal->getId());
+        return $this->getPublishedIssues($journal->getId());
     }
 
+    /**
+     * @param $journal
+     * @return mixed
+     */
     public function fetchUnpublishedByJournal($journal)
     {
-        return DAOFactory::get()->getDAO('issue')->getUnpublishedIssues($journal->getId());
+        return $this->getUnpublishedIssues($journal->getId());
     }
-
 }

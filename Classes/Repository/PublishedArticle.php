@@ -3,8 +3,19 @@
 use JournalTransporterPlugin\Utility\DAOFactory;
 
 class PublishedArticle {
+    use Repository;
+
+    /**
+     * @var string
+     */
+    protected $DAO = 'publishedArticle';
+
+    /**
+     * @param $article
+     * @return mixed
+     */
     public function fetchByArticle($article)
     {
-        return DAOFactory::get()->getDAO('publishedArticle')->getPublishedArticleByArticleId($article->getId());
+        return $this->getPublishedArticleByArticleId($article->getId());
     }
 }

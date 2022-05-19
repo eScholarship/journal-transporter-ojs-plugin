@@ -3,7 +3,19 @@
 use JournalTransporterPlugin\Utility\DAOFactory;
 
 class EditorSubmission {
+    use Repository;
+
+    /**
+     * @var string
+     */
+    protected $DAO = 'editorSubmission';
+
+    /**
+     * @param $article
+     * @param null $round
+     * @return mixed
+     */
     public function fetchEditorDecisionsByArticle($article, $round = null) {
-        return DAOFactory::get()->getDAO('editorSubmission')->getEditorDecisions($article->getId(), $round);
+        return $this->getEditorDecisions($article->getId(), $round);
     }
 }

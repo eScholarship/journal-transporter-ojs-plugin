@@ -3,15 +3,30 @@
 use JournalTransporterPlugin\Utility\DAOFactory;
 
 class Section {
+    use Repository;
 
+    /**
+     * @var string
+     */
+    protected $DAO = 'section';
+
+    /**
+     * @param $journal
+     * @return mixed
+     */
     public function fetchByJournal($journal)
     {
-        return DAOFactory::get()->getDAO('section')->getJournalSections($journal->getId());
+        return $this->getJournalSections($journal->getId());
     }
 
+    /**
+     * @param $id
+     * @param $journal
+     * @return mixed
+     */
     public function fetchByIdAndJournal($id, $journal)
     {
-        return DAOFactory::get()->getDAO('section')->getSection($id, $journal->getId());
+        return $this->getSection($id, $journal->getId());
     }
 
 }

@@ -2,10 +2,20 @@
 
 use JournalTransporterPlugin\Utility\DAOFactory;
 
-class GalleyFile
-{
+class GalleyFile {
+    use Repository;
+
+    /**
+     * @var string
+     */
+    protected $DAO = 'articleGalley';
+
+    /**
+     * @param $article
+     * @return mixed
+     */
     public function fetchByArticle($article)
     {
-        return DAOFactory::get()->getDAO('articleGalley')->getGalleysByArticle($article->getId());
+        return $this->getGalleysByArticle($article->getId());
     }
 }

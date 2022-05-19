@@ -3,15 +3,29 @@
 use JournalTransporterPlugin\Utility\DAOFactory;
 
 class Role {
+    use Repository;
 
+    /**
+     * @var string
+     */
+    protected $DAO = 'role';
+
+    /**
+     * @param $journal
+     * @return mixed
+     */
     public function fetchByJournal($journal)
     {
-        return DAOFactory::get()->getDAO('role')->getUsersByJournalId($journal->getId());
+        return $this->getUsersByJournalId($journal->getId());
     }
 
+    /**
+     * @param $user
+     * @param $journal
+     * @return mixed
+     */
     public function fetchByUserAndJournal($user, $journal)
     {
-        return DAOFactory::get()->getDAO('role')->getRolesByUserId($user->getId(), $journal->getId());
+        return $this->getRolesByUserId($user->getId(), $journal->getId());
     }
-
 }

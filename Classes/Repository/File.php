@@ -2,15 +2,21 @@
 
 use JournalTransporterPlugin\Utility\DAOFactory;
 
-class File
-{
+class File {
+    use Repository;
+
+    /**
+     * @var string
+     */
+    protected $DAO = 'articleFile';
+
     /**
      * @param $id file id
      * @return mixed
      */
     public function fetchById($id, $revision = null)
     {
-        return DAOFactory::get()->getDAO('articleFile')->getArticleFile($id, $revision);
+        return $this->getArticleFile($id, $revision);
     }
 
     /**
@@ -19,7 +25,7 @@ class File
      */
     public function fetchByIdAndArticle($id, $article, $revision = null)
     {
-        return DAOFactory::get()->getDAO('articleFile')->getArticleFile($id, $revision, $article->getId());
+        return $this->getArticleFile($id, $revision, $article->getId());
     }
 
     /**
@@ -28,7 +34,7 @@ class File
      */
     public function fetchByArticle($article)
     {
-        return DAOFactory::get()->getDAO('articleFile')->getArticleFilesByArticle($article->getId());
+        return $this->getArticleFilesByArticle($article->getId());
     }
 
     /**
@@ -37,7 +43,7 @@ class File
      */
     public function fetchRevisionsByFile($file)
     {
-        return DAOFactory::get()->getDAO('articleFile')->getArticleFileRevisions($file->getFileId());
+        return $this->getArticleFileRevisions($file->getFileId());
     }
 
     /**
@@ -47,7 +53,6 @@ class File
      */
     public function fetchFileRevisionsUpTo($file, $upTo)
     {
-        return DAOFactory::get()->getDAO('articleFile')->
-            getArticleFileRevisionsInRange($file->getFileId(), 1, $upTo);
+        return $this->getArticleFileRevisionsInRange($file->getFileId(), 1, $upTo);
     }
 }
