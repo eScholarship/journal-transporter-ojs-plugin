@@ -1,8 +1,9 @@
-<?php namespace JournalTransporterPlugin\Api\Journals\Articles\Reviews\Review;
+<?php namespace JournalTransporterPlugin\Api\Journals\Articles\Rounds\ReviewAssignments;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
 
 class FormResponses extends ApiRoute  {
     protected $journalRepository;
@@ -31,9 +32,10 @@ class FormResponses extends ApiRoute  {
         if(is_null($reviewAssignment)) throw new \Exception("ReviewAssignment $reviewAssignmentId not found");
 
         $responses = $this->reviewFormResponseRepository->fetchByReview($reviewAssignment);
+
         $responseOutput = [];
         foreach($responses as $formElementId => $responseValue) {
-            $responseOutput[] = $this->formatResponse($formElementId, $responseValue);
+            $responseOutput[] = $this->formatResponse($reviewAssignment, $formElementId, $responseValue);
         }
         return $responseOutput;
     }
@@ -43,11 +45,10 @@ class FormResponses extends ApiRoute  {
      * @param $responseValue
      * @return object
      */
-    protected function formatResponse($formElementId, $responseValue) {
+    protected function formatResponse($reviewAssignment, $formElementId, $responseValue) {
         $reviewFormElement = $this->reviewFormElementRepository->fetchOneById($formElementId);
 
-        // TODO: to reduce the reviewFormElement to just a sourceRecordKey, add 'sourceRecordKey' as the context
-        // in the second argument of map()
-        return (object)['reviewFormElement' => NestedMapper::map($reviewFormElement), 'responseValue' => $responseValue];
+        // To show form element, remove 'sourceRecordKey' value from the reviewFormElement to just a sourceRecordKey
+        return (object)['reviewFormElement' => NestedMapper::map($reviewFormElement, 'sourceRecordKey'), 'responseValue' => $responseValue];
     }
 }

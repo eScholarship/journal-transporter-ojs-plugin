@@ -2,6 +2,7 @@
 
 use JournalTransporterPlugin\Repository\PublishedArticle;
 use JournalTransporterPlugin\Repository\AuthorSubmission;
+use JournalTransporterPlugin\Repository\EditAssignment;
 use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
 
 class Article extends AbstractDataObjectMapper {
@@ -13,8 +14,9 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'title', 'source' => 'articleTitle'],
         ['property' => 'abstract', 'source' => 'localizedAbstract', 'filters' => ['html']],
         ['property' => 'coverLetter', 'source' => 'commentsToEditor', 'filters' => ['html']],
+        // TODO: this outputs a reference like disc1540 (reference to rt_versions table)
         ['property' => 'discipline', 'source' => 'localizedDiscipline'],
-        ['property' => 'authors', 'context' => 'sourceRecordKey'], // TODO: this outputs a reference like disc1540 (reference to rt_versions table)
+        ['property' => 'authors', 'context' => 'sourceRecordKey'],
         ['property' => 'language'],
         ['property' => 'dateStarted', 'source' => 'dateSubmitted', 'filters' => ['datetime']],
         ['property' => 'dateSubmitted', 'filters' => ['datetime']],
@@ -27,7 +29,8 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'mostRecentEditorDecision'],
         ['property' => 'status', 'source' => 'publicationStatus'],
         ['property' => 'issues'],
-        ['property' => 'sections']
+        ['property' => 'sections'],
+        ['property' => 'editors', 'context' => 'sourceRecordKey']
     ];
 
     /**
@@ -35,7 +38,8 @@ class Article extends AbstractDataObjectMapper {
      * @param $dataObject
      * @return mixed
      */
-    protected static function preMap($dataObject, $context) {
+    protected static function preMap($dataObject, $context)
+    {
         // Add the publishedArticle onto the article -- it has some useful info not on the article
         $dataObject->authorSubmission = (new AuthorSubmission)->fetchByArticle($dataObject);
         $dataObject->publishedArticle = (new PublishedArticle)->fetchByArticle($dataObject);
@@ -49,14 +53,27 @@ class Article extends AbstractDataObjectMapper {
         $dataObject->sections = is_null($dataObject->publishedArticle) ?
             [] : [(object) ['source_record_key' => SourceRecordKeyUtility::section($dataObject->publishedArticle->getSectionId())]];
 
+        $dataObject->editors = self::getEditors($dataObject);
+
         return $dataObject;
     }
+
+    /**
+     * @param $dataObject
+     * @return array
+     */
+    protected static function getEditors($dataObject)
+    {
+        return (new EditAssignment)->fetchByArticle($dataObject)->toArray();
+    }
+
 
     /**
      * TODO: Might want to move this out of the Mapper class into Repository
      * @param $dataObject
      */
-    protected static function getMostRecentEditorDecision($dataObject) {
+    protected static function getMostRecentEditorDecision($dataObject)
+    {
         $editorDecisions = (new AuthorSubmission)->fetchEditorDecisionsByArticle($dataObject);
 
         if(count($editorDecisions) == 0) return [];
@@ -76,10 +93,9 @@ class Article extends AbstractDataObjectMapper {
     /**
      * @param $status
      */
-    protected static function mapJournalStatus($status) {
-        // TODO: this mapping probably isn't quite right; also this mapping should probably go somewhere else
-        // TODO: also this is a weird construction I've made here
-        // TODO: also we're missing some stages: copyediting, typesetting, proofing, maybe others
+    protected static function mapJournalStatus($status)
+    {
+        // TODO: we're missing some stages: copyediting, typesetting, proofing, maybe others
         return @[STATUS_ARCHIVED => 'archived',
                  STATUS_QUEUED => 'submitted',
                  STATUS_PUBLISHED => 'published',

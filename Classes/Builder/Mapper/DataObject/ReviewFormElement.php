@@ -1,5 +1,7 @@
 <?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
+use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
+
 class ReviewFormElement extends AbstractDataObjectMapper
 {
     protected static $contexts = ['index' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'type']]];

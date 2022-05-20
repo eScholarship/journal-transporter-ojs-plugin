@@ -38,7 +38,7 @@ class Controller {
             list($head, $tail) = explode('?', $this->args[0], 2);
             foreach ($this->routes as $route => $class) {
                 $matches = [];
-                if (preg_match('~' . $route . '~', $head, $matches)) {
+                if (preg_match('~^' . $route . '$~', $head, $matches)) {
                     $out = $this->callRouteHandler($route, $class, $matches, $this->parseArguments($tail));
                     break;
                 }

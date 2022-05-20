@@ -2,6 +2,8 @@
 
 use JournalTransporterPlugin\Repository\ArticleComment;
 use JournalTransporterPlugin\Repository\Article;
+use JournalTransporterPlugin\Repository\ReviewFormResponse;
+use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
 
 class ReviewAssignment extends AbstractDataObjectMapper {
 
@@ -31,6 +33,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         ['property' => 'reviewerFile', 'context' => 'sourceRecordKey'],
         ['property' => 'comments', 'source' => 'reviewComments'],
         ['property' => 'quality', 'source' => 'qualityText'],
+        ['property' => 'hasResponse', 'filter' => ['boolean']]
     ];
 
     /**
@@ -38,11 +41,10 @@ class ReviewAssignment extends AbstractDataObjectMapper {
      * @param $dataObject
      * @return mixed
      */
-    protected static function preMap($dataObject, $context) {
-        // TODO: we are generating a reference to another source record key here; we'll likely need another way to do
-        // this
+    protected static function preMap($dataObject, $context)
+    {
         $dataObject->reviewer = is_null($dataObject->getReviewerId()) ?
-            null : (object) ['source_record_key' => \User::class.':'.$dataObject->getReviewerId()];
+            null : (object) ['source_record_key' => SourceRecordKeyUtility::reviewer($dataObject->getReviewerId())];
 
         // TODO: Could improve performance by caching this article, or storing it for the next iteration
         $article = (new Article)->fetchById($dataObject->getArticleId());
@@ -51,10 +53,24 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         $dataObject->recommendationText = self::getRecommendationText($dataObject);
         $dataObject->reviewTypeText = self::getReviewTypeText($dataObject);
         $dataObject->qualityText = self::getQualityText($dataObject);
+        $dataObject->hasResponse = self::getHasResponse($dataObject);
 
         return $dataObject;
     }
 
+    /**
+     * @param $dataObject
+     * @return mixed
+     */
+    protected static function getHasResponse($dataObject)
+    {
+        return count((new ReviewFormResponse)->fetchByReview($dataObject)) > 0;
+    }
+
+    /**
+     * @param $reviewAssignment
+     * @return string
+     */
     protected static function getRecommendationText($reviewAssignment)
     {
         return @[
@@ -72,14 +88,18 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         // See: lib/pkp/classes/submission/reviewAssignment/PKPReviewAssignment.inc.php
         // The constants aren't working here
         return @[
-            SUBMISSION_REVIEW_METHOD_BLIND => 'blind',
-            SUBMISSION_REVIEW_METHOD_DOUBLEBLIND => 'double_blind',
-            SUBMISSION_REVIEW_METHOD_OPEN => 'open'
+            1 => 'blind',
+            2 => 'double_blind',
+            3 => 'open'
         ][$reviewAssignment->getReviewType()];
     }
 
+    /**
+     * @param $reviewAssignment
+     * @return float|int|null
+     */
     protected static function getQualityText($reviewAssignment) {
-        // Go from 1 - 5 range to 20 - 100
+        if(is_null($reviewAssignment->getQuality())) return null;
         return $reviewAssignment->getQuality() * 20;
     }
 }

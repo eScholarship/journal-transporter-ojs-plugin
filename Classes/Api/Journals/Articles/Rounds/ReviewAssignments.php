@@ -1,10 +1,10 @@
-<?php namespace JournalTransporterPlugin\Api\Journals\Articles\Reviews;
+<?php namespace JournalTransporterPlugin\Api\Journals\Articles\Rounds;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Utility\DataObjectUtility;
 
-class Review extends ApiRoute  {
+class ReviewAssignments extends ApiRoute  {
     protected $journalRepository;
     protected $articleRepository;
     protected $reviewAssignmentRepository;
