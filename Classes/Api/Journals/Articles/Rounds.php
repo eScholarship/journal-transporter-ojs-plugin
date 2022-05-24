@@ -53,7 +53,7 @@ class Rounds extends ApiRoute  {
     protected function getRound($article, $round)
     {
         $editorDecisions = $this->sectionEditorSubmissionRepository->fetchEditorDecisionsByArticle($article, $round);
-        $flattenedEditorDecisions = [array_merge([], ...$editorDecisions)];
+        $flattenedEditorDecisions = array_merge([], $editorDecisions);
 
         return array_map(function ($item) {
             return NestedMapper::map((object)($item + ['__mapperClass' => 'EditorDecision']));
