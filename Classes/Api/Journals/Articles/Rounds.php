@@ -3,12 +3,14 @@
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Utility\DateUtility;
 use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
 
 class Rounds extends ApiRoute  {
     protected $journalRepository;
     protected $articleRepository;
     protected $sectionEditorSubmissionRepository;
+    protected $editAssignmentRepository;
 
     /**
      * @param array $parameters
@@ -52,12 +54,16 @@ class Rounds extends ApiRoute  {
      */
     protected function getRound($article, $round)
     {
-        $editorDecisions = $this->sectionEditorSubmissionRepository->fetchEditorDecisionsByArticle($article, $round);
-        $flattenedEditorDecisions = array_merge([], $editorDecisions);
+        // These are ordered ASC by date
+        $assignments = $this->editAssignmentRepository->fetchByArticle($article)->toArray();
+        $dateUnderway = null;
+        if(count($assignments)) {
+            $dateUnderway = $assignments[0]->getDateUnderway();
+        }
 
-        return array_map(function ($item) {
-            return NestedMapper::map((object)($item + ['__mapperClass' => 'EditorDecision']));
-        }, $flattenedEditorDecisions);
+        return (object)[
+            'round' => $round,
+            'date' => DateUtility::formatDateString( $dateUnderway ?: $article->getLastModified())
+        ];
     }
-
 }
