@@ -2,6 +2,7 @@
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Utility\DateUtility;
+use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
 
 class AbstractDataObjectMapper {
 
@@ -53,6 +54,10 @@ class AbstractDataObjectMapper {
                     $value = NestedMapper::map(self::getFieldValue($source, $dataObject, $onError), $internalContext);
                 }
 
+                if(array_key_exists('sourceRecordKey', $mappingConfig)) {
+                    $value = self::toSourceRecordKey($mappingConfig['sourceRecordKey'], $value);
+                }
+
                 // Process filters that transform values
                 if (array_key_exists('filters', $mappingConfig)) {
                     foreach ($mappingConfig['filters'] as $filter) {
@@ -71,7 +76,7 @@ class AbstractDataObjectMapper {
      * @param $str
      * @return mixed|string
      */
-    protected function camelToSnake($str)
+    protected static function camelToSnake($str)
     {
         if(array_key_exists($str, self::CAMEL_TO_SNAKE_EXCEPTIONS)) return self::CAMEL_TO_SNAKE_EXCEPTIONS[$str];
 
@@ -81,6 +86,18 @@ class AbstractDataObjectMapper {
         $str = lcfirst($str);
         $str = preg_replace("/[A-Z]/", '_' . "$0", $str);
         return strtolower($str);
+    }
+
+    /**
+     * @param $type
+     * @param $id
+     * @return mixed
+     */
+    protected static function toSourceRecordKey($type, $id)
+    {
+        if(method_exists(SourceRecordKeyUtility::class, $type))
+            return (object) ['source_record_key' => SourceRecordKeyUtility::$type($id)];
+        throw new \Exception("Can't generate source record key for $type");
     }
 
     /**

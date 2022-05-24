@@ -12,6 +12,7 @@ use JournalTransporterPlugin\Api\Journals\Articles\Files\Revisions;
 use JournalTransporterPlugin\Api\Journals\Articles\Rounds;
 use JournalTransporterPlugin\Api\Journals\Articles\Rounds\ReviewAssignments;
 use JournalTransporterPlugin\Api\Journals\Articles\Rounds\ReviewAssignments\FormResponses;
+use JournalTransporterPlugin\Api\Journals\Articles\Rounds\ReviewAssignments\Notes;
 use JournalTransporterPlugin\Api\Journals\Articles\Synthetics\History;
 use JournalTransporterPlugin\Api\Journals\Issues;
 use JournalTransporterPlugin\Api\Journals\ReviewForms;
@@ -41,6 +42,7 @@ return [
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/digest/log' => Log::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/rounds/(?P<round>\d+)/assignments(/(?P<review_assignment>\d+))?' => ReviewAssignments::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/rounds/(?P<round>\d+)/assignments/(?P<review_assignment>\d+)/response' => FormResponses::class,
+    '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/rounds/(?P<round>\d+)/assignments/(?P<review_assignment>\d+)/notes' => Notes::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/rounds(/(?P<round>\d)+)?' => Rounds::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/synthetics/history' => History::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/review_forms(/(?P<review_form>\d+))?' => ReviewForms::class,

@@ -6,7 +6,26 @@ class SourceRecordKeyUtility
      * @param $id
      * @return string
      */
-    static public function editor($id) {
+    static public function editor($id)
+    {
+        return self::user($id);
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
+    static public function reviewer($id)
+    {
+        return self::user($id);
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
+    static public function user($id)
+    {
         return \User::class.':'.$id;
     }
 
@@ -14,15 +33,8 @@ class SourceRecordKeyUtility
      * @param $id
      * @return string
      */
-    static public function reviewer($id) {
-        return \User::class.':'.$id;
-    }
-
-    /**
-     * @param $id
-     * @return string
-     */
-    static public function issue($id) {
+    static public function issue($id)
+    {
         return \Issue::class.':'.$id;
     }
 
@@ -30,7 +42,8 @@ class SourceRecordKeyUtility
      * @param $id
      * @return string
      */
-    static public function section($id) {
+    static public function section($id)
+    {
         return \Section::class.':'.$id;
     }
 
@@ -38,8 +51,18 @@ class SourceRecordKeyUtility
      * @param $id
      * @return string
      */
-    static public function reviewForm($id) {
+    static public function reviewForm($id)
+    {
         return \ReviewForm::class.':'.$id;
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
+    static public function reviewAssignment($id)
+    {
+        return \ReviewAssignment::class.':'.$id;
     }
 
     /**
@@ -48,7 +71,8 @@ class SourceRecordKeyUtility
      * @param $round
      * @return string
      */
-    static public function round($articleId, $round) {
+    static public function round($articleId, $round)
+    {
         return 'ReviewRound:'.$articleId.':'.$round;
     }
 }

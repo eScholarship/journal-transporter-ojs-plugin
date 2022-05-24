@@ -31,12 +31,17 @@ class DAOFactory {
      * @return mixed
      */
     public function getDAO($daoName) {
-        if(!array_key_exists($daoName, $this->DAOInstances)) {
-            // This function will fatal error if the DAO isn't registered. Fine.
-            $daoInstance = DAORegistry::getDAO(ucwords($daoName) . "DAO");
-            $this->DAOInstances[$daoName] = $daoInstance;
+        $ucDaoName = ucwords($daoName);
+        if(!array_key_exists($ucDaoName, $this->DAOInstances)) {
+            $inheritedClassName = 'JournalTransporterPlugin\\DAO\\'.$ucDaoName;
+            if(class_exists($inheritedClassName)) {
+                $this->DAOInstances[$ucDaoName] = new $inheritedClassName;
+            } else {
+                // This function will fatal error if the DAO isn't registered. Fine.
+                $daoInstance = DAORegistry::getDAO(ucwords($ucDaoName) . "DAO");
+                $this->DAOInstances[$ucDaoName] = $daoInstance;
+            }
         }
-
-        return $this->DAOInstances[$daoName];
+        return $this->DAOInstances[$ucDaoName];
     }
 }
