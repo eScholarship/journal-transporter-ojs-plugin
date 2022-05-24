@@ -13,6 +13,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         ['property' => 'round'],
         ['property' => 'reviewType', 'source' => 'reviewTypeText'],
         ['property' => 'reviewMethod'],
+        ['property' => 'competingInterests'],
         ['property' => 'recommendation', 'source' => 'recommendationText'],
         ['property' => 'fullName', 'source' => 'reviewerFullName'],
         ['property' => 'dateRated', 'filters' => ['datetime']],
