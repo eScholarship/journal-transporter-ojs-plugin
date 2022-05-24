@@ -33,7 +33,8 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         ['property' => 'reviewerFile', 'context' => 'sourceRecordKey'],
         ['property' => 'comments', 'source' => 'reviewComments'],
         ['property' => 'quality', 'source' => 'qualityText'],
-        ['property' => 'hasResponse', 'filter' => ['boolean']]
+        ['property' => 'hasResponse', 'filter' => ['boolean']],
+        ['property' => 'reviewForm']
     ];
 
     /**
@@ -54,8 +55,19 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         $dataObject->reviewTypeText = self::getReviewTypeText($dataObject);
         $dataObject->qualityText = self::getQualityText($dataObject);
         $dataObject->hasResponse = self::getHasResponse($dataObject);
+        $dataObject->reviewForm = self::getReviewFormSourceRecordKey($dataObject);
 
         return $dataObject;
+    }
+
+    /**
+     * @param $dataObject
+     * @return object
+     */
+    protected static function getReviewFormSourceRecordKey($dataObject)
+    {
+        if(is_null($dataObject)) return null;
+        return (object)['source_record_key' => SourceRecordKeyUtility::reviewForm($dataObject->getReviewFormId())];
     }
 
     /**

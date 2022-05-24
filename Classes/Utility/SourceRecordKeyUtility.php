@@ -35,6 +35,14 @@ class SourceRecordKeyUtility
     }
 
     /**
+     * @param $id
+     * @return string
+     */
+    static public function reviewForm($id) {
+        return \ReviewForm::class.':'.$id;
+    }
+
+    /**
      * Not a real class in OJS
      * @param $articleId
      * @param $round
