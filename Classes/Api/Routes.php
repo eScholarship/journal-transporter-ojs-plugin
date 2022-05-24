@@ -4,6 +4,7 @@ use JournalTransporterPlugin\Api\Files;
 use JournalTransporterPlugin\Api\Journals;
 use JournalTransporterPlugin\Api\Journals\Articles;
 use JournalTransporterPlugin\Api\Journals\Articles\Authors as ArticleAuthors;
+use JournalTransporterPlugin\Api\Journals\Articles\Editors;
 use JournalTransporterPlugin\Api\Journals\Articles\Digest\Emails;
 use JournalTransporterPlugin\Api\Journals\Articles\Digest\Log;
 use JournalTransporterPlugin\Api\Journals\Articles\Files as ArticleFiles;
@@ -36,6 +37,7 @@ return [
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/files/(?P<file>\d+)/revisions' => Revisions::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/files(/(?P<file>(\d+|\d+-\d+)))?' => ArticleFiles::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/authors' => ArticleAuthors::class,
+    '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/editors' => Editors::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/digest/log' => Log::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/rounds/(?P<round>\d+)/assignments(/(?P<review_assignment>\d+))?' => ReviewAssignments::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/rounds/(?P<round>\d+)/assignments/(?P<review_assignment>\d+)/response' => FormResponses::class,

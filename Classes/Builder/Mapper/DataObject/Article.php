@@ -29,8 +29,7 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'mostRecentEditorDecision'],
         ['property' => 'status', 'source' => 'publicationStatus'],
         ['property' => 'issues'],
-        ['property' => 'sections'],
-        ['property' => 'editors', 'context' => 'sourceRecordKey']
+        ['property' => 'sections']
     ];
 
     /**
@@ -53,18 +52,7 @@ class Article extends AbstractDataObjectMapper {
         $dataObject->sections = is_null($dataObject->publishedArticle) ?
             [] : [(object) ['source_record_key' => SourceRecordKeyUtility::section($dataObject->publishedArticle->getSectionId())]];
 
-        $dataObject->editors = self::getEditors($dataObject);
-
         return $dataObject;
-    }
-
-    /**
-     * @param $dataObject
-     * @return array
-     */
-    protected static function getEditors($dataObject)
-    {
-        return (new EditAssignment)->fetchByArticle($dataObject)->toArray();
     }
 
 
