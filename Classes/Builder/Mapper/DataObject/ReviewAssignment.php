@@ -67,7 +67,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
      */
     protected static function getReviewFormSourceRecordKey($dataObject)
     {
-        if(is_null($dataObject)) return null;
+        if(is_null($dataObject->getReviewFormId())) return null;
         return (object)['source_record_key' => SourceRecordKeyUtility::reviewForm($dataObject->getReviewFormId())];
     }
 
