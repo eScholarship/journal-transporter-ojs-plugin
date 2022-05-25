@@ -62,6 +62,7 @@ class Rounds extends ApiRoute  {
         }
 
         return (object)[
+            'source_record_key' => SourceRecordKeyUtility::round($article->getId(), $round),
             'round' => $round,
             'date' => DateUtility::formatDateString( $dateUnderway ?: $article->getLastModified())
         ];
