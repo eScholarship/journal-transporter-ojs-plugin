@@ -2,9 +2,9 @@
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
-use JournalTransporterPlugin\Utility\DataObjectUtility;
-use JournalTransporterPlugin\Utility\DateUtility;
-use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
+use JournalTransporterPlugin\Utility\DataObject;
+use JournalTransporterPlugin\Utility\Date;
+use JournalTransporterPlugin\Utility\SourceRecordKey;
 
 class Rounds extends ApiRoute  {
     protected $journalRepository;
@@ -41,7 +41,7 @@ class Rounds extends ApiRoute  {
     {
         $out = [];
         for($i = 1; $i <= $numberOfRounds; $i++) {
-            $out[] = (object)['source_record_key' => SourceRecordKeyUtility::round($article->getId(), $i)];
+            $out[] = (object)['source_record_key' => SourceRecordKey::round($article->getId(), $i)];
         }
         return $out;
     }
@@ -62,9 +62,9 @@ class Rounds extends ApiRoute  {
         }
 
         return (object)[
-            'source_record_key' => SourceRecordKeyUtility::round($article->getId(), $round),
+            'source_record_key' => SourceRecordKey::round($article->getId(), $round),
             'round' => $round,
-            'date' => DateUtility::formatDateString( $dateUnderway ?: $article->getLastModified())
+            'date' => Date::formatDateString( $dateUnderway ?: $article->getLastModified())
         ];
     }
 }

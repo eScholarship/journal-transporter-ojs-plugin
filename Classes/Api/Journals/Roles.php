@@ -2,8 +2,8 @@
 
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
-use JournalTransporterPlugin\Utility\DAOFactory;
-use JournalTransporterPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Utility\DataObject;
+use JournalTransporterPlugin\Utility\Role;
 
 class Roles extends ApiRoute  {
     protected $journalRepository;
@@ -19,12 +19,11 @@ class Roles extends ApiRoute  {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
         $resultSet = $this->roleRepository->fetchByJournal($journal);
 
-        if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObjectUtility::resultSetToArray($resultSet);
+        if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObject::resultSetToArray($resultSet);
 
-        $roleDAO = DAOFactory::get()->getDAO('role');
-        return array_map(function($item) use($journal, $roleDAO) {
-            $roles = array_map(function($role) use($roleDAO) {
-                return str_replace('user.role.', '', $roleDAO->getRoleName($role->_data['roleId']));
+        return array_map(function($item) use($journal) {
+            $roles = array_map(function($role) {
+                return Role::getRoleName($role->getRoleId());
             }, $this->roleRepository->fetchByUserAndJournal($item, $journal));
 
             $user = NestedMapper::map($item, 'roles');

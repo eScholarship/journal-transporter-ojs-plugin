@@ -1,6 +1,6 @@
 <?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
-use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
+use JournalTransporterPlugin\Utility\SourceRecordKey;
 
 class EditorDecision extends AbstractDataObjectMapper {
     protected static $mapping = [
@@ -25,7 +25,7 @@ class EditorDecision extends AbstractDataObjectMapper {
             4 => 'decline'
         ][(int) $dataObject->decision];
 
-        $dataObject->editor = (object)['source_record_key' => SourceRecordKeyUtility::editor($dataObject->editorId)];
+        $dataObject->editor = (object)['source_record_key' => SourceRecordKey::editor($dataObject->editorId)];
 
         return $dataObject;
     }

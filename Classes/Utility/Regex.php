@@ -1,6 +1,6 @@
 <?php namespace JournalTransporterPlugin\Utility;
 
-class RegexUtility
+class Regex
 {
     /**
      * Extract the named matches from a regex, with a regex!

@@ -1,6 +1,6 @@
 <?php namespace JournalTransporterPlugin\Utility;
 
-class DataObjectUtility {
+class DataObject {
     /**
      * Given a resultSet returns an array of data objects cast as arrays
      * @param $resultSet
@@ -9,7 +9,7 @@ class DataObjectUtility {
     public static function resultSetToArray($resultSet, $exclude = ['allData']) {
         return array_map(
             function($dataObject) use($exclude) {
-              return DataObjectUtility::dataObjectToArray($dataObject, $exclude);
+              return DataObject::dataObjectToArray($dataObject, $exclude);
             },
             $resultSet->toArray()
         );

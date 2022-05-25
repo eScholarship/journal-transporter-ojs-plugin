@@ -3,7 +3,7 @@
 use JournalTransporterPlugin\Repository\PublishedArticle;
 use JournalTransporterPlugin\Repository\AuthorSubmission;
 use JournalTransporterPlugin\Repository\EditAssignment;
-use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
+use JournalTransporterPlugin\Utility\SourceRecordKey;
 
 class Article extends AbstractDataObjectMapper {
     protected static $contexts = ['index' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title', 'datePublished']]];
@@ -48,9 +48,9 @@ class Article extends AbstractDataObjectMapper {
         $dataObject->publicationStatus = self::mapJournalStatus($dataObject->getStatus());
 
         $dataObject->issues = is_null($dataObject->publishedArticle) ?
-            [] : [(object) ['source_record_key' => SourceRecordKeyUtility::issue($dataObject->publishedArticle->getIssueId())]];
+            [] : [(object) ['source_record_key' => SourceRecordKey::issue($dataObject->publishedArticle->getIssueId())]];
         $dataObject->sections = is_null($dataObject->publishedArticle) ?
-            [] : [(object) ['source_record_key' => SourceRecordKeyUtility::section($dataObject->publishedArticle->getSectionId())]];
+            [] : [(object) ['source_record_key' => SourceRecordKey::section($dataObject->publishedArticle->getSectionId())]];
 
         return $dataObject;
     }

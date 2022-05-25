@@ -1,6 +1,6 @@
 <?php namespace JournalTransporterPlugin\Api;
 
-use JournalTransporterPlugin\Utility\RegexUtility;
+use JournalTransporterPlugin\Utility\Regex;
 
 class Controller {
 
@@ -57,7 +57,7 @@ class Controller {
      * @return array
      */
     private function callRouteHandler($route, $class, $routeParameters, $arguments = []) {
-        $parameters = $this->zipArgs($routeParameters, RegexUtility::getRegexNamedMatches($route));
+        $parameters = $this->zipArgs($routeParameters, Regex::getRegexNamedMatches($route));
 
         try {
             $out = (new $class($routeParameters))->execute($parameters, $arguments);

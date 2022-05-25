@@ -1,7 +1,7 @@
 <?php namespace JournalTransporterPlugin\Api;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
-use JournalTransporterPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Utility\DataObject;
 
 class Users extends ApiRoute {
     protected $userRepository;
@@ -19,7 +19,7 @@ class Users extends ApiRoute {
     protected function getUser($id, $debug)
     {
         $item = $this->userRepository->fetchById($id);
-        if($debug) return DataObjectUtility::dataObjectToArray($item);
+        if($debug) return DataObject::dataObjectToArray($item);
         return NestedMapper::map($item);
     }
 }

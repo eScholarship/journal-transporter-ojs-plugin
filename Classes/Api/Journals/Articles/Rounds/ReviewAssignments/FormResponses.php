@@ -2,8 +2,8 @@
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
-use JournalTransporterPlugin\Utility\DataObjectUtility;
-use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
+use JournalTransporterPlugin\Utility\DataObject;
+use JournalTransporterPlugin\Utility\SourceRecordKey;
 
 class FormResponses extends ApiRoute  {
     protected $journalRepository;

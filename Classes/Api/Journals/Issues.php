@@ -2,7 +2,7 @@
 
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
-use JournalTransporterPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Utility\DataObject;
 
 class Issues extends ApiRoute  {
     protected $journalRepository;
@@ -41,7 +41,7 @@ class Issues extends ApiRoute  {
             }
         }
 
-        if($debug) return DataObjectUtility::dataObjectToArray($item);
+        if($debug) return DataObject::dataObjectToArray($item);
         $issue = NestedMapper::map($item);
         $issue['sequence'] = $sequence;
         return $issue;

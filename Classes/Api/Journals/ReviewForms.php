@@ -2,7 +2,7 @@
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
-use JournalTransporterPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Utility\DataObject;
 
 class ReviewForms extends ApiRoute  {
     protected $journalRepository;

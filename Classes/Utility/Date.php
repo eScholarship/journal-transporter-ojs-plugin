@@ -1,6 +1,6 @@
 <?php namespace JournalTransporterPlugin\Utility;
 
-class DateUtility {
+class Date {
     /**
      * @param $dateString
      * @return string

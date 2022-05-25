@@ -3,7 +3,7 @@
 use JournalTransporterPlugin\Repository\ArticleComment;
 use JournalTransporterPlugin\Repository\Article;
 use JournalTransporterPlugin\Repository\ReviewFormResponse;
-use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
+use JournalTransporterPlugin\Utility\SourceRecordKey;
 
 class ReviewAssignment extends AbstractDataObjectMapper {
 
@@ -46,11 +46,11 @@ class ReviewAssignment extends AbstractDataObjectMapper {
     protected static function preMap($dataObject, $context)
     {
         $dataObject->reviewer = is_null($dataObject->getReviewerId()) ?
-            null : (object) ['source_record_key' => SourceRecordKeyUtility::reviewer($dataObject->getReviewerId())];
+            null : (object) ['source_record_key' => SourceRecordKey::reviewer($dataObject->getReviewerId())];
 
         // TODO: Could improve performance by caching this article, or storing it for the next iteration
         $article = (new Article)->fetchById($dataObject->getArticleId());
-        $dataObject->reviewComments = (new ArticleComment)->fetchByArticleAndReview($article, $dataObject);
+        $dataObject->reviewComments = (new ArticleComment)->fetchByArticleAndReview($article, $dataObject, 'review');
 
         $dataObject->recommendationText = self::getRecommendationText($dataObject);
         $dataObject->reviewTypeText = self::getReviewTypeText($dataObject);
@@ -68,7 +68,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
     protected static function getReviewFormSourceRecordKey($dataObject)
     {
         if(is_null($dataObject->getReviewFormId())) return null;
-        return (object)['source_record_key' => SourceRecordKeyUtility::reviewForm($dataObject->getReviewFormId())];
+        return (object)['source_record_key' => SourceRecordKey::reviewForm($dataObject->getReviewFormId())];
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php namespace JournalTransporterPlugin\Api\Journals\Articles\Digest;
 
-use JournalTransporterPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Utility\DataObject;
 use JournalTransporterPlugin\Api\ApiRoute;
 
 class Log extends ApiRoute {
@@ -18,6 +18,6 @@ class Log extends ApiRoute {
         $journal = $this->journalRepository->fetchOneById($args['journal']);
         $article = $this->articleRepository->fetchByIdAndJournal($args['article'], $journal);
         $resultSet = $this->articleEventLogRepository->fetchByArticle($article);
-        return DataObjectUtility::resultSetToArray($resultSet);
+        return DataObject::resultSetToArray($resultSet);
     }
 }

@@ -1,6 +1,6 @@
 <?php namespace JournalTransporterPlugin\Utility;
 
-class SourceRecordKeyUtility
+class SourceRecordKey
 {
     /**
      * @param $id

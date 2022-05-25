@@ -5,6 +5,7 @@ use JournalTransporterPlugin\Api\Journals;
 use JournalTransporterPlugin\Api\Journals\Articles;
 use JournalTransporterPlugin\Api\Journals\Articles\Authors as ArticleAuthors;
 use JournalTransporterPlugin\Api\Journals\Articles\Editors;
+use JournalTransporterPlugin\Api\Journals\Articles\Comments;
 use JournalTransporterPlugin\Api\Journals\Articles\Digest\Emails;
 use JournalTransporterPlugin\Api\Journals\Articles\Digest\Log;
 use JournalTransporterPlugin\Api\Journals\Articles\Files as ArticleFiles;
@@ -34,6 +35,7 @@ return [
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/issues(/(?P<issue>\d+))?' => Issues::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/roles' => Roles::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles(/(?P<article>\d+))?' => Articles::class,
+    '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/comments' => Comments::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/digest/emails(\.(?P<format>[a-z]+))?' => Emails::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/files/(?P<file>\d+)/revisions' => Revisions::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/files(/(?P<file>(\d+|\d+-\d+)))?' => ArticleFiles::class,

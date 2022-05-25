@@ -1,7 +1,7 @@
 <?php namespace JournalTransporterPlugin\Api\Journals;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
-use JournalTransporterPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Utility\DataObject;
 use JournalTransporterPlugin\Api\ApiRoute;
 
 class Articles extends ApiRoute  {
@@ -54,11 +54,11 @@ class Articles extends ApiRoute  {
      */
     protected function getDebugResponse($article) {
         return (object) [
-            'article' => DataObjectUtility::dataObjectToArray($article),
-            'authorSubmission' => DataObjectUtility::dataObjectToArray(
+            'article' => DataObject::dataObjectToArray($article),
+            'authorSubmission' => DataObject::dataObjectToArray(
                 $this->authorSubmissionRepository->fetchByArticle($article)
             ),
-            'editorDecisions' => DataObjectUtility::dataObjectToArray(
+            'editorDecisions' => DataObject::dataObjectToArray(
                 $this->authorSubmissionRepository->fetchEditorDecisionsByArticle($article)
             )
         ];

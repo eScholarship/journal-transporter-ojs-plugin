@@ -1,7 +1,7 @@
 <?php namespace JournalTransporterPlugin\Api;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
-use JournalTransporterPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Utility\DataObject;
 
 class Journals extends ApiRoute {
     protected $journalRepository;
@@ -26,7 +26,7 @@ class Journals extends ApiRoute {
     protected function getJournal($id, $debug)
     {
         $item = $this->journalRepository->fetchOneById($id);
-        if($debug) return DataObjectUtility::dataObjectToArray($item);
+        if($debug) return DataObject::dataObjectToArray($item);
         return NestedMapper::map($item);
     }
 

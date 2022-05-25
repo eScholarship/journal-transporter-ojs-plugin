@@ -24,4 +24,13 @@ class ArticleComment {
         );
     }
 
+    /**
+     * @param $article
+     * @return mixed
+     */
+    public function fetchByArticle($article)
+    {
+        return $this->getArticleComments($article->getId());
+    }
+
 }

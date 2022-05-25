@@ -2,8 +2,8 @@
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Utility\DAOFactory;
-use JournalTransporterPlugin\Utility\DataObjectUtility;
-use JournalTransporterPlugin\Utility\DateUtility;
+use JournalTransporterPlugin\Utility\DataObject;
+use JournalTransporterPlugin\Utility\Date;
 
 class History
 {
@@ -27,7 +27,7 @@ class History
         $out = [];
         foreach($this->events as $event) {
             $logEntry = $event->articleLogEntry;
-            $out[] = (object) ['date' => DateUtility::formatDateString($logEntry['date_logged']),
+            $out[] = (object) ['date' => Date::formatDateString($logEntry['date_logged']),
                 'event' => $logEntry['event_title'], 'message' => $logEntry['message']];
 
         }

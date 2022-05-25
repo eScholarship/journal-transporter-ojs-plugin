@@ -2,7 +2,7 @@
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
-use JournalTransporterPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Utility\DataObject;
 
 class ReviewAssignments extends ApiRoute  {
     protected $journalRepository;
@@ -28,13 +28,13 @@ class ReviewAssignments extends ApiRoute  {
             // sure that we're showing a review assignment associated with the article.
             foreach($reviewAssignments as $reviewAssignment) {
                 if((int) $reviewAssignmentId !== (int) $reviewAssignment->getId()) continue;
-                if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObjectUtility::dataObjectToArray($reviewAssignment);
+                if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObject::dataObjectToArray($reviewAssignment);
                 return NestedMapper::map($reviewAssignment);
             }
         } else {
             if($arguments[ApiRoute::DEBUG_ARGUMENT]) {
                 return array_map(function($item) {
-                    return DataObjectUtility::dataObjectToArray($item);
+                    return DataObject::dataObjectToArray($item);
                 }, array_values($reviewAssignments));
             } else {
                 return array_map(function($item) {

@@ -1,6 +1,6 @@
 <?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
-use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
+use JournalTransporterPlugin\Utility\SourceRecordKey;
 
 class ReviewFormElement extends AbstractDataObjectMapper
 {

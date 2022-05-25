@@ -2,7 +2,7 @@
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
-use JournalTransporterPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Utility\DataObject;
 
 class Files extends ApiRoute  {
     protected $journalRepository;
@@ -28,7 +28,7 @@ class Files extends ApiRoute  {
 
         $files = $this->getAllFilesForArticle($article);
 
-        if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObjectUtility::dataObjectToArray($files);
+        if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObject::dataObjectToArray($files);
         return array_map(function($item) {
             return NestedMapper::map($item);
         }, $files);

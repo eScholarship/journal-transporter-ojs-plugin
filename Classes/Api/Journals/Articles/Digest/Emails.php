@@ -1,7 +1,7 @@
 <?php namespace JournalTransporterPlugin\Api\Journals\Articles\Digest;
 
 use JournalTransporterPlugin\Api\ApiRoute;
-use JournalTransporterPlugin\Utility\DataObjectUtility;
+use JournalTransporterPlugin\Utility\DataObject;
 
 /**
  * TODO: This should be broken up into smaller methods, but let's hold off until we see what functionality
@@ -33,7 +33,7 @@ class Emails extends ApiRoute {
         $journal = $this->journalRepository->fetchOneById($args['journal']);
         $article = $this->articleRepository->fetchByIdAndJournal($args['article'], $journal);
         $resultSet = $this->articleEmailLogRepository->fetchByArticle($article);
-        $articleEmailLogEntries = DataObjectUtility::resultSetToArray($resultSet);
+        $articleEmailLogEntries = DataObject::resultSetToArray($resultSet);
 
         $emails = [];
         foreach($articleEmailLogEntries as $articleEmailLogEntry) {

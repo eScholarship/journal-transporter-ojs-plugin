@@ -1,8 +1,10 @@
 <?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
-use JournalTransporterPlugin\Utility\DateUtility;
-use JournalTransporterPlugin\Utility\SourceRecordKeyUtility;
+use JournalTransporterPlugin\Utility\CommentType;
+use JournalTransporterPlugin\Utility\Date;
+use JournalTransporterPlugin\Utility\Role;
+use JournalTransporterPlugin\Utility\SourceRecordKey;
 
 class AbstractDataObjectMapper {
 
@@ -54,8 +56,16 @@ class AbstractDataObjectMapper {
                     $value = NestedMapper::map(self::getFieldValue($source, $dataObject, $onError), $internalContext);
                 }
 
+                // Turns an id into a source record key object
                 if(array_key_exists('sourceRecordKey', $mappingConfig)) {
                     $value = self::toSourceRecordKey($mappingConfig['sourceRecordKey'], $value);
+                }
+
+                // Turns an enum value into a label
+                if(array_key_exists('mapTo', $mappingConfig)) {
+                    if($mappingConfig['mapTo'] == 'role') $value = Role::getRoleName($value);
+                    if($mappingConfig['mapTo'] == 'commentType') $value = CommentType::getCommentTypeName($value);
+
                 }
 
                 // Process filters that transform values
@@ -95,8 +105,8 @@ class AbstractDataObjectMapper {
      */
     protected static function toSourceRecordKey($type, $id)
     {
-        if(method_exists(SourceRecordKeyUtility::class, $type))
-            return (object) ['source_record_key' => SourceRecordKeyUtility::$type($id)];
+        if(method_exists(SourceRecordKey::class, $type))
+            return (object) ['source_record_key' => SourceRecordKey::$type($id)];
         throw new \Exception("Can't generate source record key for $type");
     }
 
@@ -206,7 +216,7 @@ class AbstractDataObjectMapper {
      */
     protected static function applyDatetimeFilter($value) {
         if(!is_null($value) && strlen($value) > 0) {
-            return DateUtility::formatDateString($value);
+            return Date::formatDateString($value);
         }
         return null;
     }
