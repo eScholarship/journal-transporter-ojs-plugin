@@ -3,6 +3,7 @@
 use JournalTransporterPlugin\Repository\PublishedArticle;
 use JournalTransporterPlugin\Repository\AuthorSubmission;
 use JournalTransporterPlugin\Repository\EditAssignment;
+use JournalTransporterPlugin\Utility\Enums\Discipline;
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 
 class Article extends AbstractDataObjectMapper {
@@ -14,8 +15,7 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'title', 'source' => 'articleTitle'],
         ['property' => 'abstract', 'source' => 'localizedAbstract', 'filters' => ['html']],
         ['property' => 'coverLetter', 'source' => 'commentsToEditor', 'filters' => ['html']],
-        // TODO: this outputs a reference like disc1540 (reference to rt_versions table)
-        ['property' => 'discipline', 'source' => 'localizedDiscipline'],
+        ['property' => 'disciplines'],
         ['property' => 'authors', 'context' => 'sourceRecordKey'],
         ['property' => 'language'],
         ['property' => 'dateStarted', 'source' => 'dateSubmitted', 'filters' => ['datetime']],
@@ -47,6 +47,8 @@ class Article extends AbstractDataObjectMapper {
 
         $dataObject->publicationStatus = self::mapJournalStatus($dataObject->getStatus());
 
+        $dataObject->disciplines = self::mapDisciplines($dataObject);
+
         $dataObject->issues = is_null($dataObject->publishedArticle) ?
             [] : [(object) ['source_record_key' => SourceRecordKey::issue($dataObject->publishedArticle->getIssueId())]];
         $dataObject->sections = is_null($dataObject->publishedArticle) ?
@@ -76,6 +78,20 @@ class Article extends AbstractDataObjectMapper {
         $editorDecision = (object) array_pop($editorDecisions);
         $editorDecision->__mapperClass = 'EditorDecision';
         return $editorDecision;
+    }
+
+    /**
+     * @param $dataObject
+     * @return array
+     */
+    protected static function mapDisciplines($dataObject)
+    {
+        return array_filter(
+            array_map(
+                function($disciplineKey) { return Discipline::getDisciplineName($disciplineKey); },
+                $dataObject->getLocalizedDiscipline()
+            )
+        );
     }
 
     /**

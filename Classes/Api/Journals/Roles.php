@@ -3,7 +3,7 @@
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Utility\DataObject;
-use JournalTransporterPlugin\Utility\Role;
+use JournalTransporterPlugin\Utility\Enums\Role;
 
 class Roles extends ApiRoute  {
     protected $journalRepository;

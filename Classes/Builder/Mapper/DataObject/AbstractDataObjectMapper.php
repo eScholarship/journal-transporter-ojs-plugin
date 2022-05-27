@@ -1,9 +1,9 @@
 <?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
-use JournalTransporterPlugin\Utility\CommentType;
 use JournalTransporterPlugin\Utility\Date;
-use JournalTransporterPlugin\Utility\Role;
+use JournalTransporterPlugin\Utility\Enums\Role;
+use JournalTransporterPlugin\Utility\Enums\CommentType;
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 
 class AbstractDataObjectMapper {

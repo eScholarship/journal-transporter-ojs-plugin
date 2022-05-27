@@ -1,4 +1,4 @@
-<?php namespace JournalTransporterPlugin\Utility;
+<?php namespace JournalTransporterPlugin\Utility\Enums;
 
 use JournalTransporterPlugin\Utility\DAOFactory;
 

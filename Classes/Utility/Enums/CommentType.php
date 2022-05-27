@@ -1,9 +1,12 @@
-<?php namespace JournalTransporterPlugin\Utility;
+<?php namespace JournalTransporterPlugin\Utility\Enums;
 
 import('classes.article.ArticleComment');
 
 class CommentType
 {
+    /**
+     * @var string[]
+     */
     static $mapping = [
         COMMENT_TYPE_PEER_REVIEW => 'peer_review',
         COMMENT_TYPE_EDITOR_DECISION => 'editor_decision',
