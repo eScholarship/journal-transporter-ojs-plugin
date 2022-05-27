@@ -3,6 +3,7 @@
 use JournalTransporterPlugin\Repository\ArticleComment;
 use JournalTransporterPlugin\Repository\Article;
 use JournalTransporterPlugin\Repository\ReviewFormResponse;
+use JournalTransporterPlugin\Repository\SupplementaryFile;
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 
 class ReviewAssignment extends AbstractDataObjectMapper {
@@ -30,7 +31,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         ['property' => 'replaced', 'filters' => ['boolean']],
         ['property' => 'cancelled', 'filters' => ['boolean']],
         ['property' => 'reviewFile', 'context' => 'sourceRecordKey'],
-        ['property' => 'suppFiles', 'context' => 'sourceRecordKey'],
+        ['property' => 'suppFiles', 'source' => 'supplementaryFiles'],
         ['property' => 'reviewerFile', 'context' => 'sourceRecordKey'],
         ['property' => 'comments', 'source' => 'reviewComments'],
         ['property' => 'quality', 'source' => 'qualityText'],
@@ -52,6 +53,14 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         $article = (new Article)->fetchById($dataObject->getArticleId());
         $dataObject->reviewComments = (new ArticleComment)->fetchByArticleAndReview($article, $dataObject, 'review');
 
+        // We have to fetch the supp files ourselves because OJS doesn't return the revision number. We have to filter
+        // because OJS includes review files that are not shared with reviewers.
+        $dataObject->supplementaryFiles = array_filter(
+            (new SupplementaryFile)->fetchByArticle($article),
+            function($file) {
+                return $file->getShowReviewers() == true;
+            }
+        );
         $dataObject->recommendationText = self::getRecommendationText($dataObject);
         $dataObject->reviewTypeText = self::getReviewTypeText($dataObject);
         $dataObject->qualityText = self::getQualityText($dataObject);
@@ -96,6 +105,10 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         ][$reviewAssignment->getRecommendation()];
     }
 
+    /**
+     * @param $reviewAssignment
+     * @return string
+     */
     protected static function getReviewTypeText($reviewAssignment)
     {
         // See: lib/pkp/classes/submission/reviewAssignment/PKPReviewAssignment.inc.php

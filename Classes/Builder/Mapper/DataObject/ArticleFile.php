@@ -57,7 +57,7 @@ class ArticleFile  extends AbstractDataObjectMapper {
         }
 
         // Here's where we would define the $textFields for ArticleFiles that are not supps or galleys
-        // TODO: at some point, we might want to set values programatically for title, description, creator, etc.
+        // TODO: at some point, we might want to set values programmatically for title, description, creator, etc.
         if(!property_exists($dataObject, 'settings')) {
             $dataObject->settings = [ 'title' => ''];
         }
@@ -78,6 +78,7 @@ class ArticleFile  extends AbstractDataObjectMapper {
 
         // Get the other file types, all of which are also article files
         $specialFileGroups = [
+            // Note: these don't fetch revision numbers for some reason
             (new GalleyFile)->fetchByArticle($article),
             (new SupplementaryFile)->fetchByArticle($article),
         ];
