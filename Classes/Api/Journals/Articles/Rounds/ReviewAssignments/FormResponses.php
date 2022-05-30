@@ -29,7 +29,8 @@ class FormResponses extends ApiRoute  {
             if ((int)$reviewAssignmentId === (int)$reviewAssignment->getId()) break;
         }
 
-        if(is_null($reviewAssignment)) throw new \Exception("ReviewAssignment $reviewAssignmentId not found");
+        if(is_null($reviewAssignment))
+            throw new UnknownDatabaseAccsesObjectException("ReviewAssignment $reviewAssignmentId not found");
 
         $responses = $this->reviewFormResponseRepository->fetchByReview($reviewAssignment);
 

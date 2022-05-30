@@ -5,6 +5,8 @@ use JournalTransporterPlugin\Utility\Date;
 use JournalTransporterPlugin\Utility\Enums\Role;
 use JournalTransporterPlugin\Utility\Enums\CommentType;
 use JournalTransporterPlugin\Utility\SourceRecordKey;
+use JournalTransporterPlugin\Exception\InvalidMappingConfigurationException;
+use JournalTransporterPlugin\Exception\InvalidArgumentException;
 
 class AbstractDataObjectMapper {
 
@@ -107,7 +109,7 @@ class AbstractDataObjectMapper {
     {
         if(method_exists(SourceRecordKey::class, $type))
             return (object) ['source_record_key' => SourceRecordKey::$type($id)];
-        throw new \Exception("Can't generate source record key for $type");
+        throw new InvalidArgumentException("Can't generate source record key for $type");
     }
 
     /**
@@ -134,7 +136,7 @@ class AbstractDataObjectMapper {
                     if($onError !== self::ON_ERROR_TRIGGER_EXCEPTION) {
                         return $onError;
                     }
-                    throw new \Exception("Can't get \"$key\" from " . get_class($object));
+                    throw new InvalidMappingConfigurationException("Can't get \"$key\" from " . get_class($object));
                 }
             }
         }
@@ -206,7 +208,7 @@ class AbstractDataObjectMapper {
         if($filter === 'integer') return static::applyIntegerFilter($value);
         if($filter === 'html') return static::applyHTMLFilter($value);
 
-        throw new \Exception("Filter $filter does not exist");
+        throw new InvalidMappingConfigurationException("Filter $filter does not exist");
     }
 
     /**

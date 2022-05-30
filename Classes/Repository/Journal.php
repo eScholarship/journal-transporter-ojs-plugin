@@ -1,7 +1,7 @@
 <?php namespace JournalTransporterPlugin\Repository;
 
-use JournalTransporterPlugin\Utility\DAOFactory;
 use JournalTransporterPlugin\Utility\Traits\DAOCache;
+use JournalTransporterPlugin\Exception\CannotFetchDataObjectException;
 
 class Journal {
     use Repository;
@@ -54,7 +54,7 @@ class Journal {
             $journal = $this->getJournalByPath($id);
         }
 
-        if(is_null($journal)) throw new \Exception("Journal $id not found");
+        if(is_null($journal)) throw new CannotFetchDataObjectException("Journal $id not found");
         return $journal;
     }
 

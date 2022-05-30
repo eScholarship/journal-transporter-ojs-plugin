@@ -1,11 +1,12 @@
 <?php namespace JournalTransporterPlugin\Api\Journals\Articles\Digest;
 
 use JournalTransporterPlugin\Api\ApiRoute;
+use JournalTransporterPlugin\Api\Response;
 use JournalTransporterPlugin\Utility\DataObject;
+use JournalTransporterPlugin\Exception\InvalidRequestException;
+use JournalTransporterPlugin\Utility\Date;
 
 /**
- * TODO: This should be broken up into smaller methods, but let's hold off until we see what functionality
- * is shared among other routes.
  * Class Emails
  * @package JournalTransporterPlugin\Api\Journals\Articles\Digest
  */
@@ -24,7 +25,7 @@ class Emails extends ApiRoute {
         // If we need this elsewhere, abstract it
         if(strlen($args['format']) > 0) {
             if(!in_array($args['format'], ['txt', 'json'])) {
-                throw new \Exception("Format .{$args['format']} not allowed");
+                throw new InvalidRequestException("Format .{$args['format']} not allowed");
             } else {
                 $format = $args['format'];
             }
@@ -46,20 +47,27 @@ class Emails extends ApiRoute {
                 'subject'   => $articleEmailLogEntry->subject,
                 'body'      => $articleEmailLogEntry->body,
                 'reference' => $articleEmailLogEntry->__class.':'.$articleEmailLogEntry->id,
-                'datetime'  => new \DateTime(
-                    $articleEmailLogEntry->dateSent, new \DateTimeZone('America/Los_Angeles')
-                ),
+                'datetime'  => Date::formatDateString($articleEmailLogEntry->dateSent)
             ];
         }
 
         usort($emails, function($a, $b) { return $a->datetime < $b->datetime ? -1 : 1; });
 
-        //return $emails;
+        if($format === 'json') return $emails;
+        else return $this->formatAsText($emails);
+    }
+
+    /**
+     * @param $emails
+     * @return Response
+     */
+    protected function formatAsText($emails)
+    {
         $digest = [];
 
         foreach($emails as $email) {
             $digest[] = "
-Sent At:   {$email->datetime->format('r')}
+Sent At:   {$email->datetime}
 Reference: {$email->reference}
 From:      {$email->from} ({$email->ip})
 To:        {$email->to}
@@ -70,10 +78,14 @@ Subject:   {$email->subject}
 {$email->body}
 ";
         }
-        $separator = "\n\n".str_repeat('═', 80)."\n\n";
+        $separator = "\n\n".str_repeat('=', 80)."\n\n";
 
         $string = wordwrap(implode($separator, $digest), 80);
 
-        return (object) ['__format__' => $format, 'data' => $string];
+        $response = new Response;
+        $response->setContentType('text/plain');
+        $response->setPayload($string);
+
+        return $response;
     }
 }

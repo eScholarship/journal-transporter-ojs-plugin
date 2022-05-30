@@ -5,6 +5,7 @@ use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Utility\DataObject;
 use JournalTransporterPlugin\Utility\Date;
 use JournalTransporterPlugin\Utility\SourceRecordKey;
+use JournalTransporterPlugin\Exception\UnknownDatabaseAccessObjectException;
 
 class Rounds extends ApiRoute  {
     protected $journalRepository;
@@ -25,7 +26,8 @@ class Rounds extends ApiRoute  {
         $round = (int)$parameters['round'];
 
         if ($round) {
-            if ($round < 1 || $round > $numberOfRounds) throw new \Exception("Round $round doesn't exist");
+            if ($round < 1 || $round > $numberOfRounds)
+                throw new UnknownDatabaseAccessObjectException("Round $round doesn't exist");
             return $this->getRound($article, $round);
         } else {
             return $this->getRounds($article, $numberOfRounds);

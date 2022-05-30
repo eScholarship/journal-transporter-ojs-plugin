@@ -27,7 +27,8 @@ class Notes extends ApiRoute  {
             if ((int)$reviewAssignmentId === (int)$reviewAssignment->getId()) break;
         }
 
-        if(is_null($reviewAssignment)) throw new \Exception("ReviewAssignment $reviewAssignmentId not found");
+        if(is_null($reviewAssignment))
+            throw new UnknownDatabaseAccessObjeetException("ReviewAssignment $reviewAssignmentId not found");
 
         $notes = $this->noteRepository->fetchByReviewAssignment($reviewAssignment);
 

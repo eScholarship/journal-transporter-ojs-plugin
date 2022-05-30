@@ -1,6 +1,9 @@
 <?php namespace JournalTransporterPlugin\Api;
 
+use JournalTransporterPlugin\Exception\CannotFetchDataObjectException;
+use JournalTransporterPlugin\Api\Response;
 use JournalTransporterPlugin\Utility\Regex;
+use JournalTransporterPlugin\Exception\PluginException;
 
 class Controller {
 
@@ -22,16 +25,17 @@ class Controller {
      */
     public function execute() {
         $skipRouteLookup = false;
+        $response = new Response;
         if(is_null($this->args[0])) {
-            $out = ['Exception' => 'No route provided', 'routeRegexes' => array_keys($this->routes)];
+            $response->setPayload(['exception' => 'No route provided', 'route_regexes' => array_keys($this->routes)]);
+            $response->setResponseCode(500);
             $skipRouteLookup = true;
         } else {
-            $out = ['Exception' =>
-                [
-                    "Provided route '".$this->args[0]."' did not match defined routes",
-                    'routeRegexes' => array_keys($this->routes)
-                ]
-            ];
+            $response->setPayload([
+                'exception' => "Provided route '".$this->args[0]."' did not match defined routes",
+                'route_regexes' => array_keys($this->routes)
+            ]);
+            $response->setResponseCode(500);
         }
 
         if(!$skipRouteLookup) {
@@ -39,13 +43,13 @@ class Controller {
             foreach ($this->routes as $route => $class) {
                 $matches = [];
                 if (preg_match('~^' . $route . '$~', $head, $matches)) {
-                    $out = $this->callRouteHandler($route, $class, $matches, $this->parseArguments($tail));
+                    $response = $this->callRouteHandler($route, $class, $matches, $this->parseArguments($tail));
                     break;
                 }
             }
         }
 
-        return $out;
+        return $response;
     }
 
     /**
@@ -59,13 +63,25 @@ class Controller {
     private function callRouteHandler($route, $class, $routeParameters, $arguments = []) {
         $parameters = $this->zipArgs($routeParameters, Regex::getRegexNamedMatches($route));
 
+        // Typically the route controllers just return a payload, and we expect it be JSON. However,
+        // they can also return a response object, in which case we just pass it through.
+        $response = new Response;
         try {
-            $out = (new $class($routeParameters))->execute($parameters, $arguments);
+            $payload = (new $class($routeParameters))->execute($parameters, $arguments);
+            if($payload instanceof Response) {
+                $response = $payload;
+            } else {
+                $response->setPayload($payload);
+            }
+        } catch(CannotFetchDataObjectException $e) {
+            $response->setPayload($e->getMessage());
+            $response->setResponseCode('404');
         } catch(\Exception $e) {
-            // TODO: this could be make more robust exception handling
-            $out = ['Exception' => $e->getMessage()];
+            $response->setPayload($e->getMessage());
+            $response->setResponseCode('500');
         }
-        return $out;
+
+        return $response;
     }
 
     /**

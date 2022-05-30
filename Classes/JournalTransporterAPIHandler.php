@@ -16,20 +16,13 @@ class JournalTransporterAPIHandler extends Handler {
     protected function handleRequest($class) {
         $requestUri = '/' . implode('/', array_slice(explode('/', $_SERVER['REQUEST_URI']), 5));
         $api = new $class([$requestUri]);
-        $out = $api->execute();
+        $response = $api->execute();
 
-        // This is the start of a what might be a response object. Not sure we need it yet. Only using in
-        // Api/Journals/Articles/Digest/Emails currently
-        if(is_object($out) && property_exists($out, '__format__')) {
-            $format = in_array($out->__format__, ['json', 'txt']) ? $out->__format__ : 'json';
-            $data = $out->data;
-        } else {
-            $format = 'json';
-            $data = $out;
-        }
-        if($format == 'txt') header('Content-Type: text/plain');
-        if($format == 'json') header('Content-Type: text/json');
+        $payload = $response->getPayload();
 
-        echo $format == 'json' ? json_encode($data) : $data;
+        header('Content-Type: '.$response->getContentType());
+        http_response_code($response->getResponseCode());
+
+        echo $response->getContentType() == 'text/json' ? json_encode($payload) : $payload;
     }
 }
