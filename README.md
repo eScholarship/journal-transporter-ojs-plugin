@@ -27,12 +27,13 @@ ASCII art from https://ascii.co.uk/art/startrek
 
 # Requirements
 
-This plugin has only been tested with a modified version of OJS 2.3.6 running PHP 7.2.
+This plugin has only been tested with a modified version of OJS 2.3.6 running PHP 7.2. This does require modifications
+to OJS 2.x to make it compatible with PHP 7.x. 
 
 # Overview
 
 This plugin provides HTTP endpoints for fetching data out of OJS. Access to these endpoints can be authorized via basic
-auth, or site admin authorization (or both). Data is mapped from OJS data objects to associative arrays which are, in 
+auth, or site admin authorization, or both. Data is mapped from OJS data objects to associative arrays which are, in 
 turn, transformed into JSON for output.
 
 # API
