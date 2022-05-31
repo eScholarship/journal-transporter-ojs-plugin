@@ -125,7 +125,7 @@ class AbstractDataObjectMapper {
         while(count($fieldNameParts) > 0) {
             $fieldName = array_shift($fieldNameParts);
             if(is_array($currentValue)) {
-                $currentValue = $currentValue[$fieldName];
+                $currentValue = array_key_exists($fieldName, $currentValue) ? $currentValue[$fieldName] : null;
             } elseif(is_object($currentValue)) {
                 $methodName = 'get' . ucfirst($fieldName);
                 if(method_exists($currentValue, $methodName)) {
