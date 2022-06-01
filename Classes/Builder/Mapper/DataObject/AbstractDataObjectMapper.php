@@ -4,6 +4,7 @@ use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Utility\Date;
 use JournalTransporterPlugin\Utility\Enums\Role;
 use JournalTransporterPlugin\Utility\Enums\CommentType;
+use JournalTransporterPlugin\Utility\HTML;
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 use JournalTransporterPlugin\Exception\InvalidMappingConfigurationException;
 use JournalTransporterPlugin\Exception\InvalidArgumentException;
@@ -244,10 +245,6 @@ class AbstractDataObjectMapper {
      * @return string
      */
     protected static function applyHTMLFilter($value) {
-        $steps = [$value];
-        $steps[] = strip_tags(end($steps), '<p><ul><li><ol><em><i><strong>');
-        // A bullet-vulnerable way to strip attributes off of HTML tags
-        $steps[] = preg_replace('/(<[a-zA-Z]+)[^>]*>/','\1>', end($steps));
-        return end($steps);
+        return HTML::cleanHtml($value);
     }
 }

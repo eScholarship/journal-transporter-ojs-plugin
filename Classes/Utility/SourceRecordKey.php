@@ -67,6 +67,17 @@ class SourceRecordKey
 
     /**
      * Not a real class in OJS
+     * @param $id
+     * @param $index
+     * @return string
+     */
+    static public function reviewAssignmentResponse($id, $index)
+    {
+        return 'ReviewAssignmentResponse:'.$id.'-'.$index;
+    }
+
+    /**
+     * Not a real class in OJS
      * @param $articleId
      * @param $round
      * @return string

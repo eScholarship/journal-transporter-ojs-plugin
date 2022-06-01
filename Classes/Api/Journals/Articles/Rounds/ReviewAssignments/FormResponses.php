@@ -3,6 +3,7 @@
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Utility\DataObject;
+use JournalTransporterPlugin\Utility\HTML;
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 
 class FormResponses extends ApiRoute  {
@@ -30,13 +31,16 @@ class FormResponses extends ApiRoute  {
         }
 
         if(is_null($reviewAssignment))
-            throw new UnknownDatabaseAccsesObjectException("ReviewAssignment $reviewAssignmentId not found");
+            throw new UnknownDatabaseAccessObjectException("ReviewAssignment $reviewAssignmentId not found");
 
         $responses = $this->reviewFormResponseRepository->fetchByReview($reviewAssignment);
 
         $responseOutput = [];
+        $index = 0;
         foreach($responses as $formElementId => $responseValue) {
-            $responseOutput[] = $this->formatResponse($reviewAssignment, $formElementId, $responseValue);
+            // TODO: this passing of the index to render a source record key could merit revisiting
+            $responseOutput[] = $this->formatResponse($reviewAssignment, $formElementId, $responseValue, $index);
+            $index++;
         }
         return $responseOutput;
     }
@@ -46,10 +50,19 @@ class FormResponses extends ApiRoute  {
      * @param $responseValue
      * @return object
      */
-    protected function formatResponse($reviewAssignment, $formElementId, $responseValue) {
+    protected function formatResponse($reviewAssignment, $formElementId, $responseKey, $index) {
         $reviewFormElement = $this->reviewFormElementRepository->fetchOneById($formElementId);
 
+        $responseValue = null;
+        foreach($reviewFormElement->getLocalizedPossibleResponses() as $response) {
+            if($response['order'] == $responseKey) $responseValue = HTML::cleanHtml($response['content']);
+        }
+
         // To show form element, remove 'sourceRecordKey' value from the reviewFormElement to just a sourceRecordKey
-        return (object)['reviewFormElement' => NestedMapper::map($reviewFormElement, 'sourceRecordKey'), 'responseValue' => $responseValue];
+        return (object)[
+            'source_record_key' => SourceRecordKey::reviewAssignmentResponse($reviewAssignment->getId(), $index),
+            'reviewFormElement' => NestedMapper::map($reviewFormElement, 'sourceRecordKey'),
+            'responseValue' => $responseValue
+        ];
     }
 }

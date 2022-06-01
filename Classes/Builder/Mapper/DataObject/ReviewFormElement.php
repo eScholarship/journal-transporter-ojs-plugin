@@ -33,7 +33,7 @@ class ReviewFormElement extends AbstractDataObjectMapper
     protected static function getFormattedResponses($responses) {
         if(is_null($responses)) return null;
         return array_map(
-            function($response) { return (object) ['key' => $response['order'], 'value' => $response['content']]; },
+            function($response) { return $response['content']; },
             $responses
         );
     }
