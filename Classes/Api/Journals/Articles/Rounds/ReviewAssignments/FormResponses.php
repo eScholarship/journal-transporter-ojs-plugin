@@ -53,9 +53,11 @@ class FormResponses extends ApiRoute  {
     protected function formatResponse($reviewAssignment, $formElementId, $responseKey, $index) {
         $reviewFormElement = $this->reviewFormElementRepository->fetchOneById($formElementId);
 
-        $responseValue = null;
-        foreach($reviewFormElement->getLocalizedPossibleResponses() as $response) {
-            if($response['order'] == $responseKey) $responseValue = HTML::cleanHtml($response['content']);
+        $responseValue = $responseKey;
+        if(!(preg_match('/^[0-9]+$/'))) {
+            foreach ($reviewFormElement->getLocalizedPossibleResponses() as $response) {
+                if ($response['order'] == $responseKey) $responseValue = HTML::cleanHtml($response['content']);
+            }
         }
 
         // To show form element, remove 'sourceRecordKey' value from the reviewFormElement to just a sourceRecordKey
