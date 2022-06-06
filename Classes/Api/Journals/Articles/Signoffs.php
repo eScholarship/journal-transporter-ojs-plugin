@@ -7,7 +7,7 @@ use JournalTransporterPlugin\Utility\DataObject;
 class Signoffs extends ApiRoute  {
     protected $journalRepository;
     protected $articleRepository;
-    protected $copyeditorSubmissionRepository;
+    protected $signoffRepository;
 
     /**
      * @param array $parameters
@@ -18,15 +18,13 @@ class Signoffs extends ApiRoute  {
     {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
         $article = $this->articleRepository->fetchByIdAndJournal($parameters['article'], $journal);
-        $copyeditorSubmission = $this->copyeditorSubmissionRepository->fetchByArticle($article);
-        print_r($copyeditorSubmission); die();
-        return DataObject::dataObjectToArray($copyeditorSubmission);
 
+        $signoffs = $this->signoffRepository->fetchByArticle($article)->toArray();
 
-//        if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObject::dataObjectToArray($files);
-//        return array_map(function($item) {
-//            return NestedMapper::map($item);
-//        }, $files);
+        if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObject::dataObjectToArray($signoffs);
+        return array_map(function($item) {
+            return NestedMapper::map($item);
+        }, $signoffs);
     }
 
 }

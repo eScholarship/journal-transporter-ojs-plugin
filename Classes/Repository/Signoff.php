@@ -1,12 +1,12 @@
 <?php namespace JournalTransporterPlugin\Repository;
 
-class CopyeditorSubmission {
+class Signoff {
     use Repository;
 
     /**
      * @var string
      */
-    protected $DAO = 'copyeditorSubmission';
+    protected $DAO = 'signoff';
 
     /**
      * @param $article
@@ -14,6 +14,6 @@ class CopyeditorSubmission {
      */
     public function fetchByArticle($article)
     {
-        return $this->getCopyeditorSubmission($article->getId());
+        return $this->getByAssoc('257', $article->getId());
     }
 }

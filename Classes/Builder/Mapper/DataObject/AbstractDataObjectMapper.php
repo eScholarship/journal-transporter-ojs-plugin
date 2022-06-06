@@ -108,6 +108,7 @@ class AbstractDataObjectMapper {
      */
     protected static function toSourceRecordKey($type, $id)
     {
+        if(!(int) $id) return null;
         if(method_exists(SourceRecordKey::class, $type))
             return (object) ['source_record_key' => SourceRecordKey::$type($id)];
         throw new InvalidArgumentException("Can't generate source record key for $type");

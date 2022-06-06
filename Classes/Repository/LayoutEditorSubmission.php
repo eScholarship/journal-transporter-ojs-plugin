@@ -1,12 +1,12 @@
 <?php namespace JournalTransporterPlugin\Repository;
 
-class CopyeditorSubmission {
+class LayoutEditorSubmission {
     use Repository;
 
     /**
      * @var string
      */
-    protected $DAO = 'copyeditorSubmission';
+    protected $DAO = 'layoutEditorSubmission';
 
     /**
      * @param $article
@@ -14,6 +14,6 @@ class CopyeditorSubmission {
      */
     public function fetchByArticle($article)
     {
-        return $this->getCopyeditorSubmission($article->getId());
+        return $this->getSubmission($article->getId());
     }
 }
