@@ -3,6 +3,7 @@
 use JournalTransporterPlugin\Repository\ArticleComment;
 use JournalTransporterPlugin\Repository\Article;
 use JournalTransporterPlugin\Repository\ReviewFormResponse;
+use JournalTransporterPlugin\Repository\ArticleEventLog;
 use JournalTransporterPlugin\Repository\SupplementaryFile;
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 
@@ -10,7 +11,8 @@ class ReviewAssignment extends AbstractDataObjectMapper {
 
     protected static $mapping = [
         ['property' => 'sourceRecordKey', 'source' => 'reviewId'],
-        ['property' => 'reviewer'],
+        ['property' => 'reviewer', 'source' => 'reviewerId', 'sourceRecordKey' => 'reviewer'],
+        ['property' => 'editor', 'sourceRecordKey' => 'editor'],
         ['property' => 'round'],
         ['property' => 'reviewType', 'source' => 'reviewTypeText'],
         ['property' => 'reviewMethod'],
@@ -46,8 +48,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
      */
     protected static function preMap($dataObject, $context)
     {
-        $dataObject->reviewer = is_null($dataObject->getReviewerId()) ?
-            null : (object) ['source_record_key' => SourceRecordKey::reviewer($dataObject->getReviewerId())];
+        $dataObject->editor = self::getEditorFromLogEntry($dataObject);
 
         // TODO: Could improve performance by caching this article, or storing it for the next iteration
         $article = (new Article)->fetchById($dataObject->getArticleId());
@@ -67,7 +68,21 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         $dataObject->hasResponse = self::getHasResponse($dataObject);
         $dataObject->reviewForm = self::getReviewFormSourceRecordKey($dataObject);
 
+
         return $dataObject;
+    }
+
+    /**
+     * @param $dataObject
+     * @return mixed 
+     */
+    protected static function getEditorFromLogEntry($dataObject)
+    {
+        $logEntries = (new ArticleEventLog)
+            ->getArticleLogEntriesByAssoc($dataObject->getArticleId(), 3, $dataObject->getReviewId())->toArray();
+        if(count($logEntries) == 0) return null;
+        usort($logEntries, function($a, $b) { return $a->getDateLogged() > $b->getDateLogged(); });
+        return reset($logEntries)->getUserId();
     }
 
     /**
