@@ -63,8 +63,8 @@ class FormResponses extends ApiRoute  {
         // To show form element, remove 'sourceRecordKey' value from the reviewFormElement to just a sourceRecordKey
         return (object)[
             'source_record_key' => SourceRecordKey::reviewAssignmentResponse($reviewAssignment->getId(), $index),
-            'reviewFormElement' => NestedMapper::map($reviewFormElement, 'sourceRecordKey'),
-            'responseValue' => $responseValue
+            'review_form_element' => NestedMapper::map($reviewFormElement, 'sourceRecordKey'),
+            'response_value' => $responseValue
         ];
     }
 }
