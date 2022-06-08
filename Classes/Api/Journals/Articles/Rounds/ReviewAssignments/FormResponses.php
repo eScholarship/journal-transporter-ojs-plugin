@@ -50,13 +50,37 @@ class FormResponses extends ApiRoute  {
      * @param $responseValue
      * @return object
      */
-    protected function formatResponse($reviewAssignment, $formElementId, $responseKey, $index) {
+    protected function formatResponse($reviewAssignment, $formElementId, $responseData, $index) {
         $reviewFormElement = $this->reviewFormElementRepository->fetchOneById($formElementId);
 
-        $responseValue = $responseKey;
-        if(!(preg_match('/^[0-9]+$/'))) {
-            foreach ($reviewFormElement->getLocalizedPossibleResponses() as $response) {
-                if ($response['order'] == $responseKey) $responseValue = HTML::cleanHtml($response['content']);
+        /**
+         * Put together an array of the allowed options, if relevant
+         */
+        $responseOrderToContentMap = [];
+        foreach ($reviewFormElement->getLocalizedPossibleResponses() as $responseOption) {
+            $responseOrder = $responseOption['order'];
+            $responseContent = $responseOption['content'];
+            $responseOrderToContentMap[$responseOrder] = HTML::cleanHtml($responseContent);
+        }
+
+        /**
+         * Different types of responses are handled differently. The messiest is when it's an array, which indicates
+         * that it's a checkbox field type, which allows multiple selections.
+         */
+        $responseOutputValue = null;
+        if(is_integer($responseData)) {
+            if(array_key_exists($responseData, $responseOrderToContentMap)) {
+                $responseOutputValue = $responseOrderToContentMap[$responseData];
+            }
+        } elseif(is_string($responseData)) {
+            $responseOutputValue = HTML::cleanHtml($responseData);
+        } elseif(is_array($responseData)) {
+            $responseOutputValue = $responseData;
+
+            foreach($responseData as $k => $v) {
+                if(array_key_exists($v, $responseOrderToContentMap)) {
+                    $responseOutputValue[$k] = $responseOrderToContentMap[$v];
+                }
             }
         }
 
@@ -64,7 +88,7 @@ class FormResponses extends ApiRoute  {
         return (object)[
             'source_record_key' => SourceRecordKey::reviewAssignmentResponse($reviewAssignment->getId(), $index),
             'review_form_element' => NestedMapper::map($reviewFormElement, 'sourceRecordKey'),
-            'response_value' => $responseValue
+            'response_value' => $responseOutputValue
         ];
     }
 }
