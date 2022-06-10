@@ -22,8 +22,6 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'dateSubmitted', 'filters' => ['datetime']],
         ['property' => 'dateUpdated', 'source' => 'lastModified', 'filters' => ['datetime']],
         ['property' => 'datePublished', 'source' => 'publishedArticle.datePublished', 'onError' => null, 'filters' => ['datetime']],
-        ['property' => 'dateAccepted', 'onError' => null, 'filters' => ['datetime']], // TODO NOT IMPLEMENTED
-        ['property' => 'dateDeclined', 'onError' => null, 'filters' => ['datetime']], // TODO NOT IMPLEMENTED
         ['property' => 'doi', 'source' => 'storedDOI'],
         ['property' => 'pages'],
         ['property' => 'mostRecentEditorDecision'],
@@ -39,13 +37,9 @@ class Article extends AbstractDataObjectMapper {
      */
     protected static function preMap($dataObject, $context)
     {
-        // Add the publishedArticle onto the article -- it has some useful info not on the article
-        $dataObject->authorSubmission = (new AuthorSubmission)->fetchByArticle($dataObject);
-        $dataObject->publishedArticle = (new PublishedArticle)->fetchByArticle($dataObject);
+        $dataObject = self::addStatusProperties($dataObject);
 
         $dataObject->mostRecentEditorDecision = self::getMostRecentEditorDecision($dataObject);
-
-        $dataObject->publicationStatus = self::mapJournalStatus($dataObject->getStatus());
 
         $dataObject->disciplines = self::mapDisciplines($dataObject);
 
@@ -95,12 +89,26 @@ class Article extends AbstractDataObjectMapper {
     }
 
     /**
+     * @param $dataObject
+     * @return mixed
+     */
+    protected static function addStatusProperties($dataObject)
+    {
+        $dataObject->publishedArticle = (new PublishedArticle)->fetchByArticle($dataObject);
+        $dataObject->publicationStatus =
+            is_null($dataObject->publishedArticle) ? self::getUnpublishedArticleStatus($dataObject) : 'published';
+        return $dataObject;
+    }
+
+
+    /**
      * @param $status
      */
-    protected static function mapJournalStatus($status)
+    protected static function getUnpublishedArticleStatus($dataObject)
     {
-        // TODO: we're missing some stages: copyediting, typesetting, proofing, maybe others
-        return @[STATUS_ARCHIVED => 'archived',
+        $status = $dataObject->getStatus();
+
+        return @[STATUS_ARCHIVED => 'rejected', // If not published and yes archived, it's rejected for all intents and purposes
                  STATUS_QUEUED => 'submitted',
                  STATUS_PUBLISHED => 'published',
                  STATUS_DECLINED => 'rejected',
@@ -109,6 +117,5 @@ class Article extends AbstractDataObjectMapper {
                  STATUS_QUEUED_EDITING => 'copyediting',
                  STATUS_INCOMPLETE => 'draft']
                  [$status] ?: null;
-
     }
 }
