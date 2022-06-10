@@ -11,7 +11,7 @@ class Journal extends AbstractDataObjectMapper {
         ['property' => 'path'],
         ['property' => 'title', 'source' => 'localizedTitle'],
         ['property' => 'abbreviation', 'source' => 'journalInitials'],
-        ['property' => 'description', 'source' => 'localizedDescription'],
+        ['property' => 'description', 'source' => 'localizedDescription', 'filters' => ['html']],
         ['property' => 'enabled', 'filters' => ['boolean']],
         ['property' => 'contactName', 'source' => 'settings.contactName'],
         ['property' => 'contactEmail', 'source' => 'settings.contactEmail'],
@@ -44,7 +44,7 @@ class Journal extends AbstractDataObjectMapper {
      * @return mixed|null
      */
     protected static function getImage($dataObject, $settingKey) {
-        $imageData = $dataObject->getSettings()[$settingKey]['en_US'];
+        $imageData = @$dataObject->getSettings()[$settingKey]['en_US'];
         if($imageData) {
             $imageUrl =
                 Config::getVar('general', 'base_url') .
