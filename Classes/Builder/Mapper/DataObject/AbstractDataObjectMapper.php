@@ -5,6 +5,7 @@ use JournalTransporterPlugin\Utility\Date;
 use JournalTransporterPlugin\Utility\Enums\Role;
 use JournalTransporterPlugin\Utility\Enums\CommentType;
 use JournalTransporterPlugin\Utility\HTML;
+use JournalTransporterPlugin\Utility\Str;
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 use JournalTransporterPlugin\Exception\InvalidMappingConfigurationException;
 use JournalTransporterPlugin\Exception\InvalidArgumentException;
@@ -15,8 +16,6 @@ class AbstractDataObjectMapper {
      * Where we store record identifiers in the JSON we output
      */
     const SOURCE_RECORD_KEY_PROPERTY = 'sourceRecordKey';
-
-    const CAMEL_TO_SNAKE_EXCEPTIONS = ['iPaddress' => 'ip_address'];
 
     const ON_ERROR_TRIGGER_EXCEPTION = '!@#$!@#$';
 
@@ -79,27 +78,12 @@ class AbstractDataObjectMapper {
                 }
 
                 // Convert to snakes for JSON
-                $out[self::camelToSnake($property)] = $value;
+                $out[Str::camelToSnake($property)] = $value;
             }
         }
         return static::postMap($out, $dataObject, $context);
     }
 
-    /**
-     * @param $str
-     * @return mixed|string
-     */
-    protected static function camelToSnake($str)
-    {
-        if(array_key_exists($str, self::CAMEL_TO_SNAKE_EXCEPTIONS)) return self::CAMEL_TO_SNAKE_EXCEPTIONS[$str];
-
-        if (empty($str)) {
-            return $str;
-        }
-        $str = lcfirst($str);
-        $str = preg_replace("/[A-Z]/", '_' . "$0", $str);
-        return strtolower($str);
-    }
 
     /**
      * @param $type
