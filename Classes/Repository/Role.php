@@ -14,7 +14,7 @@ class Role {
      * @param $journal
      * @return mixed
      */
-    public function fetchByJournal($journal)
+    public function fetchUsersByJournal($journal)
     {
         return $this->getUsersByJournalId($journal->getId());
     }

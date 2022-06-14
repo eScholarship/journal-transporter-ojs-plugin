@@ -18,19 +18,24 @@ class Roles extends ApiRoute  {
     public function execute($parameters, $arguments)
     {
         $journal = $this->journalRepository->fetchOneById($parameters['journal']);
-        $resultSet = $this->roleRepository->fetchByJournal($journal);
+        $users = $this->roleRepository->fetchUsersByJournal($journal)->toArray();
 
-        if($arguments[ApiRoute::DEBUG_ARGUMENT]) return DataObject::resultSetToArray($resultSet);
+        if($arguments[ApiRoute::DEBUG_ARGUMENT]) return $users;
 
-        return array_map(function($item) use($journal) {
+        $roles = array_map(function($user) use($journal) {
             $roles = array_map(function($role) {
                 return Str::camelToSnake(Role::getRoleName($role->getRoleId()));
-            }, $this->roleRepository->fetchByUserAndJournal($item, $journal));
+            }, $this->roleRepository->fetchByUserAndJournal($user, $journal));
 
-            return (object)[
-                'user' => NestedMapper::map($item, 'sourceRecordKey'),
-                'roles' => $roles
-            ];
-        }, $resultSet->toArray());
+            return array_map(function($role) use($user, $journal) {
+                return (object)[
+                    'source_record_key' => 'Role:'.hexdec(substr(sha1($journal->getId().':'.$user->getId().':'.$role), 0, 12)),
+                    'user' => NestedMapper::map($user, 'sourceRecordKey'),
+                    'role' => $role
+                ];
+            }, $roles);
+
+        }, $users);
+        return array_merge(...$roles);
     }
 }
