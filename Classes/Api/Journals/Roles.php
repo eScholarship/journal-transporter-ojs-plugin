@@ -24,14 +24,18 @@ class Roles extends ApiRoute  {
 
         $roles = array_map(function($user) use($journal) {
             $roles = array_map(function($role) {
-                return Str::camelToSnake(Role::getRoleName($role->getRoleId()));
+                return (object)[
+                    'label' => Str::camelToSnake(Role::getRoleName($role->getRoleId())),
+                    'id' => $role->getRoleId(),
+                ];
             }, $this->roleRepository->fetchByUserAndJournal($user, $journal));
 
             return array_map(function($role) use($user, $journal) {
                 return (object)[
-                    'source_record_key' => 'Role:'.hexdec(substr(sha1($journal->getId().':'.$user->getId().':'.$role), 0, 12)),
+                    // Role records don't have an id, so we fabricate a SRK like this
+                    'source_record_key' => 'JournalUserRole:'.$journal->getId().':'.$user->getId().':'.$role->id,
                     'user' => NestedMapper::map($user, 'sourceRecordKey'),
-                    'role' => $role
+                    'role' => $role->label
                 ];
             }, $roles);
 
