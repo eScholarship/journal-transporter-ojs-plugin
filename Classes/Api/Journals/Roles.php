@@ -27,10 +27,10 @@ class Roles extends ApiRoute  {
                 return Str::camelToSnake(Role::getRoleName($role->getRoleId()));
             }, $this->roleRepository->fetchByUserAndJournal($item, $journal));
 
-            $user = NestedMapper::map($item, 'roles');
-            $user['roles'] = $roles;
-
-            return $user;
+            return (object)[
+                'user' => NestedMapper::map($item, 'sourceRecordKey'),
+                'roles' => $roles
+            ];
         }, $resultSet->toArray());
     }
 }
