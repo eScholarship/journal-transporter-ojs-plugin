@@ -36,6 +36,7 @@ return [
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/roles' => Roles::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles(/(?P<article>\d+))?' => Articles::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/comments' => Comments::class,
+    '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/revision_requests(/(?P<revision_request>\d+))?' => Articles\RevisionRequests::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/digest/emails(\.(?P<format>[a-z]+))?' => Emails::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/files/(?P<file>\d+)/revisions' => Revisions::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/files(/(?P<file>(\d+|\d+-\d+)))?' => ArticleFiles::class,

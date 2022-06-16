@@ -15,14 +15,28 @@ class ArticleComment {
      * @param $review
      * @return mixed
      */
-    public function fetchByArticleAndReview($article, $review)
+    public function fetchByArticleAndReview($article, $review = null)
     {
         return $this->getArticleComments(
             $article->getId(),
             1,
-            $review->getReviewId()
+            is_object($review) ? $review->getReviewId() : null
         );
     }
+
+    /**
+     * @param $article
+     * @param $review
+     * @return mixed
+     */
+    public function fetchEditorCommentsByArticle($article)
+    {
+        return $this->getArticleComments(
+            $article->getId(),
+            2
+        );
+    }
+
 
     /**
      * @param $article
