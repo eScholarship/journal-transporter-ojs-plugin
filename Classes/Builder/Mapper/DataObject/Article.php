@@ -27,7 +27,8 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'mostRecentEditorDecision'],
         ['property' => 'status', 'source' => 'publicationStatus'],
         ['property' => 'issues'],
-        ['property' => 'sections']
+        ['property' => 'sections'],
+        ['property' => 'externalIds']
     ];
 
     /**
@@ -48,9 +49,27 @@ class Article extends AbstractDataObjectMapper {
         $dataObject->sections = is_null($dataObject->publishedArticle) ?
             [] : [(object) ['source_record_key' => SourceRecordKey::section($dataObject->publishedArticle->getSectionId())]];
 
+        $dataObject->externalIds = self::getExternalIds($dataObject);
+
         return $dataObject;
     }
 
+    /**
+     * @param $dataObject
+     * @return array
+     */
+    protected static function getExternalIds($dataObject)
+    {
+        $ids = [];
+        $ids[] = (object) ['name' => 'source_id', 'value' => $dataObject->getId()];
+
+        // This is quite specific to CDL
+        if($ark = $dataObject->getLocalizedData('eschol_ark')) {
+            $ids[] = (object) ['name' => 'ark', 'value' => $ark];
+        }
+
+        return $ids;
+    }
 
     /**
      * TODO: Might want to move this out of the Mapper class into Repository
