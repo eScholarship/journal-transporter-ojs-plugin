@@ -1,6 +1,7 @@
 <?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
 use Config;
+use JournalTransporterPlugin\Utility\Files;
 
 class Issue extends AbstractDataObjectMapper {
     protected static $contexts = ['index' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title']]];
@@ -20,7 +21,17 @@ class Issue extends AbstractDataObjectMapper {
         ['property' => 'width', 'source' => 'issueWidth'],
         ['property' => 'height', 'source' => 'issueHeight'],
         ['property' => 'articlesCount', 'source' => 'numArticles'],
-        ['property' => 'issueFileName', 'source' => 'localizedFileName'],
-        ['property' => 'originalFileName', 'source' => 'localizedOriginalFileName'],
+        ['property' => 'filename', 'source' => 'coverFileName'],
+        ['property' => 'originalFileName', 'source' => 'localizedOriginalFileName']
     ];
+
+    public static function preMap($dataObject, $context)
+    {
+        $dataObject->coverFileName = null;
+        if(!is_null($dataObject->getLocalizedFilename())) {
+            $dataObject->coverFileName = Files::getPublicJournalUrl($dataObject->getJournalId()) .
+                '/' . $dataObject->getLocalizedFilename();
+        }
+        return $dataObject;
+    }
 }

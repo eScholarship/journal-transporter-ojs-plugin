@@ -2,6 +2,7 @@
 
 use JournalTransporterPlugin\Utility\DAOFactory;
 use Config;
+use JournalTransporterPlugin\Utility\Files;
 
 class Journal extends AbstractDataObjectMapper {
     protected static $contexts = ['list' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title', 'path']]];
@@ -46,10 +47,7 @@ class Journal extends AbstractDataObjectMapper {
     protected static function getImage($dataObject, $settingKey) {
         $imageData = @$dataObject->getSettings()[$settingKey]['en_US'];
         if($imageData) {
-            $imageUrl =
-                Config::getVar('general', 'base_url') .
-                Config::getVar('files', 'public_files_dir') .
-                '/journals/' . $dataObject->getId() . '/' . $imageData['uploadName'];
+            $imageUrl = Files::getPublicJournalUrl($dataObject) . '/' . $imageData['uploadName'];
             $imageData['url'] = $imageUrl;
             return (object) $imageData;
         } else return null;
