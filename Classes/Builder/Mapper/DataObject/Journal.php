@@ -3,6 +3,7 @@
 use JournalTransporterPlugin\Utility\DAOFactory;
 use Config;
 use JournalTransporterPlugin\Utility\Files;
+use JournalTransporterPlugin\Utility\Str;
 
 class Journal extends AbstractDataObjectMapper {
     protected static $contexts = ['list' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title', 'path']]];
@@ -23,8 +24,8 @@ class Journal extends AbstractDataObjectMapper {
         ['property' => 'printIssn', 'source' => 'settings.printIssn'],
         ['property' => 'supportEmail', 'source' => 'settings.supportEmail'],
         ['property' => 'supportName', 'source' => 'settings.supportName'],
-        ['property' => 'header'],
-        ['property' => 'logo']
+        ['property' => 'headerFile'],
+        ['property' => 'logoFile']
     ];
 
     /**
@@ -33,8 +34,8 @@ class Journal extends AbstractDataObjectMapper {
      * @return mixed
      */
     protected static function preMap($dataObject, $context) {
-        $dataObject->header = self::getImage($dataObject, 'pageHeaderTitleImage');
-        $dataObject->logo  = self::getImage($dataObject, 'pageHeaderLogoImage');
+        $dataObject->headerFile = self::getImage($dataObject, 'pageHeaderTitleImage');
+        $dataObject->logoFile  = self::getImage($dataObject, 'pageHeaderLogoImage');
         return $dataObject;
     }
 
@@ -45,7 +46,8 @@ class Journal extends AbstractDataObjectMapper {
      * @return mixed|null
      */
     protected static function getImage($dataObject, $settingKey) {
-        $imageData = @$dataObject->getSettings()[$settingKey]['en_US'];
+        $settings = @$dataObject->getSettings()[$settingKey]['en_US'];
+        $imageData = array_combine(array_map([Str::class, 'camelToSnake'], array_keys($settings)),array_values($settings));
         if($imageData) {
             $imageUrl = Files::getPublicJournalUrl($dataObject) . '/' . $imageData['uploadName'];
             $imageData['url'] = $imageUrl;

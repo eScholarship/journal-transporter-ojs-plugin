@@ -21,16 +21,18 @@ class Issue extends AbstractDataObjectMapper {
         ['property' => 'width', 'source' => 'issueWidth'],
         ['property' => 'height', 'source' => 'issueHeight'],
         ['property' => 'articlesCount', 'source' => 'numArticles'],
-        ['property' => 'filename', 'source' => 'coverFileName'],
-        ['property' => 'originalFileName', 'source' => 'localizedOriginalFileName']
+        ['property' => 'coverFile', 'source' => 'coverFileName']
     ];
 
     public static function preMap($dataObject, $context)
     {
         $dataObject->coverFileName = null;
         if(!is_null($dataObject->getLocalizedFilename())) {
-            $dataObject->coverFileName = Files::getPublicJournalUrl($dataObject->getJournalId()) .
-                '/' . $dataObject->getLocalizedFilename();
+            $dataObject->coverFileName = (object) [
+                'url' => Files::getPublicJournalUrl($dataObject->getJournalId()) . '/' .
+                    $dataObject->getLocalizedFilename(),
+                'upload_name' => $dataObject->getLocalizedOriginalFileName()
+            ];
         }
         return $dataObject;
     }
