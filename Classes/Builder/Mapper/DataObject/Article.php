@@ -28,7 +28,8 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'status', 'source' => 'publicationStatus'],
         ['property' => 'issues'],
         ['property' => 'sections'],
-        ['property' => 'externalIds']
+        ['property' => 'externalIds'],
+        ['property' => 'license']
     ];
 
     /**
@@ -50,6 +51,8 @@ class Article extends AbstractDataObjectMapper {
             [] : [(object) ['source_record_key' => SourceRecordKey::section($dataObject->publishedArticle->getSectionId())]];
 
         $dataObject->externalIds = self::getExternalIds($dataObject);
+
+        $dataObject->license = reset($dataObject->getData('eschol_license_url'));
 
         return $dataObject;
     }
