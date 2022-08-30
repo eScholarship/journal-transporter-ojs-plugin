@@ -15,6 +15,7 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'title', 'source' => 'articleTitle'],
         ['property' => 'abstract', 'source' => 'localizedAbstract', 'filters' => ['html']],
         ['property' => 'coverLetter', 'source' => 'commentsToEditor', 'filters' => ['html']],
+        ['property' => 'acknowledgements', 'source' => 'localizedSponsor', 'filters' => ['html']],
         ['property' => 'disciplines'],
         ['property' => 'authors', 'context' => 'sourceRecordKey'],
         ['property' => 'language'],
