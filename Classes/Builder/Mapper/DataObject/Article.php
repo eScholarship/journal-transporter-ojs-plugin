@@ -17,6 +17,7 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'coverLetter', 'source' => 'commentsToEditor', 'filters' => ['html']],
         ['property' => 'acknowledgements', 'source' => 'localizedSponsor', 'filters' => ['html']],
         ['property' => 'disciplines'],
+        ['property' => 'keywords'],
         ['property' => 'authors', 'context' => 'sourceRecordKey'],
         ['property' => 'language'],
         ['property' => 'dateStarted', 'source' => 'dateSubmitted', 'filters' => ['datetime']],
@@ -52,6 +53,7 @@ class Article extends AbstractDataObjectMapper {
             [] : [(object) ['source_record_key' => SourceRecordKey::section($dataObject->publishedArticle->getSectionId())]];
 
         $dataObject->externalIds = self::getExternalIds($dataObject);
+        $dataObject->keywords = array_map('trim', explode(';', reset($dataObject->getData('subject'))));
 
         $dataObject->license = reset($dataObject->getData('eschol_license_url'));
 

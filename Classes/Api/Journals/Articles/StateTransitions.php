@@ -4,7 +4,7 @@ use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Utility\DataObject;
 
-class Signoffs extends ApiRoute  {
+class StateTransitions extends ApiRoute  {
     protected $journalRepository;
     protected $articleRepository;
     protected $signoffRepository;

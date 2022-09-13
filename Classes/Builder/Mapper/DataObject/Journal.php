@@ -50,7 +50,7 @@ class Journal extends AbstractDataObjectMapper {
         $imageData = array_combine(array_map([Str::class, 'camelToSnake'], array_keys($settings)),array_values($settings));
         if($imageData) {
             $imageUrl = Files::getPublicJournalUrl($dataObject) . '/' . $imageData['uploadName'];
-            $imageData['url'] = $imageUrl;
+            $imageData['url'] = $imageUrl . $imageData['upload_name'];
             return (object) $imageData;
         } else return null;
     }

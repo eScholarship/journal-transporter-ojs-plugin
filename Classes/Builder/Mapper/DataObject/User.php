@@ -18,9 +18,9 @@ class User extends AbstractDataObjectMapper {
         ['property' => 'fax'],
         ['property' => 'mailingAddress'],
         ['property' => 'countryCode', 'source' => 'country'],
-        ['property' => 'biography', 'source' => 'localizedBiography'],
+        ['property' => 'biography', 'source' => 'localizedBiography', 'filters' => ['html']],
         ['property' => 'interests'],
         ['property' => 'title', 'source' => 'localizedProfessionalTitle'],
-        ['property' => 'signature', 'source' => 'contactSignature'],
+        ['property' => 'signature', 'source' => 'contactSignature']
     ];
 }
