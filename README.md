@@ -38,7 +38,7 @@ turn, transformed into JSON for output.
 
 # API
 
-All API endpoints will look like this: [SITE DOMAIN]/index.php/pages/js/api/[ROUTE]. The allowed routes are
+All API endpoints will look like this: [SITE DOMAIN]/index.php/pages/jt/api/[ROUTE]. The allowed routes are
 defined in `Classes/Api/Controller.php`. Routes that display single records (journals, articles, etc), accept a URL
 parameter `?debug`, which dumps all data from the requested object rather than mapping specific fields.
 
