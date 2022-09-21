@@ -7,7 +7,7 @@ use JournalTransporterPlugin\Api\Journals\Articles\Authors as ArticleAuthors;
 use JournalTransporterPlugin\Api\Journals\Articles\Editors;
 use JournalTransporterPlugin\Api\Journals\Articles\Comments;
 use JournalTransporterPlugin\Api\Journals\Articles\Digest\Emails;
-use JournalTransporterPlugin\Api\Journals\Articles\Digest\Log;
+use JournalTransporterPlugin\Api\Journals\Articles\Digest\LogEntries;
 use JournalTransporterPlugin\Api\Journals\Articles\Files as ArticleFiles;
 use JournalTransporterPlugin\Api\Journals\Articles\Files\Revisions;
 use JournalTransporterPlugin\Api\Journals\Articles\Rounds;
@@ -47,7 +47,7 @@ return [
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/rounds/(?P<round>\d+)/assignments/(?P<review_assignment>\d+)/notes' => Notes::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/rounds(/(?P<round>\d)+)?' => Rounds::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/state_transitions' => Articles\StateTransitions::class,
-    '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/digest/log' => Log::class,
+    '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/log_entries' => LogEntries::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/articles/(?P<article>\d+)/synthetics/history' => History::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/review_forms(/(?P<review_form>\d+))?' => ReviewForms::class,
     '/journals/(?P<journal>[a-zA-Z0-9_]+)/review_forms/(?P<review_form>\d+)/elements(/(?P<review_form_element>\d+))?' => Elements::class,

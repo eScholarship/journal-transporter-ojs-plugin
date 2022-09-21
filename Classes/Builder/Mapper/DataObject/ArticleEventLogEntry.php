@@ -1,22 +1,29 @@
 <?php namespace JournalTransporterPlugin\Builder\Mapper\DataObject;
 
+use JournalTransporterPlugin\Utility\SourceRecordKey;
+
 class ArticleEventLogEntry extends AbstractDataObjectMapper
 {
     protected static $mapping = [
         ['property' => 'sourceRecordKey', 'source' => 'logId'],
-        ['property' => 'articleId'],
-        ['property' => 'userId'],
-        ['property' => 'dateLogged', 'filters' => ['datetime']],
-        ['property' => 'ip', 'source' => 'iPaddress'],
-        ['property' => 'logLevel'],
-        ['property' => 'eventType'],
-        ['property' => 'assocType'],
-        ['property' => 'message'],
-        ['property' => 'logLevelString'],
-        ['property' => 'eventTitle'],
-        ['property' => 'userFullName'],
-        ['property' => 'userEmail'],
-        ['property' => 'assocTypeString'],
-        ['property' => 'assocTypeLongString'],
+        ['property' => 'user'],
+        ['property' => 'date', 'source' => 'dateLogged', 'filters' => ['datetime']],
+        ['property' => 'ip_address', 'source' => 'iPaddress'],
+        ['property' => 'level'],
+        ['property' => 'title'],
+        ['property' => 'description', 'source' => 'message'],
     ];
+
+    /**
+     * @param $data
+     * @param $dataObject
+     * @return mixed
+     */
+    protected static function preMap($dataObject, $context)
+    {
+        $dataObject->user = SourceRecordKey::user($dataObject->getUserId());
+        $dataObject->title = '[OJS] '.$dataObject->getEventTitle();
+        $dataObject->level = end(explode('.', $dataObject->getLogLevelString()));
+        return $dataObject;
+    }
 }
