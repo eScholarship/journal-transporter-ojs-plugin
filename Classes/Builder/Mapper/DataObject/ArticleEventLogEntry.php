@@ -21,9 +21,10 @@ class ArticleEventLogEntry extends AbstractDataObjectMapper
      */
     protected static function preMap($dataObject, $context)
     {
-        $dataObject->user = SourceRecordKey::user($dataObject->getUserId());
+        $dataObject->user = (object)['source_record_key' => SourceRecordKey::user($dataObject->getUserId())];
         $dataObject->title = '[OJS] '.$dataObject->getEventTitle();
-        $dataObject->level = end(explode('.', $dataObject->getLogLevelString()));
+        $logLevelString = explode('.', $dataObject->getLogLevelString());
+        $dataObject->level = end($logLevelString);
         return $dataObject;
     }
 }
