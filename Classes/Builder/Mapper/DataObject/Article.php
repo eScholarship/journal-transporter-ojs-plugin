@@ -24,6 +24,7 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'dateSubmitted', 'filters' => ['datetime']],
         ['property' => 'dateUpdated', 'source' => 'lastModified', 'filters' => ['datetime']],
         ['property' => 'datePublished', 'source' => 'publishedArticle.datePublished', 'onError' => null, 'filters' => ['datetime']],
+        ['property' => 'sequence', 'source' => 'publishedArticle.seq', 'onError' => null],
         ['property' => 'doi', 'source' => 'storedDOI'],
         ['property' => 'pages'],
         ['property' => 'mostRecentEditorDecision'],
