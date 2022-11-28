@@ -69,6 +69,7 @@ class Article extends AbstractDataObjectMapper {
      */
     protected function getArticleSequenceWithinIssue($dataObject)
     {
+        if(is_null($dataObject->publishedArticle)) return null;
         $articles = (new PublishedArticle)->fetchArticlesByIssue($dataObject->publishedArticle->getIssueId());
         $sequence = 0;
         foreach($articles as $article) {
