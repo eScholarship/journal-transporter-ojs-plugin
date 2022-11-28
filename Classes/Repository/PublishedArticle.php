@@ -18,4 +18,9 @@ class PublishedArticle {
     {
         return $this->getPublishedArticleByArticleId($article->getId());
     }
+
+    public function fetchArticlesByIssue($issueId)
+    {
+        return $this->getPublishedArticles($issueId);
+    }
 }

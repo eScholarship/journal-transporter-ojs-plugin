@@ -24,7 +24,7 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'dateSubmitted', 'filters' => ['datetime']],
         ['property' => 'dateUpdated', 'source' => 'lastModified', 'filters' => ['datetime']],
         ['property' => 'datePublished', 'source' => 'publishedArticle.datePublished', 'onError' => null, 'filters' => ['datetime']],
-        ['property' => 'sequence', 'source' => 'publishedArticle.seq', 'onError' => null],
+        ['property' => 'sequence', 'onError' => null],
         ['property' => 'doi', 'source' => 'storedDOI'],
         ['property' => 'pages'],
         ['property' => 'mostRecentEditorDecision'],
@@ -58,7 +58,26 @@ class Article extends AbstractDataObjectMapper {
 
         $dataObject->license = reset($dataObject->getData('eschol_license_url'));
 
+        $dataObject->sequence = self::getArticleSequenceWithinIssue($dataObject);
+
         return $dataObject;
+    }
+
+    /**
+     * @param $dataObject
+     * @return mixed
+     */
+    protected function getArticleSequenceWithinIssue($dataObject)
+    {
+        $articles = (new PublishedArticle)->fetchArticlesByIssue($dataObject->publishedArticle->getIssueId());
+        $sequence = 0;
+        foreach($articles as $article) {
+            $sequence++;
+            if($article->getId() == $dataObject->getId()) {
+                return $sequence;
+            }
+        }
+        return null;
     }
 
     /**
