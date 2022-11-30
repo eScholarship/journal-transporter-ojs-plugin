@@ -27,7 +27,6 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'sequence', 'onError' => null],
         ['property' => 'doi', 'source' => 'storedDOI'],
         ['property' => 'pages'],
-        ['property' => 'mostRecentEditorDecision'],
         ['property' => 'status', 'source' => 'publicationStatus'],
         ['property' => 'issues'],
         ['property' => 'sections'],
@@ -43,8 +42,6 @@ class Article extends AbstractDataObjectMapper {
     protected static function preMap($dataObject, $context)
     {
         $dataObject = self::addStatusProperties($dataObject);
-
-        $dataObject->mostRecentEditorDecision = self::getMostRecentEditorDecision($dataObject);
 
         $dataObject->disciplines = self::mapDisciplines($dataObject);
 
@@ -99,28 +96,6 @@ class Article extends AbstractDataObjectMapper {
     }
 
     /**
-     * TODO: Might want to move this out of the Mapper class into Repository
-     * @param $dataObject
-     */
-    protected static function getMostRecentEditorDecision($dataObject)
-    {
-        $editorDecisions = (new AuthorSubmission)->fetchEditorDecisionsByArticle($dataObject);
-
-        if(count($editorDecisions) == 0) return [];
-
-        usort($editorDecisions, function($a, $b) {
-            $dateA = strtotime($a['dateDecided']);
-            $dateB = strtotime($b['dateDecided']);
-
-            return $dateB > $dateA;
-        });
-
-        $editorDecision = (object) array_pop($editorDecisions);
-        $editorDecision->__mapperClass = 'EditorDecision';
-        return $editorDecision;
-    }
-
-    /**
      * @param $dataObject
      * @return array
      */
@@ -155,7 +130,7 @@ class Article extends AbstractDataObjectMapper {
         $status = $dataObject->getStatus();
 
         return @[STATUS_ARCHIVED => 'rejected', // If not published and yes archived, it's rejected for all intents and purposes
-                 STATUS_QUEUED => 'submitted',
+                 STATUS_QUEUED => 'review',
                  STATUS_PUBLISHED => 'published',
                  STATUS_DECLINED => 'rejected',
                  STATUS_QUEUED_UNASSIGNED => 'submitted',
