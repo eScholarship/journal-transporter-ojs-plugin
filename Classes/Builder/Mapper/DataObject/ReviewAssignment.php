@@ -2,6 +2,7 @@
 
 use JournalTransporterPlugin\Repository\ArticleComment;
 use JournalTransporterPlugin\Repository\Article;
+use JournalTransporterPlugin\Repository\File;
 use JournalTransporterPlugin\Repository\ReviewFormResponse;
 use JournalTransporterPlugin\Repository\ArticleEventLog;
 use JournalTransporterPlugin\Repository\SupplementaryFile;
@@ -32,7 +33,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         ['property' => 'declined', 'filters' => ['boolean']],
         ['property' => 'replaced', 'filters' => ['boolean']],
         ['property' => 'cancelled', 'filters' => ['boolean']],
-        ['property' => 'reviewFile', 'context' => 'sourceRecordKey'],
+        ['property' => 'reviewFile', 'source' => 'reviewFileForRound', 'context' => 'sourceRecordKey'],
         ['property' => 'suppFiles', 'source' => 'supplementaryFiles'],
         ['property' => 'reviewerFile', 'context' => 'sourceRecordKey'],
         ['property' => 'comments', 'source' => 'reviewComments'],
@@ -67,14 +68,24 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         $dataObject->qualityText = self::getQualityText($dataObject);
         $dataObject->hasResponse = self::getHasResponse($dataObject);
         $dataObject->reviewForm = self::getReviewFormSourceRecordKey($dataObject);
-
+        $dataObject->reviewFileForRound = self::getReviewFieldForRound($dataObject);
 
         return $dataObject;
     }
 
     /**
      * @param $dataObject
-     * @return mixed 
+     * @return mixed
+     */
+    protected static function getReviewFieldForRound($dataObject)
+    {
+        return (new File)->fetchRevisionsByFile($dataObject->getReviewFile(), $dataObject->getRound());
+    }
+
+
+    /**
+     * @param $dataObject
+     * @return mixed
      */
     protected static function getEditorFromLogEntry($dataObject)
     {

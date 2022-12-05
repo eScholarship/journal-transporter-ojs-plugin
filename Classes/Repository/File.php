@@ -41,9 +41,9 @@ class File {
      * @param $file
      * @return mixed
      */
-    public function fetchRevisionsByFile($file)
+    public function fetchRevisionsByFile($file, $round = null)
     {
-        return $this->getArticleFileRevisions($file->getFileId());
+        return $this->getArticleFileRevisions($file->getFileId(), $round);
     }
 
     /**
