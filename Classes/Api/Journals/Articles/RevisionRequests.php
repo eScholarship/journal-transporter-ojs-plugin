@@ -3,6 +3,7 @@
 use JournalTransporterPlugin\Api\ApiRoute;
 use JournalTransporterPlugin\Builder\Mapper\NestedMapper;
 use JournalTransporterPlugin\Exception\CannotFetchDataObjectException;
+use JournalTransporterPlugin\Repository\File;
 use JournalTransporterPlugin\Utility\Date;
 use JournalTransporterPlugin\Utility\Enums\Role;
 
@@ -66,9 +67,41 @@ class RevisionRequests extends ApiRoute  {
 
         list($commentsStart, $commentsEnd) = $this->determineCommentWindow($decisions, $revisionRequest);
 
+        /**
+         * This is a real oddball as far as rendering a response is concerned. Given the opportunity I'd circle
+         * back on this.
+         */
         $decision = NestedMapper::map($this->editDecisionArrayToObject($foundEditDecision));
+
+        $decision['dateResponse'] = $this->getResponseDate($article, $decision);
         $decision['comment'] = $this->formatComments($this->fetchEditorCommentsWithinRange($article, $commentsStart, $commentsEnd));
+
         return $decision;
+    }
+
+    /**
+     * @param $article
+     * @param $decision
+     * @return string|null
+     * @throws \Exception
+     */
+    protected function getResponseDate($article, $decision)
+    {
+        $files = array_filter((new File)->fetchByArticle($article),
+            function($f) use($decision) {
+                if($f->getRound() != $decision['round']) return false;
+                if(Date::strToDatetime($f->getDateUploaded()) <= Date::strToDatetime($decision['date'])) return false;
+                return true;
+            }
+        );
+
+        if(count($files) == 0) return null;
+
+        usort($files, function($a, $b) {
+            return $a->getDateUploaded() > $b->getDateUploaded();
+        });
+
+        return Date::formatDateString($files[0]->getDateUploaded());
     }
 
     /**
