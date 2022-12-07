@@ -73,7 +73,7 @@ class RevisionRequests extends ApiRoute  {
          */
         $decision = NestedMapper::map($this->editDecisionArrayToObject($foundEditDecision));
 
-        $decision['dateResponse'] = $this->getResponseDate($article, $decision);
+        $decision['date_response'] = $this->getResponseDate($article, $decision);
         $decision['comment'] = $this->formatComments($this->fetchEditorCommentsWithinRange($article, $commentsStart, $commentsEnd));
 
         return $decision;
