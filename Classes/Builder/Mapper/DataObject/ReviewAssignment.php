@@ -33,7 +33,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         ['property' => 'declined', 'filters' => ['boolean']],
         ['property' => 'replaced', 'filters' => ['boolean']],
         ['property' => 'cancelled', 'filters' => ['boolean']],
-        ['property' => 'reviewFile', 'source' => 'reviewFileForRound', 'context' => 'sourceRecordKey'],
+        ['property' => 'reviewFiles', 'source' => 'reviewFileForRound', 'context' => 'sourceRecordKey'],
         ['property' => 'suppFiles', 'source' => 'supplementaryFiles'],
         ['property' => 'reviewerFile', 'context' => 'sourceRecordKey'],
         ['property' => 'comments', 'source' => 'reviewComments'],
@@ -68,7 +68,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         $dataObject->qualityText = self::getQualityText($dataObject);
         $dataObject->hasResponse = self::getHasResponse($dataObject);
         $dataObject->reviewForm = self::getReviewFormSourceRecordKey($dataObject);
-        $dataObject->reviewFileForRound = self::getReviewFieldForRound($dataObject);
+        $dataObject->reviewFileForRound = self::getReviewFileForRound($dataObject);
 
         return $dataObject;
     }
@@ -77,9 +77,11 @@ class ReviewAssignment extends AbstractDataObjectMapper {
      * @param $dataObject
      * @return mixed
      */
-    protected static function getReviewFieldForRound($dataObject)
+    protected static function getReviewFileForRound($dataObject)
     {
-        return (new File)->fetchRevisionsByFile($dataObject->getReviewFile(), $dataObject->getRound());
+        $files = (new File)->fetchRevisionsByFile($dataObject->getReviewFile(), $dataObject->getRound());
+        if(count($files) == 0) return null;
+        return [end($files)];
     }
 
 
