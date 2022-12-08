@@ -27,7 +27,7 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'sequence', 'onError' => null],
         ['property' => 'doi', 'source' => 'storedDOI'],
         ['property' => 'pages'],
-        ['property' => 'status', 'source' => 'publicationStatus'],
+        ['property' => 'status', 'source' => 'submissionStatus'],
         ['property' => 'issues'],
         ['property' => 'sections'],
         ['property' => 'externalIds'],
@@ -41,7 +41,11 @@ class Article extends AbstractDataObjectMapper {
      */
     protected static function preMap($dataObject, $context)
     {
-        $dataObject = self::addStatusProperties($dataObject);
+        $dataObject->authorSubmission = (new AuthorSubmission)->fetchByArticle($dataObject);
+
+        $dataObject->publishedArticle = (new PublishedArticle)->fetchByArticle($dataObject);
+
+        $dataObject->submissionStatus = self::getSubmissionStatus($dataObject);
 
         $dataObject->disciplines = self::mapDisciplines($dataObject);
 
@@ -113,23 +117,11 @@ class Article extends AbstractDataObjectMapper {
      * @param $dataObject
      * @return mixed
      */
-    protected static function addStatusProperties($dataObject)
+    protected static function getSubmissionStatus($dataObject)
     {
-        $dataObject->publishedArticle = (new PublishedArticle)->fetchByArticle($dataObject);
-        $dataObject->publicationStatus =
-            is_null($dataObject->publishedArticle) ? self::getUnpublishedArticleStatus($dataObject) : 'published';
-        return $dataObject;
-    }
+        $status = $dataObject->authorSubmission->getSubmissionStatus();
 
-
-    /**
-     * @param $status
-     */
-    protected static function getUnpublishedArticleStatus($dataObject)
-    {
-        $status = $dataObject->getStatus();
-
-        return @[STATUS_ARCHIVED => 'rejected', // If not published and yes archived, it's rejected for all intents and purposes
+        return @[STATUS_ARCHIVED => 'rejected',
                  STATUS_QUEUED => 'review',
                  STATUS_PUBLISHED => 'published',
                  STATUS_DECLINED => 'rejected',
