@@ -53,7 +53,8 @@ class Article extends AbstractDataObjectMapper {
         $dataObject->issues = is_null($dataObject->publishedArticle) ?
             [] : [(object) ['source_record_key' => SourceRecordKey::issue($dataObject->publishedArticle->getIssueId())]];
         $dataObject->sections = is_null($dataObject->publishedArticle) ?
-            [] : [(object) ['source_record_key' => SourceRecordKey::section($dataObject->publishedArticle->getSectionId())]];
+            [(object) ['source_record_key' => SourceRecordKey::section($dataObject->getSectionId())]] :
+            [(object) ['source_record_key' => SourceRecordKey::section($dataObject->publishedArticle->getSectionId())]];
 
         $dataObject->externalIds = self::getExternalIds($dataObject);
         $dataObject->keywords = array_map('trim', explode(';', reset($dataObject->getData('subject'))));
