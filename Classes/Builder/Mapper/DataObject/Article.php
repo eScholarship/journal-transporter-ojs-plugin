@@ -18,6 +18,7 @@ class Article extends AbstractDataObjectMapper {
         ['property' => 'acknowledgements', 'source' => 'localizedSponsor', 'filters' => ['html']],
         ['property' => 'disciplines'],
         ['property' => 'keywords'],
+        ['property' => 'creator', 'source' => 'user', 'context' => 'sourceRecordKey'],
         ['property' => 'authors', 'context' => 'sourceRecordKey'],
         ['property' => 'language'],
         ['property' => 'dateStarted', 'source' => 'dateSubmitted', 'filters' => ['datetime']],
