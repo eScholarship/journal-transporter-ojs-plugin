@@ -6,6 +6,8 @@ use JournalTransporterPlugin\Repository\EditAssignment;
 use JournalTransporterPlugin\Utility\Enums\Discipline;
 use JournalTransporterPlugin\Utility\SourceRecordKey;
 
+import('classes.submission.common.Action');
+
 class Article extends AbstractDataObjectMapper {
     protected static $contexts = ['index' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title', 'datePublished']]];
 
