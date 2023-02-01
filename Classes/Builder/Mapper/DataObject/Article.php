@@ -42,6 +42,9 @@ class Article extends AbstractDataObjectMapper {
      */
     protected static function preMap($dataObject, $context)
     {
+        // Do less for index context
+        if($context == 'index') return $dataObject;
+
         $dataObject->authorSubmission = (new AuthorSubmission)->fetchByArticle($dataObject);
 
         $dataObject->publishedArticle = (new PublishedArticle)->fetchByArticle($dataObject);
