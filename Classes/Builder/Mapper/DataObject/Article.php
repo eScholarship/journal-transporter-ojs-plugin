@@ -128,6 +128,15 @@ class Article extends AbstractDataObjectMapper {
     {
         $status = $dataObject->authorSubmission->getSubmissionStatus();
 
+        if ($status == STATUS_QUEUED_REVIEW) {
+          $latestDecision = $dataObject->authorSubmission->getMostRecentDecision();
+          if ($latestDecision){
+            if($latestDecision == SUBMISSION_EDITOR_DECISION_PENDING_REVISIONS || $latestDecision == SUBMISSION_EDITOR_DECISION_RESUBMIT){
+              return 'revise';
+            }
+          }
+        }
+
         return @[STATUS_ARCHIVED => 'rejected',
                  STATUS_QUEUED => 'review',
                  STATUS_PUBLISHED => 'published',
