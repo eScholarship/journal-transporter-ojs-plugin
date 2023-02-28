@@ -137,6 +137,15 @@ class Article extends AbstractDataObjectMapper {
           }
         }
 
+        if ($status == STATUS_QUEUED_EDITING) {
+          $latestDecision = $dataObject->authorSubmission->getMostRecentDecision();
+          if ($latestDecision){
+             if($latestDecision == SUBMISSION_EDITOR_DECISION_DECLINE){
+               return 'rejected';
+             }
+          }
+        }
+
         return @[STATUS_ARCHIVED => 'rejected',
                  STATUS_QUEUED => 'review',
                  STATUS_PUBLISHED => 'published',
