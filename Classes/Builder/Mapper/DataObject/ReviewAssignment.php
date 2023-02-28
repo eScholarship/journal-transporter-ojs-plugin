@@ -39,6 +39,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         ['property' => 'comments', 'source' => 'reviewComments'],
         ['property' => 'quality', 'source' => 'qualityText'],
         ['property' => 'hasResponse', 'filter' => ['boolean']],
+        ['property' => 'isComplete', 'filter' => ['boolean']],
         ['property' => 'reviewForm']
     ];
 
@@ -67,6 +68,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         $dataObject->reviewTypeText = self::getReviewTypeText($dataObject);
         $dataObject->qualityText = self::getQualityText($dataObject);
         $dataObject->hasResponse = self::getHasResponse($dataObject);
+        $dataObject->isComplete = self::getIsComplete($dataObject);
         $dataObject->reviewForm = self::getReviewFormSourceRecordKey($dataObject);
         $dataObject->reviewFileForRound = self::getReviewFileForRound($dataObject);
 
@@ -115,6 +117,11 @@ class ReviewAssignment extends AbstractDataObjectMapper {
     protected static function getHasResponse($dataObject)
     {
         return count((new ReviewFormResponse)->fetchByReview($dataObject)) > 0;
+    }
+
+    protected static function getIsComplete($dataObject)
+    {
+        return isset($dataObject->getDateCompleted);
     }
 
     /**
