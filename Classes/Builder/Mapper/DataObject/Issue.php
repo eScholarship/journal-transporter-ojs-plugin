@@ -2,6 +2,8 @@
 
 use Config;
 use JournalTransporterPlugin\Utility\Files;
+use JournalTransporterPlugin\Utility\DAOFactory;
+use JournalTransporterPlugin\Utility\SourceRecordKey;
 
 class Issue extends AbstractDataObjectMapper {
     protected static $contexts = ['index' => ['exclude' => '*', 'include' => ['sourceRecordKey', 'title']]];
@@ -20,7 +22,8 @@ class Issue extends AbstractDataObjectMapper {
         ['property' => 'width', 'source' => 'issueWidth'],
         ['property' => 'height', 'source' => 'issueHeight'],
         ['property' => 'articlesCount', 'source' => 'numArticles'],
-        ['property' => 'coverFile', 'source' => 'coverFileName']
+        ['property' => 'coverFile', 'source' => 'coverFileName'],
+        ['property' => 'sections']
     ];
 
     public static function preMap($dataObject, $context)
@@ -33,6 +36,26 @@ class Issue extends AbstractDataObjectMapper {
                 'upload_name' => $dataObject->getLocalizedOriginalFileName()
             ];
         }
+
+        $dataObject->sections = self::getSections($dataObject);
+
         return $dataObject;
+    }
+
+    /**
+     * @param $dataObject
+     * @return array
+     */
+    protected static function getSections($dataObject)
+    {
+       $sectionDao = DAOFactory::get()->getDAO('section');
+        $sections = $sectionDao->getSectionsForIssue($dataObject->getIssueId());
+        $result = [];
+        $seq = 0;
+        foreach ($sections as $section){
+            $result[] = (object) ['source_record_key' => SourceRecordKey::section($section->getSectionId()), 'seq' => $seq];
+            $seq++;
+        }
+        return $result;
     }
 }
