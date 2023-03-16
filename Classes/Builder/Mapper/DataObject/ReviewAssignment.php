@@ -121,7 +121,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
 
     protected static function getIsComplete($dataObject)
     {
-        return isset($dataObject->getDateCompleted);
+        return !empty($dataObject->getDateCompleted());
     }
 
     /**
