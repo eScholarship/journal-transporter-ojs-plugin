@@ -24,6 +24,7 @@ class Journal extends AbstractDataObjectMapper {
         ['property' => 'printIssn', 'source' => 'settings.printIssn'],
         ['property' => 'supportEmail', 'source' => 'settings.supportEmail'],
         ['property' => 'supportName', 'source' => 'settings.supportName'],
+        ['property' => 'copyrightNotice', 'source' => 'settings.copyrightNotice'],
         ['property' => 'headerFile'],
         ['property' => 'logoFile']
     ];
