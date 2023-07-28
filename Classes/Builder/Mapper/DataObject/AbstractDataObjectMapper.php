@@ -193,6 +193,7 @@ class AbstractDataObjectMapper {
         if($filter === 'datetime') return static::applyDatetimeFilter($value);
         if($filter === 'integer') return static::applyIntegerFilter($value);
         if($filter === 'html') return static::applyHTMLFilter($value);
+        if($filter === 'first') return static::applyFirstFilter($value);
 
         throw new InvalidMappingConfigurationException("Filter $filter does not exist");
     }
@@ -231,5 +232,16 @@ class AbstractDataObjectMapper {
      */
     protected static function applyHTMLFilter($value) {
         return HTML::cleanHtml($value);
+    }
+
+    /**
+     * @param $value
+     * @return string
+     */
+    protected static function applyFirstFilter($value) {
+        if (count($value) > 0) {
+            return $value[0];
+        }
+        return "";
     }
 }
