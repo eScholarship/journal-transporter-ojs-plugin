@@ -96,7 +96,7 @@ class ArticleFile  extends AbstractDataObjectMapper {
      * @return string
      */
     protected static function getSourceRecordKey($model) {
-        return self::generateSourceRecordKey(get_class($model), $model->getArticleId(), $model->getFileId(), $model->getRevision());
+        return self::generateSourceRecordKey("ArticleFile", $model->getArticleId(), $model->getFileId(), $model->getRevision());
     }
 
     /**
