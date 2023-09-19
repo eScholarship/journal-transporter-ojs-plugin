@@ -120,6 +120,6 @@ class ArticleFile  extends AbstractDataObjectMapper {
      * @return string
      */
     protected static function generateSourceRecordKey($modelName, $articleId, $fileId, $revision) {
-        return $modelName.':'.$articleId.':'.$fileId.'-'.($revision ?: '0');
+        return $modelName.':'.$articleId.':'.$fileId.'-'.(sprintf('%02d', $revision) ?: '00');
     }
 }
