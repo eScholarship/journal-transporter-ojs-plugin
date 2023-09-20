@@ -34,7 +34,7 @@ class ReviewAssignment extends AbstractDataObjectMapper {
         ['property' => 'replaced', 'filters' => ['boolean']],
         ['property' => 'cancelled', 'filters' => ['boolean']],
         ['property' => 'reviewFiles', 'source' => 'reviewFileForRound', 'context' => 'sourceRecordKey'],
-        ['property' => 'suppFiles', 'source' => 'supplementaryFiles'],
+        ['property' => 'suppFiles', 'source' => 'supplementaryFiles', 'context' => 'sourceRecordKey'],
         ['property' => 'reviewerFile', 'context' => 'sourceRecordKey'],
         ['property' => 'comments', 'source' => 'reviewComments'],
         ['property' => 'quality', 'source' => 'qualityText'],
