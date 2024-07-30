@@ -14,6 +14,7 @@ class Issue extends AbstractDataObjectMapper {
         ['property' => 'volume'],
         ['property' => 'number'],
         ['property' => 'year'],
+        ['property' => 'showYear', 'filters' => ['boolean']],
         ['property' => 'published', 'filters' => ['boolean']],
         ['property' => 'current', 'filters' => ['boolean']],
         ['property' => 'datePublished', 'filters' => ['datetime']],
