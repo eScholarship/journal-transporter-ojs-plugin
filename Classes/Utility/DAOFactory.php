@@ -22,7 +22,7 @@ class DAOFactory {
     /**
      * @return \JournalTransporterPlugin\Utility\DAOFactory
      */
-    public function get() {
+    public static function get() {
         return self::$instance === null ? new self : self::instance;
     }
 

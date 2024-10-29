@@ -8,7 +8,7 @@ class EditorSubmission extends \EditorSubmissionDAO {
      * Constructor
      */
     function __construct() {
-        parent::EditorSubmissionDAO();
+        parent::__construct();
     }
 
     /**

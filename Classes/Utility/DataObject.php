@@ -8,7 +8,7 @@ class DataObject {
      */
     public static function resultSetToArray($resultSet, $exclude = ['allData']) {
         return array_map(
-            function($dataObject) use($exclude) {
+            static function($dataObject) use($exclude) {
               return DataObject::dataObjectToArray($dataObject, $exclude);
             },
             $resultSet->toArray()

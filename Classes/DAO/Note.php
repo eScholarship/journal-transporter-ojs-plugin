@@ -8,7 +8,7 @@ class Note extends \NoteDAO {
      * Constructor
      */
     function __construct() {
-        parent::NoteDAO();
+        parent::__construct();
     }
 
     /**

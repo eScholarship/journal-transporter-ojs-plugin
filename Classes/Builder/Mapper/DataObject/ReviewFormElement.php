@@ -20,7 +20,7 @@ class ReviewFormElement extends AbstractDataObjectMapper
      * @param $dataObject
      * @return mixed
      */
-    protected static function preMap($dataObject) {
+    protected static function preMap($dataObject, $context) {
         $dataObject->type = self::getElementType($dataObject->getElementType());
         $dataObject->responses = self::getFormattedResponses($dataObject->getLocalizedPossibleResponses());
         return $dataObject;

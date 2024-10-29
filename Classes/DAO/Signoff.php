@@ -8,7 +8,7 @@ class Signoff extends \SignoffDAO {
      * Constructor
      */
     function __construct() {
-        parent::SignoffDAO();
+        parent::__construct();
     }
 
     /**
