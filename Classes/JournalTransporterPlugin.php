@@ -52,6 +52,7 @@ class JournalTransporterPlugin extends GenericPlugin {
         // If basic auth is required and fails, no access for you!
         if(Config::getVar(self::PLUGIN_CONFIG_KEY, 'require_basic_auth')) {
             // Can't enable basic auth with an empty username or password
+            if(!isset($_SERVER['PHP_AUTH_USER'])) return false;
             if(!(strlen($_SERVER['PHP_AUTH_USER']) > 0) || !(strlen($_SERVER['PHP_AUTH_PW']) > 0)) return false;
 
             if(Config::getVar(self::PLUGIN_CONFIG_KEY, 'basic_auth_user') !== $_SERVER['PHP_AUTH_USER'] ||
