@@ -11,7 +11,7 @@ trait Repository {
      * @return mixed
      * @throws
      */
-    protected function __call($name, $arguments) {
+    public function __call($name, $arguments) {
         if(!property_exists($this, 'DAO')) throw new InvalidArgumentException('DAO method called without assigned DAO');
         if(!preg_match('/^[a-zA-Z]+$/', $this->DAO)) throw new UnknownDatabaseAccessObjectException('Invalid DAO name provided');
 

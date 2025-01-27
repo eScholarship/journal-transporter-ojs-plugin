@@ -64,7 +64,12 @@ class Article extends AbstractDataObjectMapper {
         $dataObject->externalIds = self::getExternalIds($dataObject);
         $dataObject->keywords = array_map('trim', explode(';', reset($dataObject->getData('subject'))));
 
-        $dataObject->license = reset($dataObject->getData('eschol_license_url'));
+        $license_url = $dataObject->getData('eschol_license_url');
+        if($license_url){
+            $dataObject->license = reset($license_url);
+        } else {
+            $dataObject->license = null;
+        }
 
         $dataObject->sequence = self::getArticleSequenceWithinIssue($dataObject);
 
@@ -75,7 +80,7 @@ class Article extends AbstractDataObjectMapper {
      * @param $dataObject
      * @return mixed
      */
-    protected function getArticleSequenceWithinIssue($dataObject)
+    protected static function getArticleSequenceWithinIssue($dataObject)
     {
         if(is_null($dataObject->publishedArticle)) return null;
         $articles = (new PublishedArticle)->fetchArticlesByIssue($dataObject->publishedArticle->getIssueId());

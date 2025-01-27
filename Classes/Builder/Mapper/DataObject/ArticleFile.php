@@ -73,7 +73,7 @@ class ArticleFile  extends AbstractDataObjectMapper {
      * @param $articleFiles
      * @return mixed
      */
-    protected function getAssociatedFileRecord($articleFile) {
+    protected static function getAssociatedFileRecord($articleFile) {
         $article = (new Article)->fetchById($articleFile->getArticleId());
 
         // Get the other file types, all of which are also article files
