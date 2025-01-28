@@ -62,9 +62,18 @@ class Article extends AbstractDataObjectMapper {
             [(object) ['source_record_key' => SourceRecordKey::section($dataObject->publishedArticle->getSectionId())]];
 
         $dataObject->externalIds = self::getExternalIds($dataObject);
-        $dataObject->keywords = array_map('trim', explode(';', reset($dataObject->getData('subject'))));
-
-        $dataObject->license = reset($dataObject->getData('eschol_license_url'));
+        $subject = $dataObject->getData('subject');
+        if ($subject){
+            $dataObject->keywords = array_map('trim', explode(';', reset($subject)));
+        } else {
+            $dataObject->keywords = [];
+        }
+        $license_url = $dataObject->getData('eschol_license_url');
+        if($license_url){
+            $dataObject->license = reset($license_url);
+        } else {
+            $dataObject->license = null;
+        }
 
         $dataObject->sequence = self::getArticleSequenceWithinIssue($dataObject);
 
@@ -75,7 +84,7 @@ class Article extends AbstractDataObjectMapper {
      * @param $dataObject
      * @return mixed
      */
-    protected function getArticleSequenceWithinIssue($dataObject)
+    protected static function getArticleSequenceWithinIssue($dataObject)
     {
         if(is_null($dataObject->publishedArticle)) return null;
         $articles = (new PublishedArticle)->fetchArticlesByIssue($dataObject->publishedArticle->getIssueId());
@@ -112,10 +121,14 @@ class Article extends AbstractDataObjectMapper {
      */
     protected static function mapDisciplines($dataObject)
     {
+        $ld = $dataObject->getLocalizedDiscipline();
+        if($ld == null){
+            $ld = [];
+        }
         return array_filter(
             array_map(
                 function($disciplineKey) { return Discipline::getDisciplineName($disciplineKey); },
-                $dataObject->getLocalizedDiscipline()
+                $ld
             )
         );
     }

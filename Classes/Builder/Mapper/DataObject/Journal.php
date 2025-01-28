@@ -48,11 +48,13 @@ class Journal extends AbstractDataObjectMapper {
      */
     protected static function getImage($dataObject, $settingKey) {
         $settings = @$dataObject->getSettings()[$settingKey]['en_US'];
-        $imageData = array_combine(array_map([Str::class, 'camelToSnake'], array_keys($settings)),array_values($settings));
-        if($imageData) {
-            $imageUrl = Files::getPublicJournalUrl($dataObject) . '/' . $imageData['uploadName'];
-            $imageData['url'] = $imageUrl . $imageData['upload_name'];
-            return (object) $imageData;
+        if($settings){
+            $imageData = array_combine(array_map([Str::class, 'camelToSnake'], array_keys($settings)),array_values($settings));
+            if($imageData) {
+                $imageUrl = Files::getPublicJournalUrl($dataObject) . '/' . $imageData['uploadName'];
+                $imageData['url'] = $imageUrl . $imageData['upload_name'];
+                return (object) $imageData;
+            } else return null;
         } else return null;
     }
 }
